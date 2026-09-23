@@ -1,8 +1,8 @@
 /** L8 RNG: primitive vectors, pinned tz-rng-v1 known answers (RNG-01), uniformity (RNG-02 short). */
 import { describe, expect, it } from "vitest";
-import { hmac } from "@noble/hashes/hmac";
-import { sha256 } from "@noble/hashes/sha256";
-import { chacha20 } from "@noble/ciphers/chacha";
+import { hmac } from "@noble/hashes/hmac.js";
+import { sha256 } from "@noble/hashes/sha2.js";
+import { chacha20 } from "@noble/ciphers/chacha.js";
 import { DrawStream, deriveHandSeed, fromHex, seedCommitment, std52, toHex } from "../src/index.js";
 
 describe("primitive vectors", () => {

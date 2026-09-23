@@ -21,13 +21,13 @@
     "digest": "node scripts/digest.mjs"
   },
   "dependencies": {
-    "@noble/ciphers": "1.1.3",
-    "@noble/hashes": "1.6.1"
+    "@noble/ciphers": "2.4.0",
+    "@noble/hashes": "2.4.0"
   },
   "devDependencies": {
-    "esbuild": "0.24.2",
-    "fast-check": "3.23.2",
-    "ajv": "8.17.1",
-    "quickjs-emscripten": "0.31.0"
+    "esbuild": "0.28.2",
+    "fast-check": "4.10.2",
+    "ajv": "8.20.0",
+    "quickjs-emscripten": "0.32.0"
   }
 }

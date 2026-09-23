@@ -3,7 +3,7 @@
  * any game-relevant draw: those come only from tz-rng-v1 (core/rng.ts). xoshiro128** with SHA-256
  * seeding, ported from TashZone v1 so a bot's choice is deterministic for a given seed.
  */
-import { sha256 } from "@noble/hashes/sha256";
+import { sha256 } from "@noble/hashes/sha2.js";
 import { utf8 } from "./bytes.js";
 
 export interface BotRandom {

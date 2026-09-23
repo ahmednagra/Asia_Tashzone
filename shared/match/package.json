@@ -15,8 +15,8 @@
     "@tashzone/protocol": "workspace:*"
   },
   "devDependencies": {
-    "ws": "8.18.0",
-    "@types/ws": "8.5.13"
+    "ws": "8.21.3",
+    "@types/ws": "8.18.1"
   },
   "exports": {
     ".": {

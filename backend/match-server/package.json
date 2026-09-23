@@ -13,12 +13,12 @@
   "dependencies": {
     "@tashzone/engine": "workspace:*",
     "@tashzone/protocol": "workspace:*",
-    "pg": "8.13.1",
-    "ws": "8.18.0"
+    "pg": "8.23.0",
+    "ws": "8.21.3"
   },
   "devDependencies": {
-    "@types/pg": "8.11.10",
-    "@types/ws": "8.5.13",
+    "@types/pg": "8.23.1",
+    "@types/ws": "8.18.1",
     "@tashzone/match": "workspace:*"
   }
 }

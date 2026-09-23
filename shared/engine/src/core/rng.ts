@@ -6,9 +6,9 @@
  *  below(n)   = 31-bit rejection sampling; shuffle = Fisher–Yates from the top.
  * The only randomness in the engine. No host entropy, no clocks.
  */
-import { hmac } from "@noble/hashes/hmac";
-import { sha256 } from "@noble/hashes/sha256";
-import { chacha20 } from "@noble/ciphers/chacha";
+import { hmac } from "@noble/hashes/hmac.js";
+import { sha256 } from "@noble/hashes/sha2.js";
+import { chacha20 } from "@noble/ciphers/chacha.js";
 import { frame, fromHex, toHex, utf8 } from "./bytes.js";
 
 export const RANDOMNESS_VERSION = "tz-rng-v1";
