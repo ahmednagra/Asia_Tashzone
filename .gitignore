@@ -11,8 +11,6 @@ __pycache__/
 .pytest_cache/
 *.db
 # app secrets — never commit (runbook Part J)
-app/credentials/
-app/credentials.json
 app/android/
 app/ios/
 app/.expo/
