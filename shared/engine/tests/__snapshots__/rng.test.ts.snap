@@ -1,0 +1,18 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`tz-rng-v1 known answers (pinned; any change is a randomness_version bump) > commitment, hand seed and first shuffle are stable 1`] = `
+{
+  "commit": "752aea92b32f35c8d2007e1c6b81ec8516200854bfafd748a4c2472151bb0fbb",
+  "first8": [
+    "3H",
+    "6S",
+    "JH",
+    "3C",
+    "7C",
+    "JS",
+    "KC",
+    "8S",
+  ],
+  "seed": "0b975851be08fa81c5ad45d01a12499dc0e8d5bc17e03401f22fbd969858f4d2",
+}
+`;

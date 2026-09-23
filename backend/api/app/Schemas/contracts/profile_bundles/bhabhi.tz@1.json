@@ -1,0 +1,198 @@
+{
+  "profile_id": "bhabhi.tz@1",
+  "game": "bhabhi",
+  "status": "FROZEN",
+  "profile_hash": "4fc8e70a7d0025b634bf8399ee041c318cedb3093997f30793291d7b121355d4",
+  "default_effective_profile_hash": "f5950c0a602a1ebb286486381e4a2a114edac63b7efd865629ff1eda663d13c7",
+  "presets": {
+    "standard": {},
+    "full-trick": {
+      "thulla": "finishTrick"
+    },
+    "quick-escape": {
+      "power_holder_empty": "passToNext"
+    },
+    "take-hand": {
+      "take_hand": true
+    }
+  },
+  "default_preset": "standard",
+  "decisions": {
+    "V1": "TashZone v1 Bhabhi rules unchanged (L14, L19, L32–L35, L39): ace of spades leads; first trick put aside; four power-holder rules; take-the-hand; two-player cut; ranking by fewest times Bhabhi, then summed finishing places",
+    "L32": "two decks are forced for 7–8 players when `decks` is not set explicitly",
+    "L39": "handicap is offered against bots only; the match server refuses a room with a handicap"
+  },
+  "settings_schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "tashzone:profile:bhabhi.tz@1:settings",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "players": {
+        "type": "integer",
+        "enum": [
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "default": 4,
+        "x-variant": "v1"
+      },
+      "thulla": {
+        "type": "string",
+        "enum": [
+          "immediate",
+          "finishTrick"
+        ],
+        "default": "immediate",
+        "x-variant": "v1"
+      },
+      "first_trick_discard": {
+        "type": "boolean",
+        "default": true,
+        "x-variant": "v1"
+      },
+      "power_holder_empty": {
+        "type": "string",
+        "enum": [
+          "drawFromWaste",
+          "drawFromNext",
+          "escapeIfThreePlus",
+          "passToNext"
+        ],
+        "default": "drawFromWaste",
+        "x-variant": "v1"
+      },
+      "decks": {
+        "type": "integer",
+        "enum": [
+          1,
+          2
+        ],
+        "default": 1,
+        "x-variant": "v1"
+      },
+      "take_hand": {
+        "type": "boolean",
+        "default": false,
+        "x-variant": "v1"
+      },
+      "two_player_cut": {
+        "type": "boolean",
+        "default": true,
+        "x-variant": "v1"
+      },
+      "rounds": {
+        "type": "integer",
+        "enum": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "default": 3,
+        "x-variant": "v1"
+      },
+      "bhabhi_limit": {
+        "type": "integer",
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "default": 0,
+        "x-variant": "v1"
+      },
+      "handicap": {
+        "type": "integer",
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "default": 0,
+        "x-variant": "v1"
+      },
+      "accessible_timers": {
+        "type": "boolean",
+        "default": false,
+        "x-variant": "PD-07"
+      }
+    },
+    "allOf": [
+      {
+        "if": {
+          "required": [
+            "decks"
+          ],
+          "properties": {
+            "decks": {
+              "const": 1
+            }
+          }
+        },
+        "then": {
+          "properties": {
+            "players": {
+              "enum": [
+                3,
+                4,
+                5,
+                6
+              ]
+            }
+          }
+        }
+      },
+      {
+        "if": {
+          "required": [
+            "decks"
+          ],
+          "properties": {
+            "decks": {
+              "const": 2
+            }
+          }
+        },
+        "then": {
+          "properties": {
+            "players": {
+              "enum": [
+                4,
+                5,
+                6,
+                7,
+                8
+              ]
+            }
+          }
+        }
+      }
+    ]
+  }
+}

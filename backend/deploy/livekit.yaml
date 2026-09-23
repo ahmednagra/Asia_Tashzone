@@ -1,0 +1,39 @@
+# Self-hosted LiveKit server (voice chat in private TashZone rooms).
+# Mounted read-only into the `livekit` service in both Compose files; the API/secret pair comes from the
+# LIVEKIT_KEYS environment variable, never from this file (it is in git).
+#
+# Ports, and what has to be open on the host:
+#   7880/tcp  signalling and HTTP (reached only through Caddy over TLS on the internet; never published directly)
+#   7881/tcp  ICE/TCP fallback, for phones on networks that block UDP  -> must be open to the internet
+#   7882/udp  WebRTC media, all of it, on one port  -> must be open to the internet (Oracle security list / NSG)
+#
+# Single-port UDP, not a range, and the reason is the host we run on. Docker starts one `docker-proxy`
+# process per published port, so `50000-50100:50000-50100/udp` is 101 processes and 101 nat rules before a
+# single player has spoken -- hundreds of MB of RSS on an Always Free Ampere box, and a known failure mode
+# upstream (moby#11185). Upstream LiveKit recommends single-port mode for simple deployments, and a voice-only
+# game needs no more: every session is multiplexed over 7882.
+#
+# This port must match the `ports:` list of the livekit service in the Compose files exactly. LiveKit
+# advertises ICE candidates on the port below; a candidate on a port Docker does not publish, or the
+# security list does not allow, is simply dropped and the caller hears silence.
+#
+# If a future release ever needs a range again (many concurrent rooms on a much bigger host), swap `udp_port`
+# back for `port_range_start`/`port_range_end`, publish the same range, widen the security-list rule, and
+# re-run the two-phone voice check -- it changes how every client negotiates media.
+
+port: 7880
+# Behind Caddy, which terminates TLS; LiveKit itself speaks plain HTTP on the internal Docker network.
+rtc:
+  tcp_port: 7881
+  udp_port: 7882
+  # The container sees a private address; LiveKit asks the cloud metadata service for the public one so the ICE
+  # candidates it advertises are reachable.
+  use_external_ip: true
+
+# Voice only: audio is what the app publishes, so there is no need for a large receive buffer or simulcast video.
+logging:
+  level: info
+  json: true
+
+# Keys come from the environment (LIVEKIT_KEYS="<key>: <secret>"). An empty map here means "no keys in the file".
+keys: {}

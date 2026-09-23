@@ -1,0 +1,35 @@
+[project]
+name = "tashzone-api"
+version = "0.1.0"
+description = "TashZone account, room and results API (03_PLATFORM.md §3)"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi==0.115.6",
+  "uvicorn[standard]==0.34.0",
+  "sqlalchemy==2.0.36",
+  "alembic==1.14.0",
+  "psycopg[binary]==3.2.3",
+  "pydantic-settings==2.7.0",
+  "jsonschema==4.23.0",
+  "pyjwt[crypto]>=2.10",
+  "httpx>=0.28",
+]
+
+[dependency-groups]
+dev = ["pytest==8.3.4", "httpx==0.28.1"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 140
+extend-exclude = [".venv", "alembic/versions"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = ["E501", "B008", "UP007", "UP045"]
+
+[tool.ruff.lint.per-file-ignores]
+"app/Models/__init__.py" = ["F401"]
+"app/Models/*.py" = ["F403", "F405"]

@@ -1,0 +1,78 @@
+{
+  "profile_id": "callbridge.bd@1",
+  "game": "callbreak",
+  "status": "FROZEN_WITH_GAPS",
+  "profile_hash": "0d9cd5cae15833bf7da538f090a90541daacd1edee0e8d8cceab9751bf11dab9",
+  "default_effective_profile_hash": "a0880e07551788f1a5c21f60928cc89b73d6b930b2e4676490ef40db64a1c564",
+  "presets": {
+    "standard": {}
+  },
+  "default_preset": "standard",
+  "decisions": {
+    "G-12": "must-beat and must-trump-if-winning ON by default (canonical S11/Pagat reading, matches leading apps); CB-01 relaxed play is a room toggle",
+    "G-13": "void seat whose trumps cannot beat the current winner may play any card (S11); CB-02 stays DEFER",
+    "G-14": "equal final totals share the placement (standard competition ranking); no tie-break hand",
+    "G-15": "bid-sum<8 redeal off by default (CB-03 toggle); at most 3 consecutive annulments, then the deal is played as dealt",
+    "G-57": "cap 256 actions per hand (a complete hand needs ≤ 130 including timeouts); outcome: annul, same dealer",
+    "W-CB-1": "hidden-eligibility window with fixed 4000 ms duration, identical for every viewer; never closes early",
+    "V1": "TashZone v1 presets kept: Classic (calls 1–8, automatic no-spade redeal, +0.1 per overtrick), Easy follow, Call Bridge (2–13, no overtrick bonus)",
+    "G-58": "Call Bridge match length defaults to 5 hands with the CB-11 options (source says 'set amount of time')"
+  },
+  "settings_schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "tashzone:profile:callbridge.bd@1:settings",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "low_call_sum_redeal": {
+        "type": "boolean",
+        "default": false,
+        "x-variant": "CB-03"
+      },
+      "redeal_on_request": {
+        "type": "boolean",
+        "default": true,
+        "x-variant": "CB-04"
+      },
+      "auto_redeal_no_spade": {
+        "type": "boolean",
+        "default": false,
+        "x-variant": "v1"
+      },
+      "first_lead_no_spade": {
+        "type": "boolean",
+        "default": false,
+        "x-variant": "CB-05"
+      },
+      "clockwise_play": {
+        "type": "boolean",
+        "default": false,
+        "x-variant": "CB-06"
+      },
+      "dealer_rotates_clockwise": {
+        "type": "boolean",
+        "default": false,
+        "x-variant": "CB-07"
+      },
+      "rounds": {
+        "type": "integer",
+        "enum": [
+          3,
+          5,
+          10,
+          15,
+          25,
+          50,
+          100
+        ],
+        "default": 5,
+        "x-variant": "CB-11"
+      },
+      "accessible_timers": {
+        "type": "boolean",
+        "default": false,
+        "x-variant": "PD-07"
+      }
+    }
+  }
+}

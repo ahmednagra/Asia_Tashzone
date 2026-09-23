@@ -1,0 +1,54 @@
+# HTTPS certificates are issued and renewed automatically (sslip.io names work with Let's Encrypt).
+# Access logs are off: logs never contain client IPs (C-25).
+{$API_DOMAIN} {
+	encode zstd gzip
+
+	# Service-to-service routes (match server → http://api:8080 on the Docker network) are never reachable from
+	# the internet, whatever the token. Caddy matches paths case-insensitively after decoding.
+	@internal path /api/v1/internal /api/v1/internal/*
+
+	# Released APKs, served off the disk so the app's update prompt can install them (deploy.sh --publish-apk).
+	@download path /download/*
+
+	# Feedback may carry a match record (up to 64 KB of JSON); everything else stays small.
+	@feedback path /api/v1/feedback
+	@not_feedback not path /api/v1/feedback
+	request_body @feedback {
+		max_size 128KB
+	}
+	request_body @not_feedback {
+		max_size 64KB
+	}
+
+	# Explicit order: the internal 404 must run before the catch-all proxy.
+	route {
+		respond @internal 404
+
+		handle @download {
+			uri strip_prefix /download
+			root * /srv/releases
+			header Content-Type application/vnd.android.package-archive
+			header Cache-Control "public, max-age=604800, immutable"
+			file_server
+		}
+
+		handle {
+			reverse_proxy api:8080
+		}
+	}
+}
+
+{$MATCH_DOMAIN} {
+	# Only the WebSocket endpoint is public; /health and /ready stay on the Docker network.
+	handle /match {
+		reverse_proxy match-server:8787
+	}
+	handle {
+		respond 404
+	}
+}
+
+# Voice signalling (LiveKit /rtc over wss). Media never touches Caddy.
+{$LIVEKIT_DOMAIN} {
+	reverse_proxy livekit:7880
+}

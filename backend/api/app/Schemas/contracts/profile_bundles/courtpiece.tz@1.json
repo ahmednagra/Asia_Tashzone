@@ -1,0 +1,125 @@
+{
+  "profile_id": "courtpiece.tz@1",
+  "game": "courtpiece",
+  "status": "FROZEN",
+  "profile_hash": "2415942088d5299560bc9e7c8da5a700195b2b1398d1a986d2c21203bcf330e3",
+  "default_effective_profile_hash": "739a92f3cd46503a15da437d064b6faaf9cb6431fad5b3994e59d247232c9545",
+  "presets": {
+    "standard": {},
+    "double": {
+      "variant": "double",
+      "ace_blocks_collect": false
+    },
+    "single": {
+      "variant": "single",
+      "ace_blocks_collect": false
+    },
+    "double-ace": {
+      "variant": "double",
+      "ace_blocks_collect": true
+    }
+  },
+  "default_preset": "double",
+  "decisions": {
+    "V1": "TashZone v1 Court Piece rules unchanged: caller sees 5 cards and chooses trump; Single and Double Sir; Double Sir collects when the same player wins two tricks in a row, and the last trick collects the pile; court = 7–0 (single) or all 13 collected (double); losing side deals next (pagat)",
+    "G-57": "cap 256 actions per hand; outcome annul, same dealer"
+  },
+  "settings_schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "tashzone:profile:courtpiece.tz@1:settings",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "variant": {
+        "type": "string",
+        "enum": [
+          "single",
+          "double"
+        ],
+        "default": "single",
+        "x-variant": "v1"
+      },
+      "stop_at_seven": {
+        "type": "boolean",
+        "default": true,
+        "x-variant": "v1"
+      },
+      "ace_blocks_collect": {
+        "type": "boolean",
+        "default": false,
+        "x-variant": "v1"
+      },
+      "target_points": {
+        "type": "integer",
+        "enum": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21
+        ],
+        "default": 7,
+        "x-variant": "v1"
+      },
+      "hand_points": {
+        "type": "integer",
+        "enum": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "default": 1,
+        "x-variant": "v1"
+      },
+      "court_points": {
+        "type": "integer",
+        "enum": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "default": 3,
+        "x-variant": "v1"
+      },
+      "dealer_rotation": {
+        "type": "string",
+        "enum": [
+          "pagat",
+          "rotate"
+        ],
+        "default": "pagat",
+        "x-variant": "v1"
+      },
+      "accessible_timers": {
+        "type": "boolean",
+        "default": false,
+        "x-variant": "PD-07"
+      }
+    }
+  }
+}

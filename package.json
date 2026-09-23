@@ -1,0 +1,31 @@
+{
+  "name": "tashzone",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "lint": "eslint -c shared/config/eslint.config.js shared backend/match-server --max-warnings=0",
+    "check": "pnpm lint && pnpm typecheck && pnpm test",
+    "bundle:engine": "pnpm --filter @tashzone/engine bundle",
+    "bundle:profiles": "pnpm --filter @tashzone/engine bundle:profiles",
+    "digest": "pnpm --filter @tashzone/engine digest",
+    "e2e": "node .github/scripts/e2e-fullstack.mjs",
+    "test:api": "cd backend/api && uv run pytest -q"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.17.0",
+    "eslint": "9.17.0",
+    "turbo": "2.3.3",
+    "typescript": "5.7.2",
+    "typescript-eslint": "8.18.1",
+    "vitest": "2.1.8",
+    "@types/node": "22.10.2",
+    "ws": "8.18.0"
+  }
+}

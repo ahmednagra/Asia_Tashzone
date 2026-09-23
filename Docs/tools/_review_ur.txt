@@ -1,0 +1,3224 @@
+0
+EN: You
+UR: آپ
+
+1
+EN: Ace
+UR: یکا
+
+2
+EN: Bot
+UR: بوٹ
+
+3
+EN: Cards
+UR: پتے
+
+4
+EN: Continue
+UR: آگے
+
+5
+EN: Court
+UR: کوٹ
+
+6
+EN: Fast
+UR: تیز
+
+7
+EN: Hearts
+UR: پان
+
+8
+EN: Help
+UR: مدد
+
+9
+EN: Home
+UR: ہوم
+
+10
+EN: Large
+UR: بڑا
+
+11
+EN: Locked
+UR: بند
+
+12
+EN: Off
+UR: بند
+
+13
+EN: Spades
+UR: حکم
+
+14
+EN: Take
+UR: لیں
+
+15
+EN: 10
+UR: دہلا
+
+16
+EN: Appeal
+UR: اپیل
+
+17
+EN: Back
+UR: واپس
+
+18
+EN: Badges
+UR: تمغے
+
+19
+EN: Block
+UR: بلاک
+
+20
+EN: Calling
+UR: بولی
+
+21
+EN: Challenging
+UR: مشکل
+
+22
+EN: Clubs
+UR: چڑیا
+
+23
+EN: Diamonds
+UR: اینٹ
+
+24
+EN: Easy
+UR: آسان
+
+25
+EN: Game
+UR: کھیل
+
+26
+EN: Games
+UR: کھیل
+
+27
+EN: Hard
+UR: مشکل
+
+28
+EN: Idea
+UR: خیال
+
+29
+EN: Jack
+UR: غلام
+
+30
+EN: Landscape
+UR: لیٹا
+
+31
+EN: Language
+UR: زبان
+
+32
+EN: Level
+UR: لیول
+
+33
+EN: Menu
+UR: مینو
+
+34
+EN: Mute
+UR: میوٹ
+
+35
+EN: Nearby
+UR: قریب
+
+36
+EN: Portrait
+UR: کھڑا
+
+37
+EN: Pro
+UR: ماہر
+
+38
+EN: Queen
+UR: بیگم
+
+39
+EN: Ready
+UR: تیار
+
+40
+EN: Rules
+UR: اصول
+
+41
+EN: Sound
+UR: آواز
+
+42
+EN: Stats
+UR: ترقی
+
+43
+EN: Thulla
+UR: ٹھلا
+
+44
+EN: Challenge
+UR: چیلنج
+
+45
+EN: Classic
+UR: کلاسک
+
+46
+EN: Family
+UR: فیملی
+
+47
+EN: Hint
+UR: اشارہ
+
+48
+EN: Hints
+UR: اشارے
+
+49
+EN: Last
+UR: پچھلا
+
+50
+EN: Normal
+UR: نارمل
+
+51
+EN: Oops!
+UR: اوہو!
+
+52
+EN: Opponent
+UR: مخالف
+
+53
+EN: Partner
+UR: ساتھی
+
+54
+EN: Problem
+UR: مسئلہ
+
+55
+EN: Ready!
+UR: تیار!
+
+56
+EN: Report
+UR: رپورٹ
+
+57
+EN: Rounds
+UR: راؤنڈ
+
+58
+EN: Safe
+UR: محفوظ
+
+59
+EN: Salaam!
+UR: سلام!
+
+60
+EN: Scoring
+UR: اسکور
+
+61
+EN: Slow
+UR: آہستہ
+
+62
+EN: Thulla!
+UR: ٹھلا!
+
+63
+EN: Topic
+UR: موضوع
+
+64
+EN: Auto
+UR: خودکار
+
+65
+EN: Bhabhi
+UR: بھابھی
+
+66
+EN: Delete
+UR: مٹائیں
+
+67
+EN: Done
+UR: ہو گیا
+
+68
+EN: Double Sir
+UR: ڈبل سر
+
+69
+EN: Earned
+UR: مل گیا
+
+70
+EN: Hands
+UR: بازیاں
+
+71
+EN: Host
+UR: میزبان
+
+72
+EN: King
+UR: بادشاہ
+
+73
+EN: Leave
+UR: چھوڑیں
+
+74
+EN: Music
+UR: موسیقی
+
+75
+EN: Open
+UR: کھولیں
+
+76
+EN: Players
+UR: کھلاڑی
+
+77
+EN: Remove
+UR: نکالیں
+
+78
+EN: Send
+UR: بھیجیں
+
+79
+EN: Standard
+UR: معیاری
+
+80
+EN: Thank you!
+UR: شکریہ!
+
+81
+EN: The Bhabhi
+UR: بھابھی
+
+82
+EN: {0} Trump
+UR: {0} ترپ
+
+83
+EN: 2 decks
+UR: 2 گڈیاں
+
+84
+EN: Bhabhi!
+UR: بھابھی!
+
+85
+EN: Call Bridge
+UR: کال برج
+
+86
+EN: Court Piece
+UR: کوٹ پیس
+
+87
+EN: Cut!
+UR: کٹ گیا!
+
+88
+EN: Extra large
+UR: بہت بڑا
+
+89
+EN: got away
+UR: نکل گئے
+
+90
+EN: Got away
+UR: نکل گئے
+
+91
+EN: Medium
+UR: درمیانہ
+
+92
+EN: Other
+UR: کچھ اور
+
+93
+EN: Paused
+UR: رکا ہوا
+
+94
+EN: Relaxed
+UR: آرام سے
+
+95
+EN: Settings
+UR: ترتیبات
+
+96
+EN: Sharp eye
+UR: تیز نظر
+
+97
+EN: Single Sir
+UR: سنگل سر
+
+98
+EN: Talking
+UR: بات چیت
+
+99
+EN: Ten games
+UR: دس کھیل
+
+100
+EN: Truck art
+UR: ٹرک آرٹ
+
+101
+EN: Waiting…
+UR: انتظار…
+
+102
+EN: Wrong PIN
+UR: غلط PIN
+
+103
+EN: Year {0}
+UR: سال {0}
+
+104
+EN: {0} (you)
+UR: {0} (آپ)
+
+105
+EN: 4 players
+UR: 4 کھلاڑی
+
+106
+EN: Callbreak
+UR: کال بریک
+
+107
+EN: Clean tricks
+UR: صاف ہاتھ
+
+108
+EN: Close
+UR: بند کریں
+
+109
+EN: Easy follow
+UR: آسان چال
+
+110
+EN: Easy Mode
+UR: آسان موڈ
+
+111
+EN: First win
+UR: پہلی جیت
+
+112
+EN: Hand {0}
+UR: بازی {0}
+
+113
+EN: Hand finished
+UR: بازی ختم
+
+114
+EN: Join
+UR: شامل ہوں
+
+115
+EN: Lead
+UR: پہلی چال
+
+116
+EN: Lead suit
+UR: پہلا رنگ
+
+117
+EN: Picked up
+UR: اٹھا لیے
+
+118
+EN: Room code
+UR: کمرہ کوڈ
+
+119
+EN: Say something
+UR: کچھ کہیں
+
+120
+EN: Two decks
+UR: دو گڈیاں
+
+121
+EN: Undo
+UR: واپس لیں
+
+122
+EN: Unlocked
+UR: کھلا ہوا
+
+123
+EN: Vibration
+UR: وائبریشن
+
+124
+EN: Well played!
+UR: بہت خوب!
+
+125
+EN: A hundred hands
+UR: سو بازیاں
+
+126
+EN: Call {n}
+UR: {n} بولیں
+
+127
+EN: Cheating
+UR: بے ایمانی
+
+128
+EN: Connecting
+UR: جڑ رہا ہے
+
+129
+EN: Custom rules
+UR: اپنے اصول
+
+130
+EN: Fifty games
+UR: پچاس کھیل
+
+131
+EN: First game
+UR: پہلا کھیل
+
+132
+EN: First trick
+UR: پہلا ہاتھ
+
+133
+EN: Full trick
+UR: پورا ہاتھ
+
+134
+EN: Good game
+UR: اچھا کھیل
+
+135
+EN: Got away first
+UR: پہلے نکلے
+
+136
+EN: Next hand
+UR: اگلی بازی
+
+137
+EN: None
+UR: کوئی نہیں
+
+138
+EN: On this phone
+UR: اس فون پر
+
+139
+EN: Other team
+UR: دوسری ٹیم
+
+140
+EN: Playing
+UR: کھیل جاری
+
+141
+EN: Reactions
+UR: ری ایکشنز
+
+142
+EN: Rules: {0}
+UR: اصول: {0}
+
+143
+EN: Skip for now
+UR: ابھی نہیں
+
+144
+EN: Table orientation
+UR: میز کا رخ
+
+145
+EN: The first trick
+UR: پہلا ہاتھ
+
+146
+EN: Trumping
+UR: ترپ لگانا
+
+147
+EN: Try another name
+UR: دوسرا نام
+
+148
+EN: You lead
+UR: آپ کی چال
+
+149
+EN: Your team
+UR: آپ کی ٹیم
+
+150
+EN: {0}'s table
+UR: {0} کی میز
+
+151
+EN: Cancel
+UR: منسوخ کریں
+
+152
+EN: Change rules
+UR: اصول بدلیں
+
+153
+EN: Choose an avatar
+UR: اوتار چنیں
+
+154
+EN: Connecting…
+UR: جڑ رہا ہے…
+
+155
+EN: Good game!
+UR: اچھا کھیل!
+
+156
+EN: Last trick
+UR: پچھلا ہاتھ
+
+157
+EN: Leave table
+UR: میز چھوڑیں
+
+158
+EN: New at the table
+UR: میز پر نیا
+
+159
+EN: Open table
+UR: میز کھولیں
+
+160
+EN: Play again
+UR: پھر کھیلیں
+
+161
+EN: Quick escape
+UR: جلدی نکلنا
+
+162
+EN: Send {0}
+UR: {0} بھیجیں
+
+163
+EN: Share code
+UR: کوڈ بھیجیں
+
+164
+EN: Spades are trump
+UR: حکم ترپ ہے
+
+165
+EN: Surprise me
+UR: ہر بار نیا
+
+166
+EN: Table PIN
+UR: میز کا PIN
+
+167
+EN: Take the cards
+UR: پتے لے لیں
+
+168
+EN: Three in a row
+UR: لگاتار تین
+
+169
+EN: Total points
+UR: کل پوائنٹس
+
+170
+EN: Turn order
+UR: باری کا رخ
+
+171
+EN: Watch the table
+UR: میز دیکھیں
+
+172
+EN: Winning a hand
+UR: بازی جیتنا
+
+173
+EN: Winning the game
+UR: کھیل جیتنا
+
+174
+EN: Winning tricks
+UR: ہاتھ جیتنا
+
+175
+EN: Your data
+UR: آپ کا ڈیٹا
+
+176
+EN: Your level
+UR: آپ کا لیول
+
+177
+EN: Your progress
+UR: آپ کی ترقی
+
+178
+EN: Your turn
+UR: آپ کی باری
+
+179
+EN: {0} got away
+UR: {0} نکل گئے
+
+180
+EN: {0} rules
+UR: {0} کے اصول
+
+181
+EN: {0} wins
+UR: {0} جیت گئے
+
+182
+EN: Ajrak block print
+UR: اجرک چھپائی
+
+183
+EN: Bhabhi {0}×
+UR: بھابھی {0}×
+
+184
+EN: Bot level
+UR: بوٹ کا لیول
+
+185
+EN: Create room
+UR: کمرہ بنائیں
+
+186
+EN: Easy Mode on
+UR: آسان موڈ آن
+
+187
+EN: Even deal
+UR: برابر تقسیم
+
+188
+EN: Getting away
+UR: نکل رہے ہیں
+
+189
+EN: House rules
+UR: گھر کے اصول
+
+190
+EN: How many rounds?
+UR: کتنے راؤنڈ؟
+
+191
+EN: How to play
+UR: کیسے کھیلیں
+
+192
+EN: Keep it
+UR: محفوظ رکھیں
+
+193
+EN: Leave room
+UR: کمرہ چھوڑیں
+
+194
+EN: Send an appeal
+UR: اپیل بھیجیں
+
+195
+EN: Send appeal
+UR: اپیل بھیجیں
+
+196
+EN: Send feedback
+UR: رائے بھیجیں
+
+197
+EN: Type a message
+UR: پیغام لکھیں
+
+198
+EN: Unmute
+UR: میوٹ ہٹائیں
+
+199
+EN: You got away!
+UR: آپ نکل گئے!
+
+200
+EN: You win!
+UR: آپ جیت گئے!
+
+201
+EN: {0} is playing…
+UR: {0} کی باری…
+
+202
+EN: Basics
+UR: بنیادی باتیں
+
+203
+EN: Card size
+UR: پتوں کا سائز
+
+204
+EN: Card tracker
+UR: پتوں کا حساب
+
+205
+EN: Close table
+UR: میز بند کریں
+
+206
+EN: Following suit
+UR: وہی رنگ چلنا
+
+207
+EN: Hand {0} finished
+UR: بازی {0} ختم
+
+208
+EN: Level {level}
+UR: لیول {level}
+
+209
+EN: Online room
+UR: آن لائن کمرہ
+
+210
+EN: Online rooms
+UR: آن لائن کمرے
+
+211
+EN: Play a higher trump
+UR: بڑا ترپ چلیں
+
+212
+EN: Quick messages
+UR: فوری پیغامات
+
+213
+EN: Room code {0}
+UR: کمرہ کوڈ {0}
+
+214
+EN: See results
+UR: نتیجہ دیکھیں
+
+215
+EN: Something else
+UR: کوئی اور بات
+
+216
+EN: Step 1 of 4
+UR: مرحلہ 1 از 4
+
+217
+EN: Step 2 of 4
+UR: مرحلہ 2 از 4
+
+218
+EN: Step 3 of 4
+UR: مرحلہ 3 از 4
+
+219
+EN: Step 4 of 4
+UR: مرحلہ 4 از 4
+
+220
+EN: Stop talking
+UR: بات بند کریں
+
+221
+EN: Until 3× Bhabhi
+UR: 3× بھابھی تک
+
+222
+EN: {0} place
+UR: آپ {0} پر رہے
+
+223
+EN: 3 to 6 players
+UR: 3 سے 6 کھلاڑی
+
+224
+EN: 3 to 8 players
+UR: 3 سے 8 کھلاڑی
+
+225
+EN: Back to tables
+UR: میزوں پر واپس
+
+226
+EN: Close room
+UR: کمرہ بند کریں
+
+227
+EN: Connection lost
+UR: رابطہ ٹوٹ گیا
+
+228
+EN: Delete everything
+UR: سب کچھ مٹائیں
+
+229
+EN: Got away · {0}
+UR: نکل گئے · {0}
+
+230
+EN: How to join
+UR: کیسے شامل ہوں
+
+231
+EN: Mute or report
+UR: میوٹ یا رپورٹ
+
+232
+EN: needs internet
+UR: انٹرنیٹ چاہیے
+
+233
+EN: On our server
+UR: ہمارے سرور پر
+
+234
+EN: One minute, please
+UR: ایک منٹ، پلیز
+
+235
+EN: Redeal
+UR: دوبارہ بانٹیں
+
+236
+EN: Regular player
+UR: روز کا کھلاڑی
+
+237
+EN: Round {0} finished
+UR: راؤنڈ {0} ختم
+
+238
+EN: Rung · Coat Pees
+UR: رنگ · کوٹ پیس
+
+239
+EN: Same Wi-Fi: on
+UR: اسی Wi-Fi: آن
+
+240
+EN: Scan QR
+UR: QR اسکین کریں
+
+241
+EN: Show results
+UR: نتیجہ دکھائیں
+
+242
+EN: Sound and language
+UR: آواز اور زبان
+
+243
+EN: Start talking
+UR: بات شروع کریں
+
+244
+EN: Table design
+UR: میز کا ڈیزائن
+
+245
+EN: Table helpers
+UR: میز کے مددگار
+
+246
+EN: Time to update
+UR: اپ ڈیٹ کا وقت
+
+247
+EN: Tricks to call
+UR: بولنے کے ہاتھ
+
+248
+EN: Turn timer
+UR: باری کا ٹائمر
+
+249
+EN: Who plays?
+UR: کون کھیلے گا؟
+
+250
+EN: Yes, remove it
+UR: ہاں، نکال دیں
+
+251
+EN: Account status
+UR: اکاؤنٹ کی حالت
+
+252
+EN: Bots: always on
+UR: بوٹس: ہمیشہ آن
+
+253
+EN: By suit
+UR: رنگ کے حساب سے
+
+254
+EN: Call made
+UR: بولی پوری ہوئی
+
+255
+EN: Choose your language
+UR: اپنی زبان چنیں
+
+256
+EN: Close hint
+UR: اشارہ بند کریں
+
+257
+EN: Everything is open
+UR: سب کچھ کھلا ہے
+
+258
+EN: Hint: {title}
+UR: اشارہ: {title}
+
+259
+EN: Master of the pile
+UR: ڈھیر کا بادشاہ
+
+260
+EN: No, keep it
+UR: نہیں، رہنے دیں
+
+261
+EN: Phulkari embroidery
+UR: پھلکاری کڑھائی
+
+262
+EN: Recent messages
+UR: حال کے پیغامات
+
+263
+EN: Same Wi-Fi: off
+UR: اسی Wi-Fi: بند
+
+264
+EN: Start game
+UR: کھیل شروع کریں
+
+265
+EN: Table favourite
+UR: میز کا پسندیدہ
+
+266
+EN: Table PIN {0}
+UR: میز کا PIN {0}
+
+267
+EN: Talking (voice)
+UR: بات چیت (آواز)
+
+268
+EN: Thulla · Get Away
+UR: ٹھلا · گیٹ اوے
+
+269
+EN: To my left
+UR: میری بائیں طرف
+
+270
+EN: To my right
+UR: میری دائیں طرف
+
+271
+EN: Win a game
+UR: ایک کھیل جیتیں
+
+272
+EN: won · {rate}%
+UR: جیتے · {rate}%
+
+273
+EN: Your hand, {0}
+UR: آپ کے پتے، {0}
+
+274
+EN: {0}, can play
+UR: {0}، چل سکتا ہے
+
+275
+EN: Balochi mirror work
+UR: بلوچی شیشہ کاری
+
+276
+EN: Bot playing
+UR: بوٹ کھیل رہا ہے
+
+277
+EN: By rank
+UR: نمبر کے حساب سے
+
+278
+EN: Calling…
+UR: بولی لگ رہی ہے…
+
+279
+EN: Choose the trump suit
+UR: ترپ کا رنگ چنیں
+
+280
+EN: Continue playing
+UR: کھیل جاری رکھیں
+
+281
+EN: Hand {0} of {1}
+UR: بازی {0} از {1}
+
+282
+EN: Not played yet
+UR: ابھی کھیلا نہیں
+
+283
+EN: On {0} now
+UR: ابھی {0} لگاتار
+
+284
+EN: Share room code
+UR: کمرہ کوڈ بھیجیں
+
+285
+EN: Take {0}'s cards?
+UR: {0} کے پتے لیں؟
+
+286
+EN: Talk to the table
+UR: میز پر بات کریں
+
+287
+EN: Times Bhabhi
+UR: کتنی بار بھابھی
+
+288
+EN: to your left
+UR: آپ کی بائیں طرف
+
+289
+EN: to your right
+UR: آپ کی دائیں طرف
+
+290
+EN: Trick taker
+UR: ہاتھ جیتنے والا
+
+291
+EN: Yes, get it back
+UR: ہاں، واپس لائیں
+
+292
+EN: {count} cards left
+UR: {count} پتے باقی
+
+293
+EN: {left} characters left
+UR: {left} حروف باقی
+
+294
+EN: {rank} of {suit}
+UR: {suit} کا {rank}
+
+295
+EN: 2 teams of 2
+UR: دو دو کی 2 ٹیمیں
+
+296
+EN: Appeal sent
+UR: اپیل بھیج دی گئی
+
+297
+EN: Court for the other team
+UR: دوسری ٹیم کا کوٹ
+
+298
+EN: Delete my data
+UR: میرا ڈیٹا مٹائیں
+
+299
+EN: Enter the PIN again
+UR: PIN دوبارہ لکھیں
+
+300
+EN: Follow the lead suit
+UR: پہلا رنگ ہی چلیں
+
+301
+EN: Guided hand
+UR: سکھانے والی بازی
+
+302
+EN: Hands played
+UR: کھیلی گئی بازیاں
+
+303
+EN: Hi, {nickname}
+UR: سلام، {nickname}
+
+304
+EN: Last with cards
+UR: آخر میں پتے والا
+
+305
+EN: Make your call
+UR: اپنی بولی لگائیں
+
+306
+EN: Mute {0}
+UR: {0} کو میوٹ کریں
+
+307
+EN: Not available right now
+UR: ابھی دستیاب نہیں
+
+308
+EN: Online rooms: on
+UR: آن لائن کمرے: آن
+
+309
+EN: Points to win
+UR: جیتنے کے پوائنٹس
+
+310
+EN: Reconnecting
+UR: دوبارہ جڑ رہا ہے
+
+311
+EN: Round {0} of {1}
+UR: راؤنڈ {0} از {1}
+
+312
+EN: Start playing
+UR: کھیلنا شروع کریں
+
+313
+EN: You drew a card
+UR: آپ نے پتا اٹھایا
+
+314
+EN: You pick up {0}
+UR: آپ نے {0} اٹھائے
+
+315
+EN: Your player name
+UR: آپ کا کھلاڑی نام
+
+316
+EN: {0} picks up {1}
+UR: {0} نے {1} اٹھائے
+
+317
+EN: Animation speed
+UR: اینیمیشن کی رفتار
+
+318
+EN: Choosing trump
+UR: ترپ چنا جا رہا ہے
+
+319
+EN: Continue with {0}
+UR: {0} سے جاری رکھیں
+
+320
+EN: Double Sir with Ace
+UR: اِکّے والا ڈبل سر
+
+321
+EN: Finish 10 games
+UR: 10 کھیل مکمل کریں
+
+322
+EN: Finish 50 games
+UR: 50 کھیل مکمل کریں
+
+323
+EN: Good sport
+UR: کھلے دل کا کھلاڑی
+
+324
+EN: I have played before
+UR: پہلے کھیل چکے ہیں
+
+325
+EN: Join room
+UR: کمرے میں شامل ہوں
+
+326
+EN: Not connected to Wi-Fi
+UR: Wi-Fi سے نہیں جڑے
+
+327
+EN: Online rooms: off
+UR: آن لائن کمرے: بند
+
+328
+EN: Parent Settings
+UR: والدین کی ترتیبات
+
+329
+EN: Play 100 hands
+UR: 100 بازیاں کھیلیں
+
+330
+EN: playing now
+UR: ابھی کھیل رہے ہیں
+
+331
+EN: Reconnecting…
+UR: دوبارہ جڑ رہا ہے…
+
+332
+EN: Report {0}
+UR: {0} کی رپورٹ کریں
+
+333
+EN: Rule topics
+UR: اصولوں کے موضوعات
+
+334
+EN: Same Wi-Fi play
+UR: اسی Wi-Fi پر کھیل
+
+335
+EN: Take a player's cards
+UR: کھلاڑی کے پتے لیں
+
+336
+EN: Take-the-hand table
+UR: پتے لینے والی میز
+
+337
+EN: The other team wins
+UR: دوسری ٹیم جیت گئی
+
+338
+EN: Thulla dodger
+UR: ٹھلے سے بچنے والا
+
+339
+EN: Typed messages
+UR: لکھے ہوئے پیغامات
+
+340
+EN: Waste pile, {count} cards
+UR: ڈھیر، {count} پتے
+
+341
+EN: Your microphone is on
+UR: آپ کا مائیک آن ہے
+
+342
+EN: Your turn, friend!
+UR: آپ کی باری، دوست!
+
+343
+EN: Allow camera
+UR: کیمرے کی اجازت دیں
+
+344
+EN: Drew from the pile
+UR: ڈھیر سے پتا اٹھایا
+
+345
+EN: Finish a game
+UR: ایک کھیل مکمل کریں
+
+346
+EN: Four-colour deck
+UR: چار رنگوں والی گڈی
+
+347
+EN: Keep my data
+UR: میرا ڈیٹا رہنے دیں
+
+348
+EN: Lock and close
+UR: لاک کر کے بند کریں
+
+349
+EN: no wins yet
+UR: ابھی کوئی جیت نہیں
+
+350
+EN: No year entered
+UR: کوئی سال نہیں لکھا
+
+351
+EN: Picked up in front of everyone
+UR: سب کے سامنے اٹھائے
+
+352
+EN: Reach level {0}
+UR: لیول {0} تک پہنچیں
+
+353
+EN: Same Wi-Fi table
+UR: اسی Wi-Fi والی میز
+
+354
+EN: Show the last trick
+UR: پچھلا ہاتھ دکھائیں
+
+355
+EN: Stay safe online
+UR: آن لائن محفوظ رہیں
+
+356
+EN: The table is not available
+UR: یہ میز دستیاب نہیں
+
+357
+EN: Thulla on the first trick
+UR: پہلے ہاتھ میں ٹھلا
+
+358
+EN: Turn my microphone on
+UR: میرا مائیک آن کریں
+
+359
+EN: Unmute {0}
+UR: {0} کا میوٹ ہٹائیں
+
+360
+EN: Your microphone is off
+UR: آپ کا مائیک بند ہے
+
+361
+EN: Your team wins!
+UR: آپ کی ٹیم جیت گئی!
+
+362
+EN: {0} is not muted any more.
+UR: {0} کا میوٹ ہٹ گیا۔
+
+363
+EN: Aunt with dark bun
+UR: کالے جوڑے والی خالہ
+
+364
+EN: Call missed
+UR: بولی پوری نہیں ہوئی
+
+365
+EN: Called {0} · won {1}
+UR: بولے {0} · جیتے {1}
+
+366
+EN: Chat is turned off for now
+UR: چیٹ فی الحال بند ہے
+
+367
+EN: Create an online room
+UR: آن لائن کمرہ بنائیں
+
+368
+EN: Easy Mode settings
+UR: آسان موڈ کی ترتیبات
+
+369
+EN: Enter Parent PIN
+UR: والدین کا PIN لکھیں
+
+370
+EN: Follow {0} {suitName}
+UR: {0} {suitName} چلیں
+
+371
+EN: Getting the table ready…
+UR: میز تیار ہو رہی ہے…
+
+372
+EN: Grandfather with white cap
+UR: سفید ٹوپی والے دادا
+
+373
+EN: Grandmother with grey bun
+UR: سفید جوڑے والی دادی
+
+374
+EN: Meet your player
+UR: اپنے کھلاڑی سے ملیں
+
+375
+EN: Open the card tracker
+UR: پتوں کا حساب کھولیں
+
+376
+EN: Play with bots
+UR: بوٹس کے ساتھ کھیلیں
+
+377
+EN: That room is full.
+UR: وہ کمرہ بھر گیا ہے۔
+
+378
+EN: Turn my microphone off
+UR: میرا مائیک بند کریں
+
+379
+EN: Win 3 games in a row
+UR: لگاتار 3 کھیل جیتیں
+
+380
+EN: {0} picked up these cards
+UR: {0} نے یہ پتے اٹھائے
+
+381
+EN: {name} is the Bhabhi
+UR: {name} بھابھی بن گئے
+
+382
+EN: Chiniot carved wood
+UR: چنیوٹ کی لکڑی کا کام
+
+383
+EN: Create a Parent PIN
+UR: والدین کا PIN بنائیں
+
+384
+EN: Get my progress back
+UR: میری ترقی واپس لائیں
+
+385
+EN: Girl with long hair
+UR: لمبے بالوں والی لڑکی
+
+386
+EN: How long is a game?
+UR: کھیل کتنا لمبا ہوگا؟
+
+387
+EN: Multani blue pottery
+UR: ملتانی نیلی کاشی گری
+
+388
+EN: Online rooms are off
+UR: آن لائن کمرے بند ہیں
+
+389
+EN: Other team · {0} tricks
+UR: دوسری ٹیم · {0} ہاتھ
+
+390
+EN: Report {name}
+UR: {name} کی رپورٹ کریں
+
+391
+EN: TashZone room {code}
+UR: TashZone کمرہ {code}
+
+392
+EN: That cannot be done at this moment
+UR: یہ ابھی نہیں ہو سکتا
+
+393
+EN: This cannot be undone
+UR: یہ واپس نہیں ہو سکتا
+
+394
+EN: Update TashZone
+UR: TashZone اپ ڈیٹ کریں
+
+395
+EN: What happened? (optional)
+UR: کیا ہوا؟ (اگر چاہیں)
+
+396
+EN: What year were you born?
+UR: آپ کس سال پیدا ہوئے؟
+
+397
+EN: Who leads?
+UR: پہلی چال کون چلے گا؟
+
+398
+EN: Woman with long hair
+UR: لمبے بالوں والی عورت
+
+399
+EN: Your team · {0} tricks
+UR: آپ کی ٹیم · {0} ہاتھ
+
+400
+EN: {name} house rules
+UR: {name} کے گھر کے اصول
+
+401
+EN: Boy with short hair
+UR: چھوٹے بالوں والا لڑکا
+
+402
+EN: Keep my progress
+UR: میری ترقی محفوظ رکھیں
+
+403
+EN: no internet needed
+UR: انٹرنیٹ کی ضرورت نہیں
+
+404
+EN: Play again at this table
+UR: اسی میز پر پھر کھیلیں
+
+405
+EN: Plays sensibly
+UR: سمجھداری سے کھیلتا ہے
+
+406
+EN: Regular cards · Normal speed
+UR: عام پتے · نارمل رفتار
+
+407
+EN: Remove {0} from the room
+UR: {0} کو کمرے سے نکالیں
+
+408
+EN: Resume game
+UR: کھیل دوبارہ شروع کریں
+
+409
+EN: This game has finished
+UR: یہ کھیل ختم ہو چکا ہے
+
+410
+EN: Won the trick with the last card
+UR: آخری پتے سے ہاتھ جیتا
+
+411
+EN: {0}, cannot play now
+UR: {0}، ابھی نہیں چل سکتا
+
+412
+EN: Best run of wins
+UR: لگاتار سب سے زیادہ جیت
+
+413
+EN: Each suit gets its own colour
+UR: ہر رنگ کا اپنا الگ رنگ
+
+414
+EN: Enter a friend's room code
+UR: دوست کا کمرہ کوڈ لکھیں
+
+415
+EN: Everyone calls first
+UR: پہلے سب بولی لگاتے ہیں
+
+416
+EN: Join a table nearby
+UR: قریبی میز میں شامل ہوں
+
+417
+EN: Man with saffron turban
+UR: زعفرانی پگڑی والا آدمی
+
+418
+EN: Players {joined} of {0}
+UR: کھلاڑی {joined} از {0}
+
+419
+EN: Reason: unfair play.
+UR: وجہ: غیر منصفانہ کھیل۔
+
+420
+EN: Same Wi-Fi or hotspot
+UR: اسی Wi-Fi یا ہاٹ اسپاٹ
+
+421
+EN: Show a suggested card
+UR: مشورے والا پتا دکھائیں
+
+422
+EN: Start with bots
+UR: بوٹس کے ساتھ شروع کریں
+
+423
+EN: Take the next player's cards
+UR: اگلے کھلاڑی کے پتے لیں
+
+424
+EN: That room has closed.
+UR: وہ کمرہ بند ہو گیا ہے۔
+
+425
+EN: Who deals next?
+UR: اگلی بار کون بانٹے گا؟
+
+426
+EN: {0} is muted for you.
+UR: {0} آپ کے لیے میوٹ ہیں۔
+
+427
+EN: {0} took your cards
+UR: {0} نے آپ کے پتے لے لیے
+
+428
+EN: {base}, suggested
+UR: {base}، یہ چلنا بہتر ہے
+
+429
+EN: Add another way
+UR: ایک اور طریقہ شامل کریں
+
+430
+EN: Connection to the host was lost
+UR: میزبان سے رابطہ ٹوٹ گیا
+
+431
+EN: Host a Same Wi-Fi table
+UR: اسی Wi-Fi پر میز لگائیں
+
+432
+EN: Joining table
+UR: میز میں شامل ہو رہے ہیں
+
+433
+EN: Keep the progress on this phone
+UR: اسی فون والی ترقی رکھیں
+
+434
+EN: Makes friendly mistakes
+UR: پیاری سی غلطیاں کرتا ہے
+
+435
+EN: Pick a game to play
+UR: کھیلنے کے لیے کھیل چنیں
+
+436
+EN: Play again with this room
+UR: اسی کمرے میں پھر کھیلیں
+
+437
+EN: Quick finish for the last two
+UR: آخری دو کے لیے جلدی ختم
+
+438
+EN: Sort my hand
+UR: میرے پتے ترتیب سے رکھیں
+
+439
+EN: Teen with short hair
+UR: چھوٹے بالوں والا نوجوان
+
+440
+EN: Top level reached
+UR: سب سے اوپر کا لیول مکمل
+
+441
+EN: Undo your last card
+UR: اپنا پچھلا پتا واپس لیں
+
+442
+EN: works without internet
+UR: انٹرنیٹ کے بغیر چلتا ہے
+
+443
+EN: Works without internet
+UR: انٹرنیٹ کے بغیر چلتا ہے
+
+444
+EN: You took {0}'s cards
+UR: آپ نے {0} کے پتے لے لیے
+
+445
+EN: {0} took {1}'s cards
+UR: {0} نے {1} کے پتے لے لیے
+
+446
+EN: About 30 seconds a turn
+UR: ہر باری تقریباً 30 سیکنڈ
+
+447
+EN: Called {call} · won {won}
+UR: بولے {call} · جیتے {won}
+
+448
+EN: Chat is not available right now.
+UR: چیٹ ابھی دستیاب نہیں ہے۔
+
+449
+EN: Everyone gets the same number of cards
+UR: سب کو برابر پتے ملتے ہیں
+
+450
+EN: Faded cards have been played.
+UR: ہلکے پتے چلے جا چکے ہیں۔
+
+451
+EN: Lead the card you drew
+UR: اٹھایا ہوا پتا پہلے چلیں
+
+452
+EN: One appeal for each decision
+UR: ہر فیصلے کے لیے ایک اپیل
+
+453
+EN: Play a higher card of the lead suit
+UR: پہلے رنگ کا بڑا پتا چلیں
+
+454
+EN: Room code, 6 letters or numbers
+UR: کمرہ کوڈ، 6 حروف یا نمبر
+
+455
+EN: Same Wi-Fi play is off
+UR: اسی Wi-Fi پر کھیل بند ہے
+
+456
+EN: Thank you. We will look into it.
+UR: شکریہ۔ ہم اسے دیکھیں گے۔
+
+457
+EN: That card is no longer in your hand
+UR: یہ پتا اب آپ کے پاس نہیں
+
+458
+EN: That move is not allowed right now
+UR: یہ چال ابھی نہیں چل سکتے
+
+459
+EN: Try the server again
+UR: سرور پر دوبارہ کوشش کریں
+
+460
+EN: Wait for your turn
+UR: اپنی باری کا انتظار کریں
+
+461
+EN: You drew a card from the pile
+UR: آپ نے ڈھیر سے پتا اٹھایا
+
+462
+EN: Your appeal was accepted.
+UR: آپ کی اپیل منظور ہو گئی۔
+
+463
+EN: Bot playing for them
+UR: ان کی جگہ بوٹ کھیل رہا ہے
+
+464
+EN: Call Break · Call Bridge · Lakdi
+UR: کال بریک · کال برج · لکڑی
+
+465
+EN: How do you want to play?
+UR: آپ کیسے کھیلنا چاہتے ہیں؟
+
+466
+EN: Join an online room
+UR: آن لائن کمرے میں شامل ہوں
+
+467
+EN: Joining room…
+UR: کمرے میں شامل ہو رہے ہیں…
+
+468
+EN: Messages are turned off at this table
+UR: اس میز پر پیغامات بند ہیں
+
+469
+EN: Start with the ace of spades
+UR: حکم کے اِکّے سے شروع کریں
+
+470
+EN: Stop keeping my progress
+UR: ترقی محفوظ رکھنا بند کریں
+
+471
+EN: Talking is turned off for this table.
+UR: اس میز پر بات چیت بند ہے۔
+
+472
+EN: Tap twice to play
+UR: چلنے کے لیے دو بار دبائیں
+
+473
+EN: The first trick is put aside
+UR: پہلا ہاتھ الگ رکھ دیا گیا
+
+474
+EN: The other team wins the hand
+UR: دوسری ٹیم یہ بازی جیت گئی
+
+475
+EN: You called {0} · won {1}
+UR: آپ نے بولے {0} · جیتے {1}
+
+476
+EN: Your team wins the hand
+UR: آپ کی ٹیم یہ بازی جیت گئی
+
+477
+EN: {0}. Open Account status
+UR: {0}۔ اکاؤنٹ کی حالت کھولیں
+
+478
+EN: {name} is holding the last cards
+UR: آخری پتے {name} کے پاس ہیں
+
+479
+EN: Ask your friend for the room code
+UR: دوست سے کمرے کا کوڈ پوچھیں
+
+480
+EN: Blocking {0}…
+UR: {0} کو بلاک کیا جا رہا ہے…
+
+481
+EN: Checking the deal…
+UR: پتوں کی بانٹ جانچ رہے ہیں…
+
+482
+EN: Connecting your microphone
+UR: آپ کا مائیک جوڑا جا رہا ہے
+
+483
+EN: Hand {0}: you are the Bhabhi
+UR: بازی {0}: آپ بھابھی بن گئے
+
+484
+EN: I used {0}
+UR: میں نے {0} استعمال کیا تھا
+
+485
+EN: No card of the lead suit: play a trump
+UR: پہلا رنگ نہیں ہے: ترپ چلیں
+
+486
+EN: Wrong PIN. Try again.
+UR: غلط PIN۔ دوبارہ کوشش کریں۔
+
+487
+EN: Your appeal has been sent.
+UR: آپ کی اپیل بھیج دی گئی ہے۔
+
+488
+EN: Draw from the next player
+UR: اگلے کھلاڑی سے پتا اٹھائیں
+
+489
+EN: {0} was removed from the room
+UR: {0} کو کمرے سے نکال دیا گیا
+
+490
+EN: Attach my last game
+UR: میرا پچھلا کھیل ساتھ بھیجیں
+
+491
+EN: Could not join that table
+UR: اس میز میں شامل نہیں ہو سکے
+
+492
+EN: For example 1985 or 2012
+UR: مثال کے طور پر 1985 یا 2012
+
+493
+EN: Hand {0}: you got away {1}
+UR: بازی {0}: آپ {1} پر نکل گئے
+
+494
+EN: Played {played} · won {won}
+UR: کھیلے {played} · جیتے {won}
+
+495
+EN: Talking now: {talking}
+UR: ابھی بول رہے ہیں: {talking}
+
+496
+EN: What happened, in your own words
+UR: کیا ہوا تھا، اپنے الفاظ میں
+
+497
+EN: Your microphone is off. Turn it on
+UR: آپ کا مائیک بند ہے۔ آن کریں
+
+498
+EN: Your microphone is on. Turn it off
+UR: آپ کا مائیک آن ہے۔ بند کریں
+
+499
+EN: Get away unless two are left
+UR: دو باقی نہ ہوں تو نکل جائیں
+
+500
+EN: How would you like to play?
+UR: آپ کیسے کھیلنا پسند کریں گے؟
+
+501
+EN: No games finished yet
+UR: ابھی کوئی کھیل مکمل نہیں ہوا
+
+502
+EN: Put on the pile · {0} leads
+UR: ڈھیر میں گئے · اب {0} کی چال
+
+503
+EN: Your lead: play any card
+UR: آپ کی چال: کوئی بھی پتا چلیں
+
+504
+EN: Your player name: {nickname}
+UR: آپ کا کھلاڑی نام: {nickname}
+
+505
+EN: {0} drew a card from the pile
+UR: {0} نے ڈھیر سے ایک پتا اٹھایا
+
+506
+EN: Big cards, slower play and hints
+UR: بڑے پتے، آہستہ کھیل اور اشارے
+
+507
+EN: First trick is put aside
+UR: پہلا ہاتھ الگ رکھ دیا جاتا ہے
+
+508
+EN: More time to think on each turn
+UR: ہر باری پر سوچنے کا زیادہ وقت
+
+509
+EN: Plays quietly at the table
+UR: میز پر ہلکی ہلکی بجتی رہتی ہے
+
+510
+EN: Reason: this has happened before.
+UR: وجہ: ایسا پہلے بھی ہو چکا ہے۔
+
+511
+EN: Rules: {0}, chosen by the host
+UR: اصول: {0}، میزبان کے چنے ہوئے
+
+512
+EN: Share a code with friends anywhere
+UR: کہیں بھی دوستوں کو کوڈ بھیجیں
+
+513
+EN: Win two tricks in a row to collect them
+UR: لگاتار دو ہاتھ جیت کر اٹھائیں
+
+514
+EN: Your own rules for this table
+UR: اس میز کے لیے آپ کے اپنے اصول
+
+515
+EN: Your team {0} · Other team {1}
+UR: آپ کی ٹیم {0} · دوسری ٹیم {1}
+
+516
+EN: {label}. Earned. {requirement}
+UR: {label}۔ مل گیا۔ {requirement}
+
+517
+EN: A note from the TashZone team
+UR: TashZone ٹیم کی طرف سے ایک بات
+
+518
+EN: Court! Your team wins the hand
+UR: کوٹ! آپ کی ٹیم یہ بازی جیت گئی
+
+519
+EN: Plays sharp and fair
+UR: تیز اور ایمانداری سے کھیلتا ہے
+
+520
+EN: QR code to join this table
+UR: اس میز میں شامل ہونے کا QR کوڈ
+
+521
+EN: Talking is not available in this build
+UR: اس ورژن میں بات چیت موجود نہیں
+
+522
+EN: That is not a TashZone table code
+UR: یہ TashZone میز کا کوڈ نہیں ہے
+
+523
+EN: PINs did not match. Start again.
+UR: PIN نہیں ملے۔ دوبارہ شروع کریں۔
+
+524
+EN: Your call: how many tricks will you win?
+UR: آپ کی بولی: کتنے ہاتھ جیتیں گے؟
+
+525
+EN: Connection lost. Reconnecting…
+UR: رابطہ ٹوٹ گیا۔ دوبارہ جڑ رہا ہے…
+
+526
+EN: Earned by playing, kept on this phone
+UR: کھیل کر کمایا، اسی فون میں محفوظ
+
+527
+EN: Enter the room code a friend shared
+UR: دوست کا بھیجا ہوا کمرہ کوڈ لکھیں
+
+528
+EN: Games against bots always work.
+UR: بوٹس کے ساتھ کھیل ہمیشہ چلتا ہے۔
+
+529
+EN: Mute or report a player
+UR: کسی کھلاڑی کو میوٹ یا رپورٹ کریں
+
+530
+EN: No, leave this phone alone
+UR: نہیں، اس فون کو ویسے ہی رہنے دیں
+
+531
+EN: Take a player's cards (house rule)
+UR: کھلاڑی کے پتے لینا (گھر کا اصول)
+
+532
+EN: Two aces in a row do not collect the pile
+UR: لگاتار دو اِکّے ڈھیر نہیں اٹھاتے
+
+533
+EN: Your progress is being kept.
+UR: آپ کی ترقی محفوظ رکھی جا رہی ہے۔
+
+534
+EN: {base}, tap again to play
+UR: {base}، چلنے کے لیے دوبارہ دبائیں
+
+535
+EN: {left} XP to level {next}
+UR: لیول {next} کے لیے {left} ایکس پی
+
+536
+EN: Choose one of the numbers shown
+UR: دکھائے گئے نمبروں میں سے ایک چنیں
+
+537
+EN: Nothing to undo in this hand
+UR: اس بازی میں واپس لینے کو کچھ نہیں
+
+538
+EN: Rude or mean messages
+UR: بدتمیزی یا دل دکھانے والے پیغامات
+
+539
+EN: The guided hand is not saved.
+UR: سکھانے والی بازی محفوظ نہیں ہوتی۔
+
+540
+EN: This profile cannot play online
+UR: یہ پروفائل آن لائن نہیں کھیل سکتی
+
+541
+EN: Waiting for the host to start.
+UR: میزبان کے شروع کرنے کا انتظار ہے۔
+
+542
+EN: Whatever this was, it has been lifted.
+UR: یہ جو بھی تھا، اب ہٹا دیا گیا ہے۔
+
+543
+EN: You got away. Watch the others finish
+UR: آپ نکل گئے۔ باقیوں کا کھیل دیکھیں
+
+544
+EN: Enter the PIN shown on {0}'s phone
+UR: {0} کے فون پر دکھایا گیا PIN لکھیں
+
+545
+EN: No {suitName}: play any card
+UR: {suitName} نہیں: کوئی بھی پتا چلیں
+
+546
+EN: Ready-made messages like "Good game"
+UR: "اچھا کھیل" جیسے بنے بنائے پیغامات
+
+547
+EN: Right now your progress is only on this phone.
+UR: ابھی آپ کی ترقی صرف اسی فون پر ہے۔
+
+548
+EN: Something went wrong. Try again.
+UR: کچھ گڑبڑ ہو گئی۔ دوبارہ کوشش کریں۔
+
+549
+EN: Surprise me, a different design each game
+UR: ہر بار نیا، ہر کھیل میں الگ ڈیزائن
+
+550
+EN: The table moved on. Try again.
+UR: میز آگے بڑھ گئی۔ دوبارہ کوشش کریں۔
+
+551
+EN: There is nothing to appeal here.
+UR: یہاں اپیل کرنے کے لیے کچھ نہیں ہے۔
+
+552
+EN: More games coming next: 29, Mindi, Seep, Hazari
+UR: جلد آ رہے ہیں: 29، منڈی، سیپ، ہزاری
+
+553
+EN: Online rooms are paused for now
+UR: آن لائن کمرے فی الحال روکے ہوئے ہیں
+
+554
+EN: Only share your room code with people you know.
+UR: کمرہ کوڈ صرف جاننے والوں کو بھیجیں۔
+
+555
+EN: That account already has progress
+UR: اس اکاؤنٹ میں پہلے سے ترقی موجود ہے
+
+556
+EN: The losing side deals the next hand.
+UR: ہارنے والی ٹیم اگلی بازی بانٹتی ہے۔
+
+557
+EN: Use the saved progress instead
+UR: اس کے بجائے محفوظ ترقی استعمال کریں
+
+558
+EN: Check the year and try again.
+UR: سال دوبارہ دیکھیں اور پھر کوشش کریں۔
+
+559
+EN: Friends nearby join with a PIN or QR code
+UR: قریبی دوست PIN یا QR کوڈ سے شامل ہوں
+
+560
+EN: Replay hand: see every deal
+UR: بازی دوبارہ دیکھیں: سب کے پتے دیکھیں
+
+561
+EN: The winner of each trick leads the next one.
+UR: ہر ہاتھ جیتنے والا اگلی چال چلتا ہے۔
+
+562
+EN: Type the 4 numbers of your birth year.
+UR: اپنے پیدائش کے سال کے 4 ہندسے لکھیں۔
+
+563
+EN: Your message, up to 500 characters
+UR: آپ کا پیغام، زیادہ سے زیادہ 500 حروف
+
+564
+EN: {label}. Not earned yet. {requirement}
+UR: {label}۔ ابھی نہیں ملا۔ {requirement}
+
+565
+EN: 7 or 8 players play with two decks.
+UR: 7 یا 8 کھلاڑی دو گڈیوں سے کھیلتے ہیں۔
+
+566
+EN: A bot takes your seat if you leave.
+UR: آپ کے جانے پر بوٹ آپ کی جگہ کھیلے گا۔
+
+567
+EN: Online rooms are not available in this version.
+UR: اس ورژن میں آن لائن کمرے دستیاب نہیں۔
+
+568
+EN: You get 3 extra cards, the bots get fewer
+UR: آپ کو 3 پتے زیادہ ملیں گے، بوٹس کو کم
+
+569
+EN: {name} rules. Also called {aka}
+UR: {name} کے اصول۔ اسے {aka} بھی کہتے ہیں
+
+570
+EN: {place, selectordinal, one {#st} two {#nd} few {#rd} other {#th}}
+UR: {place, selectordinal, other {نمبر #}}
+
+571
+EN: Choose from the numbers or suits shown
+UR: دکھائے گئے نمبروں یا رنگوں میں سے چنیں
+
+572
+EN: Follow suit; no need to beat the card
+UR: وہی رنگ چلیں؛ بڑا پتا لگانا ضروری نہیں
+
+573
+EN: Play with friends over the internet using a code
+UR: کوڈ سے انٹرنیٹ پر دوستوں کے ساتھ کھیلیں
+
+574
+EN: Simple thumbs-up and smile reactions
+UR: سادہ انگوٹھا اور مسکراہٹ والے ری ایکشنز
+
+575
+EN: There is nothing to appeal on this profile.
+UR: اس پروفائل پر اپیل کرنے کو کچھ نہیں ہے۔
+
+576
+EN: Your game is saved. Continue it from Home.
+UR: آپ کا کھیل محفوظ ہے۔ ہوم سے جاری رکھیں۔
+
+577
+EN: Empty seats are filled with bots when you start.
+UR: شروع کرنے پر خالی جگہیں بوٹس بھر دیں گے۔
+
+578
+EN: First team to 7 tricks wins the hand
+UR: پہلے 7 ہاتھ جیتنے والی ٹیم بازی جیتتی ہے
+
+579
+EN: Get away first in 10 Bhabhi hands
+UR: بھابھی کی 10 بازیوں میں سب سے پہلے نکلیں
+
+580
+EN: Only a parent or guardian should know this PIN.
+UR: یہ PIN صرف والدین یا سرپرست کو معلوم ہو۔
+
+581
+EN: That table is full or has started
+UR: وہ میز بھر گئی ہے یا کھیل شروع ہو گیا ہے
+
+582
+EN: The drawn card was cut. You are the Bhabhi.
+UR: اٹھایا ہوا پتا کٹ گیا۔ آپ بھابھی بن گئے۔
+
+583
+EN: You can change this later in Settings.
+UR: آپ اسے بعد میں ترتیبات میں بدل سکتے ہیں۔
+
+584
+EN: Your microphone is on. {talking} is talking
+UR: آپ کا مائیک آن ہے۔ {talking} بول رہے ہیں
+
+585
+EN: Play with people nearby on the same Wi-Fi
+UR: اسی Wi-Fi پر قریب کے لوگوں کے ساتھ کھیلیں
+
+586
+EN: Reason: repeated unwanted messages.
+UR: وجہ: بار بار بھیجے گئے غیر ضروری پیغامات۔
+
+587
+EN: The drawn card was cut. {0} is the Bhabhi.
+UR: اٹھایا ہوا پتا کٹ گیا۔ {0} بھابھی بن گئے۔
+
+588
+EN: This phone cannot sign in that way.
+UR: یہ فون اس طریقے سے سائن اِن نہیں کر سکتا۔
+
+589
+EN: Too many messages at once. Wait a moment.
+UR: ایک ساتھ بہت زیادہ پیغامات۔ ذرا رک جائیں۔
+
+590
+EN: Too many tries. Wait {seconds} seconds.
+UR: بہت کوششیں ہو گئیں۔ {seconds} سیکنڈ رکیں۔
+
+591
+EN: You can change this any time in Settings.
+UR: آپ اسے کبھی بھی ترتیبات میں بدل سکتے ہیں۔
+
+592
+EN: {count, plural, one {# card} other {# cards}}
+UR: {count, plural, one {# پتا} other {# پتے}}
+
+593
+EN: {xpToNext} XP to level {nextLevel}
+UR: لیول {nextLevel} کے لیے {xpToNext} ایکس پی
+
+594
+EN: Be the Bhabhi 10 times and keep playing
+UR: 10 بار بھابھی بنیں اور پھر بھی کھیلتے رہیں
+
+595
+EN: The host has set their own rules for this table
+UR: میزبان نے اس میز کے لیے اپنے اصول رکھے ہیں
+
+596
+EN: We could not find any saved progress for that account.
+UR: اس اکاؤنٹ کے لیے کوئی محفوظ ترقی نہیں ملی۔
+
+597
+EN: Your appeal was read, and the decision stands.
+UR: آپ کی اپیل پڑھی گئی، اور فیصلہ وہی رہے گا۔
+
+598
+EN: Leaving closes the table for everyone.
+UR: آپ کے جانے سے میز سب کے لیے بند ہو جائے گی۔
+
+599
+EN: Online rooms are turned off in Parent Settings.
+UR: والدین کی ترتیبات میں آن لائن کمرے بند ہیں۔
+
+600
+EN: Quick messages are turned off in Parent Settings.
+UR: والدین کی ترتیبات میں فوری پیغامات بند ہیں۔
+
+601
+EN: Talking is not available in this build of TashZone.
+UR: TashZone کے اس ورژن میں بات چیت موجود نہیں۔
+
+602
+EN: There is nothing on this profile to appeal.
+UR: اس پروفائل پر اپیل کرنے کے لیے کچھ نہیں ہے۔
+
+603
+EN: Reason: messages or behaviour towards other players.
+UR: وجہ: دوسرے کھلاڑیوں کے ساتھ پیغامات یا رویہ۔
+
+604
+EN: Something went wrong. Please try again.
+UR: کچھ گڑبڑ ہو گئی۔ براہِ کرم دوبارہ کوشش کریں۔
+
+605
+EN: Thank you. A moderator will read what you wrote.
+UR: شکریہ۔ آپ نے جو لکھا، ایک نگران اسے پڑھے گا۔
+
+606
+EN: {name}, locked. {requirement} to use it.
+UR: {name}، بند ہے۔ استعمال کے لیے {requirement}۔
+
+607
+EN: Draw when you win with your last card
+UR: آخری پتے سے ہاتھ جیتیں تو ڈھیر سے پتا اٹھائیں
+
+608
+EN: Tell us what went wrong or what you would like
+UR: ہمیں بتائیں کیا گڑبڑ ہوئی یا آپ کیا چاہتے ہیں
+
+609
+EN: That's you this time. Better luck next hand!
+UR: اس بار آپ رہ گئے۔ اگلی بازی میں ضرور بچیں گے!
+
+610
+EN: This phone could not confirm the shuffle for this game.
+UR: یہ فون اس کھیل کی پھینٹ کی تصدیق نہیں کر سکا۔
+
+611
+EN: Big cards · Slower play · Hints · No timer
+UR: بڑے پتے · آہستہ کھیل · اشارے · کوئی ٹائمر نہیں
+
+612
+EN: Call 2–13 and no bonus for extra tricks
+UR: بولی 2 سے 13 تک، زائد ہاتھوں کا کوئی بونس نہیں
+
+613
+EN: Nothing changed. The progress on this phone is still yours.
+UR: کچھ نہیں بدلا۔ اس فون کی ترقی اب بھی آپ کی ہے۔
+
+614
+EN: Suggest a card when you are playing bots
+UR: بوٹس کے ساتھ کھیلتے ہوئے پتا چلنے کا مشورہ دیں
+
+615
+EN: Everything is open on this profile. Nothing is blocked.
+UR: اس پروفائل پر سب کچھ کھلا ہے۔ کچھ بھی بند نہیں۔
+
+616
+EN: Nobody picks up on the ace of spades trick
+UR: حکم کے اِکّے والے ہاتھ میں کوئی پتے نہیں اٹھاتا
+
+617
+EN: Open chat, mute or report a player
+UR: چیٹ کھولیں، یا کسی کھلاڑی کو میوٹ یا رپورٹ کریں
+
+618
+EN: No {suitName}: play any card for a thulla!
+UR: {suitName} نہیں: کوئی بھی پتا چل کر ٹھلا لگائیں!
+
+619
+EN: No internet connection. Check your connection and try again.
+UR: انٹرنیٹ نہیں ہے۔ کنکشن دیکھ کر دوبارہ کوشش کریں۔
+
+620
+EN: No room has that code. Check it with your friend.
+UR: اس کوڈ کا کوئی کمرہ نہیں۔ دوست سے دوبارہ پوچھیں۔
+
+621
+EN: Welcome back. Your progress is on this phone again.
+UR: خوش آمدید۔ آپ کی ترقی دوبارہ اس فون پر آ گئی ہے۔
+
+622
+EN: You get 6 extra cards: much harder to get away
+UR: آپ کو 6 پتے زیادہ ملیں گے: نکلنا کہیں زیادہ مشکل
+
+623
+EN: A friend on the same Wi-Fi or hotspot is hosting
+UR: ایک دوست اسی Wi-Fi یا ہاٹ اسپاٹ پر میز چلا رہا ہے
+
+624
+EN: Reconnecting… a bot plays for you meanwhile
+UR: دوبارہ جڑ رہا ہے… تب تک بوٹ آپ کی جگہ کھیل رہا ہے
+
+625
+EN: That seat is empty now, so there is nobody to block.
+UR: وہ جگہ اب خالی ہے، تو بلاک کرنے کے لیے کوئی نہیں۔
+
+626
+EN: You are the Bhabhi. Better luck next hand!
+UR: آپ بھابھی بن گئے۔ کوئی بات نہیں، اگلی بازی آپ کی!
+
+627
+EN: You may take the next player's cards before this trick
+UR: اس ہاتھ سے پہلے آپ اگلے کھلاڑی کے پتے لے سکتے ہیں
+
+628
+EN: You're in! Waiting for the host to start.
+UR: آپ شامل ہو گئے! میزبان کے شروع کرنے کا انتظار ہے۔
+
+629
+EN: Your message, up to {MAX_SAY_LENGTH} characters
+UR: آپ کا پیغام، زیادہ سے زیادہ {MAX_SAY_LENGTH} حروف
+
+630
+EN: Everyone plays their card, then the pickup happens
+UR: پہلے سب اپنا پتا چلتے ہیں، پھر پتے اٹھائے جاتے ہیں
+
+631
+EN: Four players in two teams. Partners sit opposite each other.
+UR: چار کھلاڑی، دو ٹیمیں۔ ساتھی آمنے سامنے بیٹھتے ہیں۔
+
+632
+EN: You hold the ace of spades, so you start with it.
+UR: حکم کا اِکّا آپ کے پاس ہے، تو آپ اسی سے شروع کریں۔
+
+633
+EN: Replaces everything on this phone with what is saved.
+UR: اس فون کی ہر چیز محفوظ کی ہوئی ترقی سے بدل جائے گی۔
+
+634
+EN: That sign-in did not finish. Please try again.
+UR: سائن اِن مکمل نہیں ہوا۔ براہِ کرم دوبارہ کوشش کریں۔
+
+635
+EN: The game keeps going for everyone while this menu is open.
+UR: یہ مینو کھلا ہو تب بھی سب کے لیے کھیل چلتا رہتا ہے۔
+
+636
+EN: Too many tries. Wait a minute and try again.
+UR: بہت کوششیں ہو گئیں۔ ایک منٹ رک کر دوبارہ کوشش کریں۔
+
+637
+EN: Your appeal, up to {MAX_APPEAL_LENGTH} characters
+UR: آپ کی اپیل، زیادہ سے زیادہ {MAX_APPEAL_LENGTH} حروف
+
+638
+EN: Friends scan the code or pick your table and enter this PIN.
+UR: دوست کوڈ اسکین کریں یا آپ کی میز چن کر یہ PIN لکھیں۔
+
+639
+EN: More cards for everyone. Always on for 7 or 8 players
+UR: سب کو زیادہ پتے ملیں گے۔ 7 یا 8 کھلاڑیوں پر ہمیشہ آن
+
+640
+EN: See which cards have been played and the last trick
+UR: دیکھیں کون سے پتے چلے جا چکے ہیں، اور پچھلا ہاتھ بھی
+
+641
+EN: Your blocked list is full. Remove someone from it first.
+UR: آپ کی بلاک لسٹ بھر گئی ہے۔ پہلے اس سے کسی کو نکالیں۔
+
+642
+EN: If any hand has no spade, the cards are dealt again.
+UR: اگر کسی کے پاس حکم نہ ہو تو پتے دوبارہ بانٹے جاتے ہیں۔
+
+643
+EN: Stay here: the host can start another game at this table.
+UR: یہیں رہیں: میزبان اسی میز پر نیا کھیل شروع کر سکتا ہے۔
+
+644
+EN: {played, plural, one {# game finished} other {# games finished}}
+UR: {played, plural, one {# کھیل مکمل} other {# کھیل مکمل}}
+
+645
+EN: Friends take seats first; bots fill the rest when you start.
+UR: پہلے دوست بیٹھیں گے؛ شروع کرنے پر باقی جگہ بوٹس لیں گے۔
+
+646
+EN: The game server is busy for a moment. Try again shortly.
+UR: گیم سرور ابھی مصروف ہے۔ تھوڑی دیر میں دوبارہ کوشش کریں۔
+
+647
+EN: If anything feels wrong, leave the room and tell a grown-up.
+UR: کچھ بھی عجیب لگے تو کمرہ چھوڑ دیں اور کسی بڑے کو بتائیں۔
+
+648
+EN: Nobody at the table is told about this. Choose what happened.
+UR: میز پر کسی کو اس کا پتا نہیں چلے گا۔ بتائیں کیا ہوا تھا۔
+
+649
+EN: Stay here: the host can start another game with the same room.
+UR: یہیں رہیں: میزبان اسی کمرے میں نیا کھیل شروع کر سکتا ہے۔
+
+650
+EN: Any card is fine. Aces of other suits usually win.
+UR: کوئی بھی پتا چلے گا۔ دوسرے رنگوں کے اِکّے اکثر جیتتے ہیں۔
+
+651
+EN: Standard rules, plus you may take the next player's cards
+UR: معیاری اصول، ساتھ یہ کہ آپ اگلے کھلاڑی کے پتے لے سکتے ہیں
+
+652
+EN: That message could not be sent. Try again in a moment.
+UR: یہ پیغام نہیں بھیجا جا سکا۔ ذرا دیر بعد دوبارہ کوشش کریں۔
+
+653
+EN: That was a lot of tries. Please wait a minute and try again.
+UR: بہت زیادہ کوششیں ہو گئیں۔ ایک منٹ رک کر دوبارہ کوشش کریں۔
+
+654
+EN: The first tap lifts a card, the second plays it
+UR: پہلی بار دبانے سے پتا اوپر اٹھتا ہے، دوسری بار چل جاتا ہے
+
+655
+EN: On a new phone, open this screen and choose "I have played before".
+UR: نئے فون پر یہی اسکرین کھولیں اور «پہلے کھیل چکے ہیں» چنیں۔
+
+656
+EN: Only people with the code can join. Chat is limited to quick messages.
+UR: صرف کوڈ والے شامل ہو سکتے ہیں۔ چیٹ صرف فوری پیغامات تک ہے۔
+
+657
+EN: Which way play goes round the table. The rules are the same either way.
+UR: میز پر کھیل کس طرف چلے گا۔ اصول دونوں طرح ایک ہی رہتے ہیں۔
+
+658
+EN: {0} is blocked. You will not share a room again.
+UR: {0} بلاک ہو گئے۔ اب آپ دوبارہ ایک ہی کمرے میں نہیں آئیں گے۔
+
+659
+EN: Could not start talking. Check your internet and try again.
+UR: بات چیت شروع نہیں ہو سکی۔ انٹرنیٹ دیکھ کر دوبارہ کوشش کریں۔
+
+660
+EN: If a card drawn from the pile is cut, its player is the Bhabhi (Pagat)
+UR: ڈھیر سے اٹھایا گیا پتا کٹ جائے تو وہ کھلاڑی بھابھی ہے (پگت)
+
+661
+EN: Level {level}, {title}. Top level reached. Open Stats
+UR: لیول {level}، {title}۔ سب سے اوپر کا لیول مکمل۔ ترقی دیکھیں
+
+662
+EN: You and {0} bots. Your game is saved as you play.
+UR: آپ اور {0} بوٹس۔ کھیلتے ہوئے آپ کا کھیل محفوظ ہوتا رہتا ہے۔
+
+663
+EN: Your last card always gets you away, even if it wins
+UR: آخری پتا آپ کو ہر حال میں نکال دیتا ہے، چاہے وہ ہاتھ جیت لے
+
+664
+EN: Check you are on the same Wi-Fi as the host and try again.
+UR: دیکھیں کہ آپ میزبان والے Wi-Fi پر ہیں، پھر دوبارہ کوشش کریں۔
+
+665
+EN: Choose a topic and send. Written messages are turned off in Protected Mode.
+UR: موضوع چن کر بھیجیں۔ محفوظ موڈ میں لکھے ہوئے پیغامات بند ہیں۔
+
+666
+EN: Open Account status to see the details and to send an appeal.
+UR: تفصیل دیکھنے اور اپیل بھیجنے کے لیے «اکاؤنٹ کی حالت» کھولیں۔
+
+667
+EN: Reason: reports sent to get back at another player.
+UR: وجہ: کسی دوسرے کھلاڑی سے بدلہ لینے کے لیے بھیجی گئی رپورٹیں۔
+
+668
+EN: That report could not be sent. Please try again later.
+UR: رپورٹ نہیں بھیجی جا سکی۔ براہِ کرم بعد میں دوبارہ کوشش کریں۔
+
+669
+EN: This has already ended, so there is nothing left to appeal.
+UR: یہ پہلے ہی ختم ہو چکا ہے، اس لیے اپیل کرنے کو کچھ باقی نہیں۔
+
+670
+EN: Level {level}, {into} of {need} XP towards level {next}
+UR: لیول {level}، لیول {next} کی طرف {need} میں سے {into} ایکس پی
+
+671
+EN: Rules in short, or a guided hand you can replay any time
+UR: اصول مختصر میں، یا سکھانے والی بازی جو جب چاہیں دوبارہ کھیلیں
+
+672
+EN: That sign-in could not be checked. Please try again.
+UR: اس سائن اِن کی تصدیق نہیں ہو سکی۔ براہِ کرم دوبارہ کوشش کریں۔
+
+673
+EN: Could not open the table. Check Wi-Fi or hotspot and try again.
+UR: میز نہیں کھل سکی۔ Wi-Fi یا ہاٹ اسپاٹ دیکھ کر دوبارہ کوشش کریں۔
+
+674
+EN: Removed. Your progress stays on this phone, and it is only here again.
+UR: نکال دیا۔ آپ کی ترقی اس فون پر رہے گی، اور اب صرف یہیں رہے گی۔
+
+675
+EN: Tap to see what this means and how to appeal.
+UR: اس کا کیا مطلب ہے اور اپیل کیسے کرنی ہے، دیکھنے کے لیے دبائیں۔
+
+676
+EN: The camera is used only to read the table's QR code. Nothing is recorded.
+UR: کیمرا صرف میز کا QR کوڈ پڑھنے کے لیے ہے۔ کچھ ریکارڈ نہیں ہوتا۔
+
+677
+EN: The first team to 7 tricks wins the hand and scores 1 point.
+UR: پہلے 7 ہاتھ جیتنے والی ٹیم بازی جیتتی ہے اور 1 پوائنٹ لیتی ہے۔
+
+678
+EN: We could not reach TashZone. Check your connection and try again.
+UR: TashZone تک رابطہ نہیں ہو سکا۔ کنکشن دیکھ کر دوبارہ کوشش کریں۔
+
+679
+EN: You have already sent an appeal for this. A moderator will read it.
+UR: آپ اس کے لیے پہلے ہی اپیل بھیج چکے ہیں۔ ایک نگران اسے پڑھے گا۔
+
+680
+EN: {bestStreak, plural, one {# win in a row} other {# wins in a row}}
+UR: {bestStreak, plural, one {لگاتار # جیت} other {لگاتار # جیتیں}}
+
+681
+EN: A thulla ends the trick at once; win with your last card and you draw from the pile
+UR: ٹھلا لگتے ہی ہاتھ ختم؛ آخری پتے سے جیتیں تو ڈھیر سے پتا اٹھائیں
+
+682
+EN: Join a Wi-Fi network or turn on your hotspot so friends can find this table.
+UR: Wi-Fi سے جڑیں یا ہاٹ اسپاٹ آن کریں تاکہ دوست یہ میز ڈھونڈ سکیں۔
+
+683
+EN: No {suitName}: play any card (first trick is put aside)
+UR: {suitName} نہیں: کوئی بھی پتا چلیں (پہلا ہاتھ الگ رکھا جاتا ہے)
+
+684
+EN: The highest trump wins; with no trump, the highest card of the lead suit wins.
+UR: سب سے بڑا ترپ جیتتا ہے؛ ترپ نہ ہو تو پہلے رنگ کا سب سے بڑا پتا۔
+
+685
+EN: There is one appeal for each decision, so this one is closed.
+UR: ہر فیصلے کے لیے ایک اپیل ہوتی ہے، اس لیے یہ اپیل بند ہو چکی ہے۔
+
+686
+EN: Looking for tables… Ask the host to open a Same Wi-Fi table.
+UR: میزیں ڈھونڈ رہے ہیں… میزبان سے کہیں کہ اسی Wi-Fi والی میز کھولے۔
+
+687
+EN: Only bots are playing with you, so there is nobody to mute.
+UR: آپ کے ساتھ صرف بوٹس کھیل رہے ہیں، تو میوٹ کرنے کے لیے کوئی نہیں۔
+
+688
+EN: You have that suit, so you must play it. The glowing cards are the ones you may play.
+UR: آپ کے پاس یہ رنگ ہے، تو یہی چلنا ہوگا۔ چمکتے پتے ہی چل سکتے ہیں۔
+
+689
+EN: No cards left means you are safe. The last player still holding cards is the Bhabhi.
+UR: پتے ختم تو آپ بچ گئے۔ آخر میں جس کے پاس پتے رہ جائیں وہ بھابھی ہے۔
+
+690
+EN: Take one card from the pile and lead it (Pagat). Off: you get away
+UR: ڈھیر سے ایک پتا اٹھا کر پہلے چلیں (پگت)۔ بند ہو تو آپ نکل جاتے ہیں
+
+691
+EN: Winning the first 7 tricks (Double Sir: all 13) is a court and scores 3 points.
+UR: پہلے 7 ہاتھ جیتنا (ڈبل سر: سارے 13) کوٹ ہے اور 3 پوائنٹس ملتے ہیں۔
+
+692
+EN: Win with your last card and you take one card from the next player instead of the pile
+UR: آخری پتے سے جیتیں تو ڈھیر کے بجائے اگلے کھلاڑی سے ایک پتا لیتے ہیں
+
+693
+EN: Before a trick, take all cards of the next player in turn; they get away
+UR: ہاتھ سے پہلے باری کے اگلے کھلاڑی کے سارے پتے لے لیں؛ وہ نکل جاتا ہے
+
+694
+EN: Before playing, each player calls how many tricks they will win, from 1 to 8.
+UR: کھیل سے پہلے ہر کھلاڑی بولتا ہے کہ وہ کتنے ہاتھ جیتے گا، 1 سے 8 تک۔
+
+695
+EN: Nobody here will ever ask for your name, school, phone number or photos.
+UR: یہاں کوئی کبھی آپ کا نام، اسکول، فون نمبر یا تصویریں نہیں مانگے گا۔
+
+696
+EN: This does not end on its own. Sending an appeal is the only way it can be lifted.
+UR: یہ خود بخود ختم نہیں ہوتا۔ اسے ہٹوانے کا واحد راستہ اپیل بھیجنا ہے۔
+
+697
+EN: Block {0}. Stops you sharing a room with this player in future
+UR: {0} کو بلاک کریں۔ آگے آپ اس کھلاڑی کے ساتھ ایک کمرے میں نہیں آئیں گے
+
+698
+EN: You get all {0}. {1} gets away and cannot be the Bhabhi.
+UR: آپ کو سارے {0} ملیں گے۔ {1} نکل جائیں گے اور بھابھی نہیں بن سکیں گے۔
+
+699
+EN: Play the lead suit if you have it; otherwise play any card. There is no need to beat the card.
+UR: پہلا رنگ ہو تو وہی چلیں؛ ورنہ کوئی بھی پتا۔ بڑا پتا لگانا ضروری نہیں۔
+
+700
+EN: Four players, each for themselves. Everyone gets 13 cards. Spades are always trump.
+UR: چار کھلاڑی، ہر کوئی اپنے لیے۔ سب کو 13 پتے ملتے ہیں۔ حکم ہمیشہ ترپ ہے۔
+
+701
+EN: Online rooms are not available right now. Please try again later.
+UR: آن لائن کمرے ابھی دستیاب نہیں ہیں۔ براہِ کرم بعد میں دوبارہ کوشش کریں۔
+
+702
+EN: Only the cards and moves, so we can replay it. No names.
+UR: صرف پتے اور چالیں، تاکہ ہم کھیل دوبارہ چلا کر دیکھ سکیں۔ کوئی نام نہیں۔
+
+703
+EN: Ask a grown-up to change this in Settings, then Parent Settings.
+UR: کسی بڑے سے کہیں کہ ترتیبات، پھر «والدین کی ترتیبات» میں جا کر اسے بدلیں۔
+
+704
+EN: Count your aces, kings and spades. Call how many tricks you expect to win.
+UR: اپنے اِکّے، بادشاہ اور حکم گنیں۔ جتنے ہاتھ جیتنے کی امید ہو، اتنے بولیں۔
+
+705
+EN: Everyone follows the lead suit. The highest card of that suit leads the next trick.
+UR: سب پہلا رنگ ہی چلتے ہیں۔ اسی رنگ کے سب سے بڑے پتے والا اگلی چال چلتا ہے۔
+
+706
+EN: Faded cards have gone to the pile. A drawn card may have come back.
+UR: ہلکے پتے ڈھیر میں جا چکے ہیں۔ ڈھیر سے اٹھایا گیا پتا واپس بھی آ سکتا ہے۔
+
+707
+EN: Five rounds by default. The highest total after the last round wins.
+UR: عام طور پر پانچ راؤنڈ۔ آخری راؤنڈ کے بعد سب سے زیادہ ٹوٹل والا جیتتا ہے۔
+
+708
+EN: You have none of the lead suit, so play a spade: any spade beats the other suits.
+UR: آپ کے پاس پہلا رنگ نہیں، تو حکم چلیں: کوئی بھی حکم باقی رنگوں سے بڑا ہے۔
+
+709
+EN: Done. Your progress is kept now, and you can get it back on another phone.
+UR: ہو گیا۔ اب آپ کی ترقی محفوظ ہے، اور آپ اسے دوسرے فون پر واپس لے سکتے ہیں۔
+
+710
+EN: Games against bots work on this version, with no update and no connection.
+UR: بوٹس کے ساتھ کھیل اسی ورژن پر چلتا ہے، نہ اپ ڈیٹ کی ضرورت، نہ انٹرنیٹ کی۔
+
+711
+EN: {name} is a bot, so there is nobody to block. Bots never chat.
+UR: {name} ایک بوٹ ہے، تو بلاک کرنے کے لیے کوئی نہیں۔ بوٹس کبھی چیٹ نہیں کرتے۔
+
+712
+EN: Talking is turned off. A grown-up can turn it back on in Parent Settings.
+UR: بات چیت بند ہے۔ کوئی بڑا «والدین کی ترتیبات» میں اسے دوبارہ آن کر سکتا ہے۔
+
+713
+EN: Follow suit and beat the card if you can. Call 1–8, extra tricks add 0.1
+UR: وہی رنگ چلیں اور ہو سکے تو بڑا پتا لگائیں۔ بولی 1 سے 8، ہر زائد ہاتھ پر 0.1
+
+714
+EN: These stats stay on this phone. Nothing is uploaded and nothing can be bought.
+UR: یہ سب اسی فون میں رہتا ہے۔ کچھ اپ لوڈ نہیں ہوتا اور کچھ خریدا نہیں جا سکتا۔
+
+715
+EN: Reports here never include what anyone typed. Send the report on its own.
+UR: یہاں کی رپورٹوں میں کسی کا لکھا ہوا کبھی شامل نہیں ہوتا۔ رپورٹ اکیلی بھیجیں۔
+
+716
+EN: This room needs a newer version of TashZone. Update the app, then join again.
+UR: اس کمرے کے لیے TashZone کا نیا ورژن چاہیے۔ ایپ اپ ڈیٹ کر کے دوبارہ شامل ہوں۔
+
+717
+EN: Choose how your child plays with other people. Playing with bots is always on.
+UR: چنیں کہ آپ کا بچہ دوسروں کے ساتھ کیسے کھیلے۔ بوٹس کے ساتھ کھیلنا ہمیشہ آن ہے۔
+
+718
+EN: You won the trick with your last card, so you drew one from the pile. Lead it.
+UR: آپ نے آخری پتے سے ہاتھ جیتا، اس لیے ڈھیر سے ایک پتا اٹھایا۔ اب اسے پہلے چلیں۔
+
+719
+EN: Your level and badges are kept, so you can get them back on another phone.
+UR: آپ کا لیول اور تمغے محفوظ ہیں، اس لیے آپ انہیں دوسرے فون پر واپس لے سکتے ہیں۔
+
+720
+EN: Each player plays one card. The highest card of the lead suit wins, unless a spade is played.
+UR: ہر کھلاڑی ایک پتا چلتا ہے۔ پہلے رنگ کا سب سے بڑا پتا جیتتا ہے، اگر حکم نہ لگے۔
+
+721
+EN: Level {level}, {title}. {xpToNext} XP to level {nextLevel}. Open Stats
+UR: لیول {level}، {title}۔ لیول {nextLevel} کے لیے {xpToNext} ایکس پی۔ ترقی دیکھیں
+
+722
+EN: That way of signing in is not working right now. Please try again later.
+UR: سائن اِن کا یہ طریقہ ابھی کام نہیں کر رہا۔ براہِ کرم بعد میں دوبارہ کوشش کریں۔
+
+723
+EN: Typing messages is turned off. A grown-up can turn it back on in Parent Settings.
+UR: پیغام لکھنا بند ہے۔ کوئی بڑا «والدین کی ترتیبات» میں اسے دوبارہ آن کر سکتا ہے۔
+
+724
+EN: Tell us what you think we got wrong. A moderator reads every appeal.
+UR: ہمیں بتائیں کہ آپ کے خیال میں ہم سے کہاں غلطی ہوئی۔ ہر اپیل ایک نگران پڑھتا ہے۔
+
+725
+EN: Play {gameName} with me on TashZone. Room code: {code} tashzone://room/{code}
+UR: TashZone پر میرے ساتھ {gameName} کھیلیں۔ کمرہ کوڈ: {code} tashzone://room/{code}
+
+726
+EN: Play a card of the lead suit. Staying below the highest card keeps you from picking up.
+UR: پہلے رنگ کا پتا چلیں۔ سب سے بڑے پتے سے چھوٹا چلیں گے تو پتے نہیں اٹھانے پڑیں گے۔
+
+727
+EN: This ends on {when}. Nothing is needed from you: it lifts on its own.
+UR: یہ {when} کو ختم ہو جائے گا۔ آپ کو کچھ کرنے کی ضرورت نہیں: یہ خود ہی ہٹ جائے گا۔
+
+728
+EN: No points at all. Get rid of every card: whoever is left holding cards at the end is the Bhabhi.
+UR: پوائنٹس بالکل نہیں۔ سارے پتے نکال دیں: آخر میں جس کے پاس پتے رہ جائیں وہی بھابھی۔
+
+729
+EN: Only a moderator sees this. It is never shown to anyone you played with.
+UR: اسے صرف ایک نگران دیکھتا ہے۔ جن کے ساتھ آپ کھیلے، انہیں یہ کبھی نہیں دکھایا جاتا۔
+
+730
+EN: Play a hand against the bots and your level, counters and badges start filling up here.
+UR: بوٹس کے ساتھ ایک بازی کھیلیں، پھر آپ کا لیول، گنتیاں اور تمغے یہاں بھرنے لگیں گے۔
+
+731
+EN: A thulla ended the last trick, so the highest card of the lead suit took every card.
+UR: پچھلے ہاتھ میں ٹھلا لگا، اس لیے پہلے رنگ کے سب سے بڑے پتے والے نے سارے پتے اٹھائے۔
+
+732
+EN: Muting hides someone's messages and voice for you only. Nobody is told.
+UR: میوٹ کرنے سے کسی کے پیغامات اور آواز صرف آپ سے چھپ جاتے ہیں۔ کسی کو پتا نہیں چلتا۔
+
+733
+EN: Win with your last card and you get away. With only two players left you draw from the pile
+UR: آخری پتے سے جیتیں تو آپ نکل جاتے ہیں۔ صرف دو کھلاڑی بچیں تو ڈھیر سے پتا اٹھاتے ہیں
+
+734
+EN: Playing with other people needs a newer version. Games against bots still work.
+UR: دوسرے لوگوں کے ساتھ کھیلنے کے لیے نیا ورژن چاہیے۔ بوٹس کے ساتھ کھیل پھر بھی چلتا ہے۔
+
+735
+EN: Win fewer tricks than you called and you lose your call. Call 4, win 2: minus 4 points.
+UR: بولی سے کم ہاتھ جیتیں تو بولی کے پوائنٹس کٹ جاتے ہیں۔ بولے 4، جیتے 2: منفی 4 پوائنٹس۔
+
+736
+EN: Chat is quick messages and emoji only. Nobody can send you words of their own.
+UR: چیٹ میں صرف فوری پیغامات اور ایموجی ہیں۔ کوئی آپ کو اپنی لکھی ہوئی بات نہیں بھیج سکتا۔
+
+737
+EN: Play the lead suit if you have it. With Classic rules you must also beat the highest card if you can.
+UR: پہلا رنگ ہو تو وہی چلیں۔ کلاسک اصولوں میں ہو سکے تو سب سے بڑے پتے سے بڑا بھی لگانا ہے۔
+
+738
+EN: Tricks stay in the middle until one player wins two in a row. The last trick collects everything left.
+UR: ہاتھ درمیان میں رہتے ہیں جب تک کوئی لگاتار دو نہ جیتے۔ آخری ہاتھ باقی سب اٹھا لیتا ہے۔
+
+739
+EN: You have already used a different account here. Remove that one first, then add this one.
+UR: آپ یہاں پہلے ہی کوئی اور اکاؤنٹ استعمال کر چکے ہیں۔ پہلے اسے نکالیں، پھر یہ شامل کریں۔
+
+740
+EN: Your feedback was sent. It helps us fix problems and get the rules right.
+UR: آپ کی رائے بھیج دی گئی۔ اس سے ہمیں مسئلے ٹھیک کرنے اور اصول درست رکھنے میں مدد ملتی ہے۔
+
+741
+EN: Designs unlock as you play. The card backs follow the design you choose.
+UR: کھیلتے جائیں، ڈیزائن کھلتے جائیں گے۔ پتوں کی پشت بھی اسی ڈیزائن کی ہو جاتی ہے جو آپ چنیں۔
+
+742
+EN: Names are picked for you, so nobody can type a real name. Tap Try another name until you like one.
+UR: نام آپ کے لیے چنے جاتے ہیں تاکہ کوئی اصلی نام نہ لکھ سکے۔ پسند آنے تک «دوسرا نام» دبائیں۔
+
+743
+EN: Removes your progress, settings and saved game from this phone, and your player from our server.
+UR: اس فون سے آپ کی ترقی، ترتیبات اور محفوظ کھیل، اور ہمارے سرور سے آپ کا کھلاڑی مٹا دیتا ہے۔
+
+744
+EN: TashZone needs the microphone to let you talk. You can allow it in your phone settings.
+UR: بات کرنے کے لیے TashZone کو مائیک کی اجازت چاہیے۔ آپ فون کی ترتیبات میں اجازت دے سکتے ہیں۔
+
+745
+EN: The ace of spades starts. This first trick is put aside, even if someone cannot follow.
+UR: حکم کا اِکّا پہلے چلتا ہے۔ یہ پہلا ہاتھ الگ رکھ دیا جاتا ہے، چاہے کسی کے پاس وہ رنگ نہ ہو۔
+
+746
+EN: {name} could not be blocked just now. They are muted for you, so try again in a moment.
+UR: {name} کو ابھی بلاک نہیں کیا جا سکا۔ وہ آپ کے لیے میوٹ ہیں، تھوڑی دیر بعد دوبارہ کوشش کریں۔
+
+747
+EN: Talk to the other players in an online room. Uses the microphone, and nothing is recorded.
+UR: آن لائن کمرے میں دوسرے کھلاڑیوں سے بات کریں۔ مائیک استعمال ہوتا ہے، اور کچھ ریکارڈ نہیں ہوتا۔
+
+748
+EN: The player after the dealer sees their first 5 cards and chooses the trump suit. Then everyone gets 13 cards.
+UR: بانٹنے والے کے بعد والا کھلاڑی اپنے پہلے 5 پتے دیکھ کر ترپ چنتا ہے۔ پھر سب کو 13 پتے ملتے ہیں۔
+
+749
+EN: With none of the lead suit, play a spade. If a spade is already down, beat it if you can; otherwise play any card.
+UR: پہلا رنگ نہ ہو تو حکم چلیں۔ اگر حکم پہلے لگ چکا ہو تو ہو سکے تو بڑا لگائیں؛ ورنہ کوئی بھی پتا۔
+
+750
+EN: Your progress stays on this phone, but it will only be here. If you remove the app it is gone.
+UR: آپ کی ترقی اس فون پر رہے گی، لیکن صرف یہیں رہے گی۔ اگر آپ نے ایپ نکال دی تو یہ ختم ہو جائے گی۔
+
+751
+EN: Fair deal checked: the cards match the shuffle the server locked in before dealing.
+UR: بانٹ ایمانداری سے ہوئی: پتے بالکل ویسے ہی ہیں جیسے سرور نے بانٹنے سے پہلے پھینٹ کر پکے کیے تھے۔
+
+752
+EN: Nobody at a table is ever told who reported anyone, and you are never told either.
+UR: میز پر کسی کو کبھی نہیں بتایا جاتا کہ کس نے کس کی رپورٹ کی، اور آپ کو بھی کبھی نہیں بتایا جاتا۔
+
+753
+EN: A moderator will read it. There is one appeal for each decision, so there is nothing more to send.
+UR: ایک نگران اسے پڑھے گا۔ ہر فیصلے کے لیے ایک اپیل ہوتی ہے، اس لیے اب اور کچھ بھیجنے کی ضرورت نہیں۔
+
+754
+EN: Something applies to this profile. Tap to see what it is, when it ends and how to appeal.
+UR: اس پروفائل پر کوئی بات لاگو ہے۔ یہ کیا ہے، کب تک ہے اور اپیل کیسے کرنی ہے — دیکھنے کے لیے دبائیں۔
+
+755
+EN: Type short messages at the table. Messages are checked before anyone sees them, and nothing is saved.
+UR: میز پر چھوٹے پیغامات لکھیں۔ پیغامات کسی کو دکھنے سے پہلے جانچے جاتے ہیں، اور کچھ محفوظ نہیں ہوتا۔
+
+756
+EN: We only ask who you are. We never see your email, your name or your contacts.
+UR: ہم صرف یہ پوچھتے ہیں کہ آپ کون ہیں۔ ہمیں آپ کا ای میل، آپ کا نام یا آپ کے رابطے کبھی نظر نہیں آتے۔
+
+757
+EN: There is no way to keep your progress in this version yet. Nothing is wrong — you can carry on playing.
+UR: اس ورژن میں ابھی ترقی محفوظ رکھنے کا کوئی طریقہ نہیں ہے۔ کوئی خرابی نہیں ہے — آپ کھیلتے رہ سکتے ہیں۔
+
+758
+EN: This copy of TashZone cannot reach the internet, so there is nothing to keep your progress on yet.
+UR: TashZone کا یہ ورژن انٹرنیٹ تک نہیں پہنچ سکتا، اس لیے ابھی آپ کی ترقی رکھنے کے لیے کوئی جگہ نہیں ہے۔
+
+759
+EN: A parent has turned off online rooms in Parent Settings. Games against bots always work.
+UR: آپ کے والدین نے «والدین کی ترتیبات» میں آن لائن کمرے بند کر دیے ہیں۔ بوٹس کے ساتھ کھیل ہمیشہ چلتا ہے۔
+
+760
+EN: Stay on the same Wi-Fi and join the table again to get your seat back. A bot plays for you meanwhile.
+UR: اسی Wi-Fi پر رہیں اور اپنی جگہ واپس لینے کے لیے دوبارہ میز میں شامل ہوں۔ تب تک بوٹ آپ کی جگہ کھیلے گا۔
+
+761
+EN: The last player still holding cards is the Bhabhi. There are no points: the app counts how many times each player was the Bhabhi.
+UR: آخر میں جس کے پاس پتے رہ جائیں وہ بھابھی ہے۔ پوائنٹس نہیں ہوتے: ایپ گنتی ہے کہ کون کتنی بار بھابھی بنا۔
+
+762
+EN: Win at least your call and you score it, plus 0.1 for each extra trick. Call 3, win 5: 3.2 points.
+UR: بولی جتنے یا زیادہ ہاتھ جیتیں تو بولی کے پوائنٹس، اور ہر زائد ہاتھ پر 0.1۔ بولے 3، جیتے 5: 3.2 پوائنٹس۔
+
+763
+EN: Your level and badges are only on this phone. If you remove TashZone or change phone, they are gone.
+UR: آپ کا لیول اور تمغے صرف اسی فون پر ہیں۔ اگر آپ TashZone نکال دیں یا فون بدل لیں، تو یہ ختم ہو جائیں گے۔
+
+764
+EN: Lead a low card of a suit you hold many of: others are less likely to be out of it.
+UR: جس رنگ کے پتے آپ کے پاس زیادہ ہوں، اس کا چھوٹا پتا چلیں: دوسروں کے پاس اس رنگ کے ختم ہونے کا امکان کم ہے۔
+
+765
+EN: Playing with other people needs a newer version of TashZone. Update the app and everything works again.
+UR: دوسرے لوگوں کے ساتھ کھیلنے کے لیے TashZone کا نیا ورژن چاہیے۔ ایپ اپ ڈیٹ کریں، سب کچھ دوبارہ چلنے لگے گا۔
+
+766
+EN: A parent has turned off same Wi-Fi tables in Parent Settings. Games against bots always work.
+UR: آپ کے والدین نے «والدین کی ترتیبات» میں اسی Wi-Fi والی میزیں بند کر دی ہیں۔ بوٹس کے ساتھ کھیل ہمیشہ چلتا ہے۔
+
+767
+EN: When everyone follows suit, the cards go face down onto the pile and the highest card of the lead suit leads next.
+UR: جب سب پہلا رنگ ہی چلیں تو پتے الٹے ڈھیر میں چلے جاتے ہیں اور پہلے رنگ کے سب سے بڑے پتے والا اگلی چال چلتا ہے۔
+
+768
+EN: Two teams of two, partners opposite each other. The caller picks trump after seeing five cards; seven tricks wins the hand.
+UR: دو دو کی دو ٹیمیں، ساتھی آمنے سامنے۔ بولی لگانے والا پانچ پتے دیکھ کر ترپ چنتا ہے؛ سات ہاتھ جیت کر بازی آپ کی۔
+
+769
+EN: You say how many tricks you will win before you play, and spades are always trump. Missing your call costs points.
+UR: کھیلنے سے پہلے بولتے ہیں کہ کتنے ہاتھ جیتیں گے، اور ترپ ہمیشہ حکم ہوتا ہے۔ بولی پوری نہ ہو تو پوائنٹس کٹ جاتے ہیں۔
+
+770
+EN: This profile can no longer create or join online rooms on TashZone. Games against bots still work.
+UR: یہ پروفائل اب TashZone پر نہ آن لائن کمرے بنا سکتی ہے نہ ان میں شامل ہو سکتی ہے۔ بوٹس کے ساتھ کھیل پھر بھی چلتا ہے۔
+
+771
+EN: Three hands by default. You can also play 1 or 5 hands, or keep playing until someone has been the Bhabhi 3 times.
+UR: عام طور پر تین بازیاں۔ آپ 1 یا 5 بازیاں بھی کھیل سکتے ہیں، یا اُس وقت تک کھیلیں جب تک کوئی 3 بار بھابھی نہ بن جائے۔
+
+772
+EN: Sent on {sent}. A moderator will read it. There is one appeal for each decision, so there is nothing more to send.
+UR: {sent} کو بھیجی گئی۔ ایک نگران اسے پڑھے گا۔ ہر فیصلے کے لیے ایک اپیل ہوتی ہے، اس لیے اب اور کچھ بھیجنے کی ضرورت نہیں۔
+
+773
+EN: Chat is turned off for your profile at the moment, so quick messages are off too. Reactions and playing are not affected.
+UR: آپ کی پروفائل کے لیے چیٹ فی الحال بند ہے، اس لیے فوری پیغامات بھی بند ہیں۔ ری ایکشنز اور کھیلنے پر اس کا کوئی اثر نہیں۔
+
+774
+EN: {0} is already keeping a different player's progress. We will not mix the two, so it is your choice which one to keep.
+UR: {0} پہلے ہی کسی اور کھلاڑی کی ترقی سنبھالے ہوئے ہے۔ ہم دونوں کو آپس میں نہیں ملاتے، اس لیے کون سی رکھنی ہے یہ آپ طے کریں۔
+
+775
+EN: A moderator has left a note on this profile. Nothing is blocked: every game, online rooms and chat all work as usual.
+UR: ایک نگران نے اس پروفائل پر ایک نوٹ لکھا ہے۔ کچھ بھی بند نہیں: ہر کھیل، آن لائن کمرے اور چیٹ سب معمول کے مطابق چل رہے ہیں۔
+
+776
+EN: There is one appeal for each decision, so there is nothing more to send. You will see the answer here under Account status.
+UR: ہر فیصلے کے لیے ایک اپیل ہوتی ہے، اس لیے اب اور کچھ بھیجنے کی ضرورت نہیں۔ جواب آپ کو یہیں «اکاؤنٹ کی حالت» میں نظر آئے گا۔
+
+777
+EN: At the table, anyone can be muted or reported at any time, whatever these settings say. Messages are never saved.
+UR: میز پر کسی کو بھی، کسی بھی وقت میوٹ یا رپورٹ کیا جا سکتا ہے، چاہے یہ ترتیبات کچھ بھی ہوں۔ پیغامات کبھی محفوظ نہیں کیے جاتے۔
+
+778
+EN: Messages are checked before anyone sees them, and nothing is saved. A grown-up can turn typing off in Parent Settings.
+UR: پیغامات کسی کو دکھنے سے پہلے جانچے جاتے ہیں، اور کچھ محفوظ نہیں ہوتا۔ کوئی بڑا «والدین کی ترتیبات» میں لکھنا بند کر سکتا ہے۔
+
+779
+EN: This profile can no longer create or join online rooms on TashZone. Games against bots still work on this phone.
+UR: یہ پروفائل اب TashZone پر نہ آن لائن کمرے بنا سکتی ہے نہ ان میں شامل ہو سکتی ہے۔ اس فون پر بوٹس کے ساتھ کھیل پھر بھی چلتا ہے۔
+
+780
+EN: A guided hand plays one short hand with a hint on every step. Nothing is recorded and you can leave at any time.
+UR: سکھانے والی بازی میں ایک چھوٹی بازی کھیلی جاتی ہے اور ہر قدم پر اشارہ ملتا ہے۔ کچھ ریکارڈ نہیں ہوتا اور آپ جب چاہیں چھوڑ سکتے ہیں۔
+
+781
+EN: Check your internet and join the room again with its code. Your seat is kept for a short while and a bot plays for you meanwhile.
+UR: اپنا انٹرنیٹ دیکھیں اور کوڈ سے دوبارہ کمرے میں شامل ہوں۔ آپ کی جگہ تھوڑی دیر کے لیے رکھی جاتی ہے اور تب تک بوٹ آپ کی جگہ کھیلتا ہے۔
+
+782
+EN: You have none of the lead suit. Play any card: the trick stops and the highest card of the lead suit picks it all up. Get rid of a high card!
+UR: آپ کے پاس پہلا رنگ نہیں۔ کوئی بھی پتا چلیں: ہاتھ رک جائے گا اور پہلے رنگ کے سب سے بڑے پتے والا سب اٹھائے گا۔ کوئی بڑا پتا نکال دیں!
+
+783
+EN: Everything on this phone is deleted. We could not reach the server, so your player there is still waiting to be deleted. Try again when you are back online.
+UR: اس فون کا سب کچھ مٹ گیا۔ سرور تک رابطہ نہیں ہو سکا، اس لیے وہاں آپ کا کھلاڑی ابھی مٹنا باقی ہے۔ انٹرنیٹ واپس آنے پر دوبارہ کوشش کریں۔
+
+784
+EN: This profile cannot create or join an online room at the moment. Games against bots and tables on the same Wi-Fi still work.
+UR: یہ پروفائل فی الحال نہ آن لائن کمرہ بنا سکتی ہے نہ کسی میں شامل ہو سکتی ہے۔ بوٹس کے ساتھ کھیل اور اسی Wi-Fi والی میزیں پھر بھی چلتی ہیں۔
+
+785
+EN: At your table play goes {nextSide}, so the next player sits on that side. You can change this in Settings; the rules are the same either way.
+UR: آپ کی میز پر کھیل {nextSide} چلتا ہے، تو اگلا کھلاڑی اُسی طرف بیٹھتا ہے۔ آپ اسے ترتیبات میں بدل سکتے ہیں؛ اصول دونوں طرح ایک ہی رہتے ہیں۔
+
+786
+EN: Chat is turned off for this profile at the moment. You can still play every game. Open Account status in Settings to see when it ends.
+UR: اس پروفائل کے لیے چیٹ فی الحال بند ہے۔ آپ ہر کھیل پھر بھی کھیل سکتے ہیں۔ یہ کب تک ہے، یہ دیکھنے کے لیے ترتیبات میں «اکاؤنٹ کی حالت» کھولیں۔
+
+787
+EN: Chat is turned off for your profile at the moment, so you cannot type here. You can still play every game. See Account status in Settings.
+UR: آپ کی پروفائل کے لیے چیٹ فی الحال بند ہے، اس لیے آپ یہاں لکھ نہیں سکتے۔ آپ ہر کھیل پھر بھی کھیل سکتے ہیں۔ ترتیبات میں «اکاؤنٹ کی حالت» دیکھیں۔
+
+788
+EN: Your phone asks to use the microphone only so the others at this table can hear you. Nothing is recorded or saved, and you can stop at any time.
+UR: فون مائیک کی اجازت صرف اس لیے مانگتا ہے کہ اس میز کے باقی لوگ آپ کی بات سن سکیں۔ کچھ ریکارڈ یا محفوظ نہیں ہوتا، اور آپ جب چاہیں بند کر سکتے ہیں۔
+
+789
+EN: The player who was the Bhabhi the fewest times wins. If players are level, the one who got away earlier across the hands ranks higher. Only a full tie shares a place.
+UR: جو سب سے کم بار بھابھی بنا، وہ جیتتا ہے۔ برابر ہونے پر جو بازیوں میں پہلے نکلتا رہا وہ اوپر آتا ہے۔ ہر بات برابر ہو تو ہی دونوں ایک نمبر پر آتے ہیں۔
+
+790
+EN: Everything on this phone — your name, your level, your badges — is replaced by what you saved. If you have played on this phone, that play is lost.
+UR: اس فون کی ہر چیز — آپ کا کھلاڑی نام، آپ کا لیول، آپ کے تمغے — محفوظ کی ہوئی ترقی سے بدل جائے گی۔ اگر آپ اس فون پر کھیلے ہیں، تو وہ کھیل ضائع ہو جائے گا۔
+
+791
+EN: Play the lead suit if you can. The highest card of the lead suit leads next. With two decks, if two identical cards are highest, the one played first wins.
+UR: پہلا رنگ ہو تو وہی چلیں۔ پہلے رنگ کے سب سے بڑے پتے والا اگلی چال چلتا ہے۔ دو گڈیوں میں اگر دو ایک جیسے پتے سب سے بڑے ہوں تو جو پہلے چلا گیا وہ جیتتا ہے۔
+
+792
+EN: You can sign in once to keep them. You do not have to: everything in TashZone, including playing online, works exactly the same either way.
+UR: انہیں محفوظ رکھنے کے لیے آپ ایک بار سائن اِن کر سکتے ہیں۔ ضروری نہیں ہے: TashZone میں سب کچھ، آن لائن کھیلنا بھی، دونوں صورتوں میں بالکل ایک جیسا چلتا ہے۔
+
+793
+EN: Played TashZone on another phone and kept your progress? Bring it here. What is on this phone now will be replaced, and we will ask you first.
+UR: کیا آپ نے کسی اور فون پر TashZone کھیلا اور اپنی ترقی محفوظ کی تھی؟ اسے یہاں لے آئیں۔ اس فون پر ابھی جو کچھ ہے وہ بدل جائے گا، اور ہم پہلے آپ سے پوچھیں گے۔
+
+794
+EN: This profile can no longer play online on TashZone. Games against bots still work. Open Account status in Settings to see why and to send an appeal.
+UR: یہ پروفائل اب TashZone پر آن لائن نہیں کھیل سکتی۔ بوٹس کے ساتھ کھیل پھر بھی چلتا ہے۔ وجہ دیکھنے اور اپیل بھیجنے کے لیے ترتیبات میں «اکاؤنٹ کی حالت» کھولیں۔
+
+795
+EN: Online rooms are paused for this profile at the moment. Games against bots still work. Open Account status in Settings to see when it ends.
+UR: اس پروفائل کے لیے آن لائن کمرے فی الحال روکے ہوئے ہیں۔ بوٹس کے ساتھ کھیل پھر بھی چلتا ہے۔ یہ کب تک ہے، یہ دیکھنے کے لیے ترتیبات میں «اکاؤنٹ کی حالت» کھولیں۔
+
+796
+EN: Typed messages, quick messages and talking are turned off for this profile. You can still play every game, online and offline, and reactions still work.
+UR: اس پروفائل کے لیے لکھے ہوئے پیغامات، فوری پیغامات اور بات چیت بند ہیں۔ آپ ہر کھیل پھر بھی کھیل سکتے ہیں، آن لائن بھی اور آف لائن بھی، اور ری ایکشنز بھی چلتے ہیں۔
+
+797
+EN: Your nickname and avatar, your level, XP, titles and badges, your stats, your saved game, your settings, Parent Settings and your muted and blocked players.
+UR: آپ کا کھلاڑی نام اور اوتار، آپ کا لیول، ایکس پی، خطاب اور تمغے، آپ کی ترقی، آپ کا محفوظ کھیل، آپ کی ترتیبات، والدین کی ترتیبات، اور آپ کے میوٹ اور بلاک کیے ہوئے کھلاڑی۔
+
+798
+EN: If you have none of the lead suit, play any card: that is a thulla. With Quick thulla the trick stops at once; with Full trick everyone still plays. The player with the highest card of the lead suit picks up the whole trick.
+UR: پہلا رنگ نہ ہو تو کوئی بھی پتا چلیں: یہ ٹھلا ہے۔ «جلدی ٹھلا» میں ہاتھ فوراً رک جاتا ہے؛ «پورا ہاتھ» میں سب پھر بھی چلتے ہیں۔ پہلے رنگ کے سب سے بڑے پتے والا پورا ہاتھ اٹھاتا ہے۔
+
+799
+EN: Your level, your badges and your table designs are saved here and nowhere else. If you remove TashZone, change phone or lose it, they are gone and cannot be brought back.
+UR: آپ کا لیول، آپ کے تمغے اور آپ کے میز کے ڈیزائن یہیں محفوظ ہیں، اور کہیں نہیں۔ اگر آپ TashZone نکال دیں، فون بدل لیں یا فون کھو جائے، تو یہ ختم ہو جائیں گے اور واپس نہیں لائے جا سکتے۔
+
+800
+EN: The player with the ace of spades starts with it. With the usual rules the first trick is put aside, even if someone cannot follow. With two decks, whoever was dealt the first ace of spades starts.
+UR: جس کے پاس حکم کا اِکّا ہو وہ اسی سے شروع کرتا ہے۔ عام اصولوں میں پہلا ہاتھ الگ رکھ دیا جاتا ہے، چاہے کسی کے پاس وہ رنگ نہ ہو۔ دو گڈیوں میں جسے حکم کا پہلا اِکّا بانٹا گیا ہو، وہ شروع کرتا ہے۔
+
+801
+EN: Before a trick, you may take all the cards of the next player in turn order ({nextSide} at your table) who still holds cards. They get away and cannot be the Bhabhi. If they were about to lead, you lead instead.
+UR: ہاتھ سے پہلے آپ باری کے اگلے کھلاڑی — آپ کی میز پر {nextSide} — کے سارے پتے لے سکتے ہیں، اگر اس کے پاس پتے باقی ہوں۔ وہ نکل جاتا ہے اور بھابھی نہیں بن سکتا۔ اگر چال اسی کی تھی تو اب چال آپ چلیں گے۔
+
+802
+EN: Three to six players with one deck. Seven or eight players always use two decks, and four to six may choose two decks. All the cards are dealt. Try to get rid of every card.
+UR: ایک گڈی سے تین سے چھ کھلاڑی۔ سات یا آٹھ کھلاڑی ہمیشہ دو گڈیوں سے کھیلتے ہیں، اور چار سے چھ کھلاڑی چاہیں تو دو گڈیاں چن سکتے ہیں۔ سارے پتے بانٹ دیے جاتے ہیں۔ کوشش کریں کہ آپ کے سارے پتے ختم ہو جائیں۔
+
+803
+EN: On by default (Pagat). With two players left, if a card drawn from the pile is led and the other player cannot follow, the player who led it is the Bhabhi at once. Turn it off to keep playing it out.
+UR: عام طور پر آن رہتا ہے (پگت)۔ جب دو کھلاڑی رہ جائیں اور ڈھیر سے اٹھایا گیا پتا چلا جائے اور دوسرے کھلاڑی کے پاس وہ رنگ نہ ہو، تو چلانے والا فوراً بھابھی بن جاتا ہے۔ بند کر دیں تو کھیل آخر تک چلتا رہے گا۔
+
+804
+EN: Your player, any room you are in, your progress, your Parent Settings and anyone you blocked. Reports you sent about other players are kept, because they are needed to keep tables safe.
+UR: آپ کا کھلاڑی، آپ جس کمرے میں ہیں، آپ کی ترقی، آپ کی والدین کی ترتیبات اور وہ لوگ جنہیں آپ نے بلاک کیا۔ دوسرے کھلاڑیوں کے بارے میں آپ کی بھیجی ہوئی رپورٹیں رکھی جاتی ہیں، کیونکہ میزوں کو محفوظ رکھنے کے لیے وہ ضروری ہیں۔
+
+805
+EN: Play all your cards to get away. If your last card wins a trick that nobody cut, you draw one card from the pile (before that trick is added) and lead it. House rule off: you get away instead.
+UR: سارے پتے چل کر نکل جائیں۔ اگر آپ کا آخری پتا ایسا ہاتھ جیتے جس میں کسی نے ٹھلا نہ لگایا ہو، تو آپ ڈھیر سے ایک پتا اٹھاتے ہیں (وہ ہاتھ ڈھیر میں جانے سے پہلے) اور وہی پہلے چلتے ہیں۔ یہ گھر کا اصول بند ہو تو آپ سیدھے نکل جاتے ہیں۔
+

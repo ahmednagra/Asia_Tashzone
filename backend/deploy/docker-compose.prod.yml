@@ -1,0 +1,180 @@
+# Production on one server (Oracle Cloud Always Free, Ubuntu 24.04 ARM, 141.148.193.78). Run from the repository root:
+#   docker compose --env-file /srv/tashzone/.env -f backend/deploy/docker-compose.prod.yml up -d --build
+# Only Caddy (80/443) and LiveKit media (7881/tcp, 7882/udp) are reachable from the internet. Secrets come from
+# /srv/tashzone/.env (chmod 600, generated on the server by server-setup.sh), never from git.
+#
+# ARM64: every image publishes linux/arm64 (postgres:17, caddy:2, livekit/livekit-server:v1.13; api and match-server
+# are built here FROM python:3.12-slim / node:22-slim). Build ON the server; pin majors, never `latest`.
+name: tashzone
+x-logging: &logging
+  driver: json-file
+  options: { max-size: "10m", max-file: "3" }
+
+services:
+  postgres:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: tashzone
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set in .env}
+      POSTGRES_DB: tashzone
+      TZ_MATCH_PASSWORD: ${TZ_MATCH_PASSWORD:?set in .env}  # read by initdb/01-roles.sh on the first start only
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - pgwal:/var/lib/postgresql/archive
+      # Creates the least-privilege role tz_match on first initialisation; Alembic 0001 grants it rows it may touch.
+      - ./initdb:/docker-entrypoint-initdb.d:ro
+    # Point-in-time recovery is not on yet: nightly pg_dump (backup.sh) restores to 03:30 UTC. Before the public
+    # release, enable WAL archiving (Docs/06-deployment.md Part D3):
+    # command: >-
+    #   postgres -c wal_level=replica -c archive_mode=on
+    #   -c archive_command='test ! -f /var/lib/postgresql/archive/%f && cp %p /var/lib/postgresql/archive/%f'
+    #   -c archive_timeout=300
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tashzone"]
+      interval: 5s
+      retries: 20
+    networks: [internal]
+    logging: *logging
+
+  api-migrate:
+    build: { context: ../.., dockerfile: backend/api/infrastructure/docker/Dockerfile }
+    command: ["alembic", "upgrade", "head"]
+    environment: &api-env
+      ENVIRONMENT: production
+      DATABASE_URL: postgresql+psycopg://tashzone:${POSTGRES_PASSWORD}@postgres:5432/tashzone
+      PLAYER_TOKEN_SECRET: ${PLAYER_TOKEN_SECRET:?set in .env}
+      JOIN_TOKEN_SECRET: ${JOIN_TOKEN_SECRET:?set in .env}
+      INTERNAL_API_TOKEN: ${INTERNAL_API_TOKEN:?set in .env}
+      MATCH_SERVER_URL: wss://${MATCH_DOMAIN:?set in .env}/match
+      RELEASE_TAG: ${RELEASE_TAG:-dev}
+      RELEASE_COMMIT: ${RELEASE_COMMIT:-unknown}
+      # Voice: leave the three values empty to ship without voice (the endpoint answers 503 NOT_CONFIGURED).
+      LIVEKIT_URL: ${LIVEKIT_URL:-}
+      LIVEKIT_API_KEY: ${LIVEKIT_API_KEY:-}
+      LIVEKIT_API_SECRET: ${LIVEKIT_API_SECRET:-}
+      # Optional sign-in for account recovery (empty = button hidden in the app).
+      GOOGLE_CLIENT_IDS: ${GOOGLE_CLIENT_IDS:-}
+      APPLE_CLIENT_IDS: ${APPLE_CLIENT_IDS:-}
+      PLAY_GAMES_CLIENT_ID: ${PLAY_GAMES_CLIENT_ID:-}
+      PLAY_GAMES_CLIENT_SECRET: ${PLAY_GAMES_CLIENT_SECRET:-}
+      # Kill switch and remote control (app-config). Change in .env, then `docker compose ... up -d api`.
+      ONLINE_ENABLED: ${ONLINE_ENABLED:-true}
+      DISABLED_PROFILES: ${DISABLED_PROFILES:-}
+      DISABLED_FEATURES: ${DISABLED_FEATURES:-}
+      MAINTENANCE_MESSAGE_EN: ${MAINTENANCE_MESSAGE_EN:-}
+      MAINTENANCE_MESSAGE_UR: ${MAINTENANCE_MESSAGE_UR:-}
+      MIN_VERSION_CODE: ${MIN_VERSION_CODE:-1}
+      # The release the app offers as an update, written by `deploy.sh --publish-apk`. Interpolated (not env_file)
+      # so a changed .env changes the service definition and `up -d api` really recreates the container.
+      APP_MINIMUM_VERSION: ${APP_MINIMUM_VERSION:-}
+      APP_LATEST_VERSION: ${APP_LATEST_VERSION:-}
+      APP_LATEST_VERSION_CODE: ${APP_LATEST_VERSION_CODE:-0}
+      APP_DOWNLOAD_URL: ${APP_DOWNLOAD_URL:-}
+      APP_DOWNLOAD_SHA256: ${APP_DOWNLOAD_SHA256:-}
+      APP_DOWNLOAD_SIZE_BYTES: ${APP_DOWNLOAD_SIZE_BYTES:-0}
+      APP_RELEASE_NOTES_EN: ${APP_RELEASE_NOTES_EN:-}
+      APP_RELEASE_NOTES_UR: ${APP_RELEASE_NOTES_UR:-}
+      REPORT_EVIDENCE_ENABLED: "false"  # changes the Play Data Safety answers: never flip without Docs/08 first
+    depends_on:
+      postgres: { condition: service_healthy }
+    restart: "no"
+    networks: [internal]
+    logging: *logging
+
+  api:
+    build: { context: ../.., dockerfile: backend/api/infrastructure/docker/Dockerfile }
+    restart: unless-stopped
+    environment: *api-env
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      start_period: 20s
+      retries: 5
+    depends_on:
+      api-migrate: { condition: service_completed_successfully }
+    networks: [internal]
+    logging: *logging
+
+  # Expires stale rooms and Quick Match tickets and applies retention (rooms 30 d, feedback 180 d, reports 180 d,
+  # evidence 30 d, sanctions 365 d; the moderation audit is never deleted) every 5 minutes. Safe to restart.
+  room-maintenance:
+    build: { context: ../.., dockerfile: backend/api/infrastructure/docker/Dockerfile }
+    restart: unless-stopped
+    command: ["python", "-m", "app.Workers.expire_rooms", "--loop"]
+    environment: *api-env
+    depends_on:
+      api-migrate: { condition: service_completed_successfully }
+    networks: [internal]
+    logging: *logging
+
+  match-server:
+    build: { context: ../.., dockerfile: backend/match-server/Dockerfile }
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://tz_match:${TZ_MATCH_PASSWORD}@postgres:5432/tashzone
+      JOIN_TOKEN_SECRET: ${JOIN_TOKEN_SECRET}
+      INTERNAL_API_TOKEN: ${INTERNAL_API_TOKEN}
+      SEED_ENCRYPTION_KEY: ${SEED_ENCRYPTION_KEY:?64 hex chars, set in .env}
+      API_INTERNAL_URL: http://api:8080
+      INSTANCE_ID: ${INSTANCE_ID:-match-server-1}
+      INSTANCE_URL: ${INSTANCE_URL:-}
+      DRAIN_DEADLINE_MS: "600000"
+      RELEASE_TAG: ${RELEASE_TAG:-dev}
+      RELEASE_COMMIT: ${RELEASE_COMMIT:-unknown}
+    # SIGTERM drains: no new rooms, live matches finish for up to 10 min, then results flush and leases release.
+    # Docker kills at the end of this grace period, so it must exceed DRAIN_DEADLINE_MS (C-14).
+    stop_grace_period: 630s
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8787/health').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      start_period: 15s
+      retries: 5
+    depends_on:
+      api: { condition: service_healthy }
+    networks: [internal]
+    logging: *logging
+
+  # Voice (WebRTC). Signalling goes through Caddy over TLS; media goes straight to the host on 7881/tcp and
+  # 7882/udp (open them in the Oracle security list). Published ports bypass the host INPUT chain (Part I2).
+  # One UDP port for all media: keep this and livekit.yaml identical, or callers hear silence.
+  livekit:
+    image: livekit/livekit-server:v1.13
+    restart: unless-stopped
+    command: ["--config", "/etc/livekit.yaml"]
+    environment:
+      LIVEKIT_KEYS: "${LIVEKIT_API_KEY:?add LIVEKIT_API_KEY to .env}: ${LIVEKIT_API_SECRET:?add LIVEKIT_API_SECRET to .env}"
+    volumes: ["./livekit.yaml:/etc/livekit.yaml:ro"]
+    ports: ["7881:7881", "7882:7882/udp"]
+    networks: [internal]
+    logging: *logging
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports: ["80:80", "443:443", "443:443/udp"]
+    environment:
+      API_DOMAIN: ${API_DOMAIN:?set in .env}
+      MATCH_DOMAIN: ${MATCH_DOMAIN}
+      LIVEKIT_DOMAIN: ${LIVEKIT_DOMAIN:?set in .env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      # Released APKs, outside the repo so a release swap never deletes a build players are being offered.
+      - /srv/tashzone/releases:/srv/releases:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on: [api, match-server, livekit]
+    networks: [internal]
+    logging: *logging
+
+networks:
+  internal:
+
+volumes:
+  pgdata:
+  pgwal:
+  caddy_data:
+  caddy_config:

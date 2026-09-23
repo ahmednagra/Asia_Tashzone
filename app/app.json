@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "TashZone",
+    "slug": "tashzone",
+    "version": "0.1.0",
+    "orientation": "default",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.tashzone.app"
+    },
+    "android": {
+      "package": "com.tashzone.app",
+      "edgeToEdgeEnabled": true
+    },
+    "extra": {
+      "note": "API URL comes from EXPO_PUBLIC_API_URL; signing keys live in app/credentials/ and are never committed",
+      "eas": {
+        "projectId": "5ca7b4b8-fb4c-458e-95f5-e5d4c27f5360"
+      }
+    },
+    "owner": "muhammad_ahmed"
+  }
+}
