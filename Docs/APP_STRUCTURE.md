@@ -37,7 +37,7 @@ app/
 | Tabs `(tabs)` | `/` Play, `/games`, `/me` (You), `/settings` |
 | Game flow | `game/[id]` detail, `game/[id]/ways`, `game/[id]/setup`, `play/[game]` (table; params `preset,length,players,level,handicap` skip the setup sheet), `result/hand`, `result/game` |
 | Online | `room`, `wait`, `online/[game]`, `match`; `pass` (pass-the-phone curtain) |
-| Wi-Fi | `wifi/{host,join,pin,hotspot}` (UI only: no native TCP/mDNS transport yet) |
+| Wi-Fi | `wifi/{host,join,pin,hotspot}`: wired to a real host table (TCP + mDNS + QR) and guest join; needs a device build (`react-native-tcp-socket`, `react-native-zeroconf`), not verified on hardware. After the lobby the table is the shared `wait` / `online/[game]` / `match` screens |
 | Settings | `settings/{appearance,play,sound,parent,parent-pin,account}`, `themes` |
 | Reference | `howto`, `rules`, `atlas` |
 
@@ -59,8 +59,11 @@ Layout: `Screen`, `Header`, `TabBar`, `Sheet`, `ConfirmSheet`, `Collapsible`. Su
 
 ## Not built yet
 
-Wi-Fi/hotspot play (needs TCP + mDNS native modules and a host/guest transport), audio and haptics playback, in-match chat, concede, table cloth
-themes applied to the felt, badges/XP, and non-English strings.
+Audio and haptics playback, in-match chat, concede, table cloth themes applied to the felt, badges/XP, and non-English strings.
+
+Same-Wi-Fi/hotspot play is built (host table, PIN, QR, nearby list, manual address, reconnect) but only tested in code with in-memory links.
+It needs a development or release build (not Expo Go) and has not been run on two phones yet: mDNS discovery on Android (NSD), the host
+phone in the background, and hotspot hosts that do not report their own address are the open questions. See `features/multiplayer/README.md`.
 
 ## Decisions (24 Sep 2026)
 

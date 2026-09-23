@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { checkSecrets } from "./config.js";
 import { decryptSeed, encryptSeed } from "./crypto.js";
-import { guardPayload } from "./guard.js";
+import { guardPayload } from "@tashzone/match";
 import { signJoinToken, verifyJoinToken } from "./tokens.js";
 
 describe("units", () => {

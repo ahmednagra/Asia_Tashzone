@@ -248,7 +248,7 @@ export function step(state: CallbreakState, action: unknown): StepResult<Callbre
     match.dealer = dealer;
     const order = seatsFrom(nextSeat(dealer, SEATS, r.direction), SEATS, r.direction);
     const shuffleStream = new DrawStream(action.hand_seed, "R-CB-1/shuffle", draws);
-    let sorted: CardId[][] = [];
+    let sorted: CardId[][];
     let redeals = 0;
     for (;;) {
       const deck = shuffleStream.shuffle(std52());

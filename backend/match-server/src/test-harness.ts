@@ -3,7 +3,7 @@ import WebSocket from "ws";
 import { MatchServer } from "./server.js";
 import { MemoryDirectory, MemoryIncidentLog, MemoryJournal } from "./stores.js";
 import { signJoinToken, type JoinClaims } from "./tokens.js";
-import type { MatchReport } from "./room.js";
+import type { MatchReport } from "@tashzone/match";
 
 export const SECRET = "j".repeat(40);
 export const BUILD = "b".repeat(64);

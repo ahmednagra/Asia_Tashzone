@@ -1,0 +1,22 @@
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import QRCode from "react-native-qrcode-svg";
+import { cards, radius } from "../../theme/tokens";
+
+const QUIET_ZONE = 12;
+
+/**
+ * QR code for a table link. Always dark modules on a light plate with a quiet zone, in both themes, because
+ * scanners need that contrast. `label` is what a screen reader announces (never put the PIN in it).
+ */
+export function QrCode({ value, size = 200, label = "QR code to join the table" }: { value: string; size?: number; label?: string }) {
+  return (
+    <View accessible accessibilityRole="image" accessibilityLabel={label} style={[s.plate, { padding: QUIET_ZONE }]}>
+      <QRCode value={value} size={size} color={cards.black} backgroundColor={cards.face} ecl="M" quietZone={0} />
+    </View>
+  );
+}
+
+const s = StyleSheet.create({
+  plate: { alignSelf: "center", backgroundColor: cards.face, borderRadius: radius.control },
+});

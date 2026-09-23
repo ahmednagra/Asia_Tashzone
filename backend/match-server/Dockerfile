@@ -8,7 +8,7 @@ COPY backend/match-server ./backend/match-server
 # app/ is excluded from the server image; drop it from the workspace list for this build
 RUN sed -i '/"app"/d' pnpm-workspace.yaml && pnpm install --frozen-lockfile=false \
       --filter @tashzone/match-server...
-RUN for p in engine protocol; do (cd shared/$p && npx tsc -p tsconfig.json); done \
+RUN for p in engine protocol match; do (cd shared/$p && npx tsc -p tsconfig.json); done \
  && (cd shared/engine && node scripts/bundle.mjs && node scripts/digest.mjs) \
  && (cd backend/match-server && npx tsc -p tsconfig.build.json)
 

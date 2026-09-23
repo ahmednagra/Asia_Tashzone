@@ -7,14 +7,15 @@
  *    whose projection did not change (so hidden actions cannot be inferred from traffic timing)
  *  - intents are idempotent by (seat, hand_id, intent_id)
  */
-import { createHmac } from "node:crypto";
+import { hmac } from "@noble/hashes/hmac.js";
+import { sha256 } from "@noble/hashes/sha2.js";
+import { bytesToHex, hexToBytes, utf8ToBytes } from "@noble/hashes/utils.js";
 import {
   type Action, type BaseView, type EngineEvent, type GameModule, type InputRecord, type SeatMove, type Viewer,
   GENESIS, deriveHandSeed, gameOfProfile, getModule, hashCanonical, recordHash, seedCommitment, stateHash,
 } from "@tashzone/engine";
 import { chooseMove } from "@tashzone/engine";
 import { type SeatControl, type ServerMessage, type TableMeta, viewHash } from "@tashzone/protocol";
-import { encryptSeed, newServerSeed } from "./crypto.js";
 import { guardPayload } from "./guard.js";
 import { type IncidentLog, type JournalStore, type RoomDirectory, StaleEpochError } from "./stores.js";
 
@@ -27,7 +28,10 @@ export interface RoomDeps {
   readonly results: (report: MatchReport) => Promise<void>;
   /** Tells FastAPI play has begun so the room stops accepting joins (v1 /internal/rooms/{code}/started). */
   readonly started?: (room: string) => Promise<void>;
-  readonly seedKey: string;
+  /** CSPRNG bytes as lowercase hex (Node crypto on the server, expo-crypto on a phone). Room never calls a global RNG. */
+  readonly randomHex: (bytes: number) => string;
+  /** Encrypts a hand's server seed at rest until it is sealed (T-18); the aad binds it to the hand id. */
+  readonly sealSeed: (seedHex: string, aad: string) => string;
   readonly engineBuildHash: string;
   readonly instanceId: string;
   readonly timing: {
@@ -38,6 +42,7 @@ export interface RoomDeps {
   readonly now?: () => number;
 }
 
+/** Reported once per match through `RoomDeps.results`. */
 export interface MatchReport {
   readonly match_id: string; readonly room: string; readonly epoch: number; readonly profile_id: string;
   readonly effective_profile_hash: string; readonly engine_build_hash: string; readonly outcome: "completed" | "interrupted";
@@ -84,9 +89,9 @@ export class Room {
   private readonly intents = new Map<string, Promise<Extract<ServerMessage, { type: "IntentResult" }>>>();
   private hand: HandCtx | null = null;
   private deadline: number | null = null;
-  private timer: NodeJS.Timeout | null = null;
-  private seedTimer: NodeJS.Timeout | null = null;
-  private leaseTimer: NodeJS.Timeout | null = null;
+  private timer: ReturnType<typeof setTimeout> | null = null;
+  private seedTimer: ReturnType<typeof setTimeout> | null = null;
+  private leaseTimer: ReturnType<typeof setInterval> | null = null;
   private lastRenewOk: number;
   private stopAtBoundary = false;
   private readonly sealed: string[] = [];
@@ -193,10 +198,10 @@ export class Room {
     if (this.stopAtBoundary) { await this.endMatch("interrupted"); return; }
     this.handSeq += 1;
     const handId = `${this.matchId}-h${this.handSeq}`;
-    const serverSeed = newServerSeed();
+    const serverSeed = this.deps.randomHex(32);
     const commitment = seedCommitment(serverSeed, handId);
     try {
-      await this.deps.journal.persistHandStart(this.code, this.epoch, handId, commitment, encryptSeed(this.deps.seedKey, serverSeed, handId));
+      await this.deps.journal.persistHandStart(this.code, this.epoch, handId, commitment, this.deps.sealSeed(serverSeed, handId));
     } catch (e) {
       if (e instanceof StaleEpochError) { this.fence(); return; }
       this.pause("commit_failure");
@@ -225,7 +230,7 @@ export class Room {
     const seeds = h.clientSeeds.map((c, i) => {
       if (c) return c;
       substituted.push(i); // bots and missing replies are substituted and flagged (RNG-04)
-      return createHmac("sha256", Buffer.from(h.serverSeed, "hex")).update(`tz/substitute/v1/${h.handId}/${i}`).digest("hex");
+      return bytesToHex(hmac(sha256, hexToBytes(h.serverSeed), utf8ToBytes(`tz/substitute/v1/${h.handId}/${i}`)));
     });
     h.clientSeeds = seeds;
     (h as HandCtx & { substituted?: number[] }).substituted = substituted;
@@ -512,7 +517,7 @@ export class Room {
       if (ok) this.lastRenewOk = this.now();
       else this.fence();
     }, t.renewMs);
-    this.leaseTimer.unref?.();
+    (this.leaseTimer as { unref?: () => void }).unref?.(); // Node only; a no-op on Hermes
   }
 
   private stopLease(): void { if (this.leaseTimer) { clearInterval(this.leaseTimer); this.leaseTimer = null; } }

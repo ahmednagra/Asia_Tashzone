@@ -5,14 +5,36 @@
     "version": "0.1.0",
     "orientation": "default",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.tashzone.app"
+      "bundleIdentifier": "com.tashzone.app",
+      "infoPlist": {
+        "NSLocalNetworkUsageDescription": "TashZone uses your local network only to find and join card tables hosted by people on the same Wi-Fi.",
+        "NSBonjourServices": [
+          "_tashzone._tcp"
+        ]
+      }
     },
     "android": {
       "package": "com.tashzone.app",
-      "edgeToEdgeEnabled": true
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.ACCESS_WIFI_STATE",
+        "android.permission.CHANGE_WIFI_MULTICAST_STATE"
+      ],
+      "blockedPermissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.READ_CONTACTS",
+        "android.permission.SYSTEM_ALERT_WINDOW"
+      ],
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundImage": "./assets/adaptive-background.png"
+      }
     },
     "extra": {
       "note": "API URL comes from EXPO_PUBLIC_API_URL; signing keys live in app/credentials/ and are never committed",
@@ -22,11 +44,30 @@
     },
     "owner": "muhammad_ahmed",
     "plugins": [
-      "expo-router"
+      "./plugins/with-release-signing",
+      "expo-router",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "TashZone uses the camera only to scan a table QR code. Nothing is recorded or saved.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#0046b8"
+        }
+      ]
     ],
     "scheme": "tashzone",
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "icon": "./assets/icon.png"
   }
 }

@@ -7,6 +7,6 @@ import { OnlineTable } from "../../features/lobby/OnlineTable";
 export default function OnlineRoute() {
   const { game } = useLocalSearchParams<{ game: string }>();
   const session = useOnlineSession();
-  if (session.phase === "idle") return <Redirect href={{ pathname: "/room", params: { game } }} />;
+  if (session.phase === "idle") return session.transport === "wifi" ? <Redirect href="/wifi/join" /> : <Redirect href={{ pathname: "/room", params: { game } }} />;
   return <OnlineTable />;
 }

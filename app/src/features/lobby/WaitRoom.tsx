@@ -24,11 +24,13 @@ export function WaitRoom() {
   useBackAction(leave, session.phase === "lobby" || session.phase === "queued");
 
   const game = GAMES.find((g) => g.profile === session.profileId);
+  const wifi = session.transport === "wifi";
+  if (wifi && session.isHost && session.phase !== "idle") return <Redirect href="/wifi/host" />; // the host's lobby has the PIN and QR
   if (session.phase === "playing") return <Redirect href={{ pathname: "/online/[game]", params: { game: game?.id ?? "" } }} />;
   if (session.phase === "ended") return <Redirect href="/match" />;
-  if (session.phase === "idle") return <Redirect href={{ pathname: "/room", params: { game: game?.id ?? "" } }} />;
+  if (session.phase === "idle") return wifi ? <Redirect href="/wifi/join" /> : <Redirect href={{ pathname: "/room", params: { game: game?.id ?? "" } }} />;
 
-  if (session.phase === "queued" || (session.phase === "connecting" && !session.roomCode)) {
+  if (!wifi && (session.phase === "queued" || (session.phase === "connecting" && !session.roomCode))) {
     const q = copy.queue;
     return (
       <Screen footer={<GoldButton kind="glass" label={q.cancel} onPress={leave} />}>
@@ -52,17 +54,17 @@ export function WaitRoom() {
   return (
     <Screen footer={<>
       {session.isHost ? <GoldButton label={t.startBots} disabled={!canStart} onPress={startTable} /> : <Caption center>{t.guestWaiting}</Caption>}
-      <GoldButton kind="glass" label={t.leave} onPress={leave} />
+      <GoldButton kind="glass" label={wifi ? t.wifiLeave : t.leave} onPress={leave} />
     </>}>
-      <Header title={`${t.titlePrefix}${code}`} back={false} />
+      <Header title={wifi ? t.wifiTitle : `${t.titlePrefix}${code}`} back={false} />
       {session.updateRequired ? <StatusBanner tone="warn" title={copy.update.title} body={copy.update.body} /> : null}
       {session.conn === "reconnecting" ? <StatusBanner busy tone="warn" title={copy.reconnecting.title} body={copy.reconnecting.body}>
         <GoldButton kind="glass" label="Try again" onPress={retryConnection} /></StatusBanner> : null}
       {session.error ? <StatusBanner tone="error" title={errorMessage(session.error)} /> : null}
-      <CodeCard label={t.shareLabel} code={code} actionLabel={t.share}
-        onAction={() => { Share.share({ message: t.shareMessage(code, game?.name ?? "card") }).catch(() => {}); }} />
+      {wifi ? null : <CodeCard label={t.shareLabel} code={code} actionLabel={t.share}
+        onAction={() => { Share.share({ message: t.shareMessage(code, game?.name ?? "card") }).catch(() => {}); }} />}
       <SeatList seats={seats} openName={t.openName} />
-      <Caption>{profile.protectedMode || !profile.parent.text ? t.chatOff : t.chat}</Caption>
+      <Caption>{wifi ? t.wifiGuestChat : profile.protectedMode || !profile.parent.text ? t.chatOff : t.chat}</Caption>
     </Screen>
   );
 }

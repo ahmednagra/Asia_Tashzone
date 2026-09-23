@@ -2,14 +2,18 @@
  * Match server: HTTP (/health, /ready) + WebSocket (/match). Owns live rooms in memory (C-08, C-18).
  * The app is never trusted for legality, order, randomness, seats or rules (03_PLATFORM.md §7.2).
  */
+import { randomBytes } from "node:crypto";
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from "node:http";
 import { WebSocketServer, type WebSocket } from "ws";
 import { compile } from "@tashzone/engine";
 import { type ClientMessage, MAX_FRAME_BYTES, type ServerMessage, negotiate, parseClientFrame } from "@tashzone/protocol";
-import { type Conn, Room, type RoomDeps } from "./room.js";
+import { type Conn, Room, type RoomDeps } from "@tashzone/match";
+import { encryptSeed } from "./crypto.js";
 import { type JoinClaims, verifyJoinToken } from "./tokens.js";
 
-export interface ServerOptions extends Omit<RoomDeps, "engineBuildHash"> {
+export interface ServerOptions extends Omit<RoomDeps, "engineBuildHash" | "randomHex" | "sealSeed"> {
+  /** AES-256 key (hex) that seals hand seeds at rest; the Node adapter behind RoomDeps.sealSeed. */
+  readonly seedKey: string;
   readonly joinTokenSecret: string;
   readonly engineBuildHash: string;
   /** behaviour digest per profile id; a Hello with a different digest gets UPDATE_REQUIRED (C-23) */
@@ -121,6 +125,15 @@ export class MatchServer {
     return { room, seat: claims.seat, claims };
   }
 
+  /** The transport-agnostic Room gets its randomness and seed sealing from Node crypto (RoomDeps). */
+  private get roomDeps(): RoomDeps {
+    return {
+      ...this.opts,
+      randomHex: (bytes) => randomBytes(bytes).toString("hex"),
+      sealSeed: (seedHex, aad) => encryptSeed(this.opts.seedKey, seedHex, aad),
+    };
+  }
+
   /** One claim per room code even when several Hellos race. */
   private readonly claiming = new Map<string, Promise<Room | null>>();
   private claimRoom(code: string, rules: Room["rules"], eph: string): Promise<Room | null> {
@@ -129,7 +142,7 @@ export class MatchServer {
       p = (async () => {
         const epoch = await this.opts.directory.claim(code, this.opts.instanceId, this.opts.instanceUrl, this.opts.timing.leaseMs);
         if (epoch === null) return null;
-        const room = new Room(code, epoch, rules, eph, this.opts);
+        const room = new Room(code, epoch, rules, eph, this.roomDeps);
         this.rooms.set(code, room);
         return room;
       })().finally(() => this.claiming.delete(code));

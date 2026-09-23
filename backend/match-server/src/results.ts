@@ -1,4 +1,4 @@
-import type { MatchReport } from "./room.js";
+import type { MatchReport } from "@tashzone/match";
 
 /** Results go only through FastAPI internal routes (T-16); accepted once per match id, epoch-checked (C-27). */
 export function httpResultsSink(apiUrl: string | null, token: string): (r: MatchReport) => Promise<void> {
