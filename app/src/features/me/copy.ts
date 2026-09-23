@@ -1,0 +1,27 @@
+/** All player-facing text for the You tab and its avatar sheet (English only for now). */
+export const T = {
+  title: "You",
+  table: "Table",
+  edit: "Edit",
+  changeAvatar: "Change avatar",
+  defaultName: "Player",
+  noHands: "No hands yet",
+  summary: (matches: number, avatar: string) => `${matches} match${matches === 1 ? "" : "es"} · ${avatar}`,
+  emptyTitle: "Nothing on the record yet",
+  emptyBody: "Play a hand and it lands here: matches, wins and the games you have tried.",
+  deal: "Deal a hand",
+  browse: "Browse the games",
+  allTime: "All time",
+  won: (pct: number) => `${pct}% won`,
+  matches: "Matches", wins: "Wins", streak: "Streak", bhabhi: "Bhabhi",
+  recent: "Recent games",
+  recentHint: "Games you played most recently, newest first",
+  localOnly: "Your record lives on this phone only. Nothing is uploaded, and clearing the app's data clears it.",
+  sheet: {
+    title: "Your avatar",
+    body: "Drawn marks, not photographs: there are no pictures of people anywhere in TashZone.",
+    nameLabel: "Your name",
+    namePlaceholder: "Type a name",
+    done: "Done",
+  },
+} as const;

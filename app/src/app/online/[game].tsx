@@ -1,0 +1,12 @@
+import React from "react";
+import { Redirect, useLocalSearchParams } from "expo-router";
+import { useOnlineSession } from "../../hooks/useOnlineSession";
+import { OnlineTable } from "../../features/lobby/OnlineTable";
+
+/** /online/<gameId>: the live table when this device has an online session, otherwise the room screen for that game. */
+export default function OnlineRoute() {
+  const { game } = useLocalSearchParams<{ game: string }>();
+  const session = useOnlineSession();
+  if (session.phase === "idle") return <Redirect href={{ pathname: "/room", params: { game } }} />;
+  return <OnlineTable />;
+}

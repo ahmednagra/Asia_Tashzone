@@ -32,7 +32,13 @@ export function handOrder(cards: readonly CardId[]): CardId[] {
  * scaled ≥ 150 %, the hand switches to two rows.
  */
 export const MIN_STRIP = 28;
-export function fanLayout(count: number, width: number, cardWidth: number, textScale = 1) {
+export function fanLayout(count: number, width: number, cardWidth: number, textScale = 1, layout: "fan" | "spread" = "fan") {
+  if (layout === "spread") {
+    // every card whole: tile in as many rows as needed, never overlapping
+    const step = cardWidth + 4;
+    const perRow = Math.max(1, Math.floor((width - cardWidth) / step) + 1);
+    return { rows: Math.max(1, Math.ceil(count / perRow)), perRow, step };
+  }
   const calc = (rows: number) => {
     const perRow = Math.ceil(count / rows);
     const step = perRow <= 1 ? 0 : Math.min(cardWidth * 0.62, (width - cardWidth) / (perRow - 1));
@@ -90,7 +96,7 @@ const ORD = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"];
 
 /** Presentation model from a SeatView of any game (the view is the only input: nothing hidden can appear). */
  
-export function tableModel(view: any, human: number): TableModel {
+export function tableModel(view: any, human: number, names?: readonly string[]): TableModel {
   const h = view.hand;
   const game: string = view.game ?? "callbreak";
   const n: number = game === "bhabhi" ? view.rules.players : 4;
@@ -129,7 +135,7 @@ export function tableModel(view: any, human: number): TableModel {
     hud.push(`Hand ${view.match.hands_played + (h && h.phase !== "DONE" ? 1 : 0)} of ${view.rules.rounds}`, h ? `Pile ${h.waste_count}` : "Shuffling");
     if (h?.last_trick) {
       const who = h.last_trick.seat;
-      notice = notice ?? (h.last_trick.outcome === "pickedUp" ? `Seat ${who + 1} picked up the trick` : "Trick put aside");
+      notice = notice ?? (h.last_trick.outcome === "pickedUp" ? `${names?.[who] ?? `Seat ${who + 1}`} picked up the trick` : "Trick put aside");
     }
   }
   let results: TableModel["results"] = null;
@@ -141,4 +147,18 @@ export function tableModel(view: any, human: number): TableModel {
     })).sort((a, b) => (a.place ?? 99) - (b.place ?? 99) || a.seat - b.seat);
   }
   return { game, seats, trick: h?.trick ?? [], hud, notice, results };
+}
+
+/**
+ * Where a played card lands on the felt, relative to the middle of the trick area: it sits toward the seat that
+ * played it. Several seats on one side (5–8 players) fan out along that side by `index` among them.
+ */
+export function trickOffset(area: Area, index: number, spread = 22): { x: number; y: number } {
+  const along = (index - 0.5) * spread * 0.9;
+  switch (area) {
+    case "bottom": return { x: index * spread, y: 30 };
+    case "top": return { x: along, y: -30 };
+    case "left": return { x: -38, y: along };
+    case "right": return { x: 38, y: along };
+  }
 }

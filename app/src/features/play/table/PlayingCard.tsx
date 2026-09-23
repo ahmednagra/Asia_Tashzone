@@ -1,8 +1,8 @@
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { cards, fonts, material, onTable, radius } from "../../../design/tokens";
+import { cards, fonts, material, onTable, radius } from "../../../theme/tokens";
 import { SUIT_GLYPH, cardLabel, rankLabel } from "./logic";
-import { useTheme } from "../../../ui/theme";
+import { useTheme } from "../../../context/ThemeContext";
 
 export interface PlayingCardProps {
   card?: string;          // undefined = face-down
@@ -10,10 +10,12 @@ export interface PlayingCardProps {
   legal?: boolean;        // halo on the felt around the card, never a tint on the face
   lifted?: boolean;
   onPress?: () => void;
+  /** when set, a card that is not playable is still pressable (the caller explains why) */
+  pressableWhenBlocked?: boolean;
   hitSlopRight?: number;  // extends a covered card's hit area toward its uncovered edge
 }
 
-export function PlayingCard({ card, width, legal, lifted, onPress, hitSlopRight = 0 }: PlayingCardProps) {
+export function PlayingCard({ card, width, legal, lifted, onPress, pressableWhenBlocked, hitSlopRight = 0 }: PlayingCardProps) {
   const t = useTheme();
   const h = Math.round(width * 1.4);
   const suits = t.fourColor ? cards.fourColor : cards.twoColor;
@@ -36,7 +38,7 @@ export function PlayingCard({ card, width, legal, lifted, onPress, hitSlopRight 
   return (
     <Pressable
       onPress={onPress}
-      disabled={!legal}
+      disabled={!legal && !pressableWhenBlocked}
       hitSlop={{ top: 8, bottom: 8, left: 0, right: hitSlopRight }}
       accessibilityRole="button"
       accessibilityLabel={cardLabel(card, legal)}

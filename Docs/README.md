@@ -3,6 +3,7 @@
 **Current (this repo):**
 - `IMPLEMENTATION_STATUS.md`: what is built and verified, and the port programme (old TashZone → this repo, phases 1–4)
 - `specs/01_GAME_RULES.md` … `specs/06_PRODUCT_UX_BLUEPRINT.md`: the specification set (rules, engine, platform, quality, deployment, UX)
+- `APP_STRUCTURE.md`: the `app/` directory layout, routes, and the old-to-new file map (realigned 24 Sep 2026)
 - `design/TashZone_mehfil_table.html`: the mehfil visual design the app follows
 - `HTML_TO_PRODUCT_TRACEABILITY.md`, `IMPLEMENTATION_READINESS.md`
 

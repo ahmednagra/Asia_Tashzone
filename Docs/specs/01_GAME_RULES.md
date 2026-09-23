@@ -424,7 +424,7 @@ play:
   obligations: [ must_follow_suit, if_void: must_play_spade_if_it_would_become_winner ]   # (no must-beat)
 scoring:
   made_if: tricks in {call, call+1}
-  made: +10*call ; bonus_call(>=8): +130   # (13 points)
+  made: +10*call ; made and call>=bonus_call(8): +130 INSTEAD of +10*call   # flat 13 points, replaces the call (owner decision 24 Sep 2026; engine: callbreak.ts)
   failed (fewer, or call+2 or more): -10*call
 match: { rounds: 5 }   # CB-11 options 3/5/10/25/50/100 ; source says "set amount of time" ; DECIDED 23 Sep 2026 (G-58, Call Bridge only)
 ```
@@ -456,7 +456,7 @@ Terminal: after the configured rounds (default 5) → MATCH_OVER; equal totals s
 | CB-09 | Blind bid | calls made without seeing others' calls (sealed simultaneous) | needs simultaneous sealed window (P-07) | TOGGLE |
 | CB-10 | Super 8 bid | undefined | — | DEFER |
 | CB-11 | Round count 3/5/10/25/50/100 | match length | OWNER | TOGGLE |
-| CBB-01 | Call Bridge | calls 2–12; score if exact or +1; ≥8 bonus 13; no must-beat | — | PROFILE `callbridge.bd` |
+| CBB-01 | Call Bridge | calls 2–12; score if exact or +1; a made call ≥8 scores a flat 13 instead of the call; no must-beat | — | PROFILE `callbridge.bd` |
 
 *Rejected (not implemented):* CB-12 (Deal constraint "max 3 suits per hand")
 

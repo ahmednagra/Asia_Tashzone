@@ -1,7 +1,8 @@
 import React from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { fonts, minTouchTarget, onTable, radius } from "../../../design/tokens";
-import { useTheme } from "../../../ui/theme";
+import { GoldButton } from "../../../components/ui/GoldButton";
+import { ActionPill } from "./chrome";
+import { cards, fonts, material, minTouchTarget, onTable, radius } from "../../../theme/tokens";
 
 
 /** Call picker sheet (Callbreak 1–13 / Call Bridge 2–12). */
@@ -63,19 +64,33 @@ export function TakeButton({ onTake }: { onTake: () => void }) {
   );
 }
 
+/** Between hands (the table holds the next deal): what just ended and the ways on. Offline only. */
+export function HandOverStrip({ title, primaryLabel, onPrimary, secondaryLabel, onSecondary }: {
+  title: string; primaryLabel: string; onPrimary: () => void; secondaryLabel: string; onSecondary: () => void;
+}) {
+  return (
+    <View style={s.strip} accessibilityLiveRegion="polite">
+      <Text style={s.stripText}>{title}</Text>
+      <View style={s.stripBtns}>
+        <ActionPill label={secondaryLabel} onPress={onSecondary} />
+        <GoldButton label={primaryLabel} onPress={onPrimary} />
+      </View>
+    </View>
+  );
+}
+
 const s = StyleSheet.create({
-  suit: { width: 64, height: 64, borderRadius: radius.control, borderWidth: 1.5, borderColor: onTable.gold, alignItems: "center", justifyContent: "center", backgroundColor: "#F7F1E3" },
-  suitText: { fontSize: 34, color: "#1B1D21" },
-  red: { color: "#B3261E" },
-  btn: { minHeight: minTouchTarget, paddingHorizontal: 20, borderRadius: radius.control, borderWidth: 1.5, alignItems: "center", justifyContent: "center" },
-  btnText: { fontFamily: fonts.ui.family, fontSize: 17, fontWeight: "600" },
-  sheet: { backgroundColor: "rgba(6,32,25,0.94)", borderTopLeftRadius: radius.sheet, borderTopRightRadius: radius.sheet, padding: 16, gap: 10 },
+  stripBtns: { flexDirection: "row", gap: 8, alignItems: "center", flexWrap: "wrap", justifyContent: "flex-end" },
+  suit: { width: 64, height: 64, borderRadius: radius.control, borderWidth: 1.5, borderColor: onTable.gold, alignItems: "center", justifyContent: "center", backgroundColor: cards.face },
+  suitText: { fontSize: 34, color: cards.black },
+  red: { color: cards.red },
+  sheet: { backgroundColor: material.feltDeep, borderWidth: 1, borderColor: material.line, borderTopLeftRadius: radius.sheet, borderTopRightRadius: radius.sheet, padding: 16, gap: 10 },
   sheetTitle: { color: onTable.text, fontFamily: fonts.display.family, fontSize: 20, fontWeight: "600" },
   row: { flexDirection: "row", flexWrap: "wrap", gap: 8, paddingVertical: 4 },
   num: { width: 48, height: 48, borderRadius: radius.control, borderWidth: 1.5, borderColor: onTable.gold, alignItems: "center", justifyContent: "center" },
-  suggested: { backgroundColor: "rgba(232,195,106,0.18)", borderWidth: 3 },
+  suggested: { backgroundColor: material.glass, borderWidth: 3 },
   numText: { color: onTable.text, fontSize: 20, fontVariant: ["tabular-nums"], fontWeight: "600" },
-  strip: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 12, padding: 12, borderRadius: radius.control, backgroundColor: "rgba(3,17,13,0.8)" },
+  strip: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 12, padding: 12, borderRadius: radius.control, backgroundColor: material.feltRim, borderWidth: 1, borderColor: material.line },
   stripText: { color: onTable.secondary, fontSize: 15, flexShrink: 1 },
   stripBtn: { minHeight: minTouchTarget, justifyContent: "center", paddingHorizontal: 14, borderRadius: radius.control, borderWidth: 1.5, borderColor: onTable.gold },
   stripBtnText: { color: onTable.gold, fontWeight: "600" },

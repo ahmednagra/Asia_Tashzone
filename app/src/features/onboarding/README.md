@@ -1,0 +1,1 @@
+First-run flow for TashZone: splash (welcome), language, birth year (sets Protected Mode), play style (easy vs standard) and table name + avatar. Everything is stored on the phone via the profile store; finishing sets `profile.onboarded` and returns to `/`. `AvatarView` is the shared drawn-avatar component (also used by the You screen).

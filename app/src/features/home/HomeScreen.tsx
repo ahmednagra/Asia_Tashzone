@@ -1,53 +1,56 @@
 import React from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { fonts, material, radius } from "../../design/tokens";
-import { useTheme } from "../../ui/theme";
-import { GAMES, type GameEntry } from "../play/games";
+import { StyleSheet, Text, View } from "react-native";
+import { Screen } from "../../components/ui/Screen";
+import { SectionLabel } from "../../components/ui/SectionLabel";
+import { Chip } from "../../components/ui/Chip";
+import { TagPill } from "../../components/ui/TagPill";
+import { StatBox } from "../../components/ui/StatBox";
+import { NavRow } from "../../components/ui/NavRow";
+import { GoldGradientBar } from "../../components/ui/GoldGradientBar";
+import { fonts, material } from "../../theme/tokens";
+import { useTheme } from "../../context/ThemeContext";
+import { useProfile } from "../../store/profile";
+import { useGameNav } from "../../hooks/useGameNav";
+import { GAMES } from "../../constants/games";
+import { GameTile } from "../games/GameTile";
+import { CardFan } from "../games/CardFan";
+import { T, findGame, playable } from "../games/copy";
 
-export function Home({ onPlay, onOnline, onSettings }: { onPlay: (g: GameEntry) => void; onOnline: (g: GameEntry) => void; onSettings: () => void }) {
-  const { c } = useTheme();
+/** Home (mockup "home"): wordmark + level, card fan, stats, quick play, "pick a game", join shortcuts. */
+export function Home() {
+  const { c, name } = useTheme();
+  const { profile } = useProfile();
+  const nav = useGameNav();
+  const { stats, recent } = profile;
+  const shelf = [...new Set([...recent, ...GAMES.filter(playable).map((g) => g.id)])].map(findGame).filter((g): g is NonNullable<typeof g> => !!g && playable(g));
+  const quick = shelf[0];
+  const level = 1 + Math.floor(stats.matches / 5);
   return (
-    <ScrollView style={{ backgroundColor: c.bg }} contentContainerStyle={s.page}>
-      <Text style={[s.title, { color: c.text }]}>TashZone</Text>
-      <Text style={[s.sub, { color: c.textSecondary }]}>A table for the games you grew up with.</Text>
-      {GAMES.map((g) => (
-        <View key={g.id} style={[s.tile, { backgroundColor: c.surface, borderColor: c.borderSubtle }]}>
-          <View style={s.tileText}>
-            <Text style={[s.game, { color: c.text }]}>{g.name}</Text>
-            <Text style={[s.meta, { color: c.textMuted }]}>{g.alias ? `${g.alias}, ` : ""}{g.region}</Text>
-          </View>
-          {g.status === "play" ? (
-            <View style={s.actions}>
-              <Pressable accessibilityRole="button" accessibilityLabel={`Play ${g.name} with bots`} onPress={() => onPlay(g)} style={[s.btn, { backgroundColor: c.primary }]}>
-                <Text style={[s.btnText, { color: c.onPrimary }]}>Bots</Text>
-              </Pressable>
-              <Pressable accessibilityRole="button" accessibilityLabel={`Play ${g.name} online`} onPress={() => onOnline(g)} style={[s.btn, { borderColor: c.borderControl, borderWidth: 1.5 }]}>
-                <Text style={[s.btnText, { color: c.text }]}>Online</Text>
-              </Pressable>
-            </View>
-          ) : (
-            <Text style={[s.soon, { color: c.textMuted }]}>Coming soon</Text>
-          )}
-        </View>
-      ))}
-      <Pressable accessibilityRole="button" onPress={onSettings} style={s.settings}>
-        <Text style={{ color: c.textSecondary, fontSize: 17 }}>Settings</Text>
-      </Pressable>
-    </ScrollView>
+    <Screen>
+      <View style={s.head}>
+        <Text accessibilityRole="header" style={[s.title, { color: name === "dark" ? material.goldLeaf : c.primary }]}>{T.home.title}</Text>
+        <TagPill gold text={`★ ${T.home.level(level)}`} />
+      </View>
+      <CardFan />
+      <StatBox items={[
+        { value: stats.matches, label: T.home.stats[0] }, { value: stats.wins, label: T.home.stats[1] },
+        { value: stats.streak, label: T.home.stats[2] }, { value: stats.bhabhi, label: T.home.stats[3] },
+      ]} />
+      {quick && <GoldGradientBar title={T.home.quick} caption={T.home.quickSub(quick.name)} onPress={() => nav.deal(quick)} />}
+      <View style={s.pickRow}>
+        <View style={s.flex}><SectionLabel>{T.home.pick}</SectionLabel></View>
+        <Chip label={T.home.all(GAMES.length)} onPress={() => nav.router.push("/games")} />
+      </View>
+      {shelf.map((g) => <GameTile key={g.id} game={g} lastPlayed={g.id === recent[0]} onOpen={() => nav.open(g)} onPlay={() => nav.deal(g)} />)}
+      <SectionLabel>{T.home.join}</SectionLabel>
+      <NavRow icon="⌁" title={T.home.joinWifi} caption={T.home.joinWifiSub} onPress={() => nav.router.push("/wifi/join")} />
+      <NavRow icon="#" title={T.home.joinRoom} caption={T.home.joinRoomSub} onPress={() => nav.router.push("/wifi/pin")} />
+    </Screen>
   );
 }
-
 const s = StyleSheet.create({
-  page: { padding: 20, gap: 12, paddingBottom: 48 },
-  title: { fontFamily: fonts.display.family, fontSize: 40, fontWeight: "600", marginTop: 24 },
-  sub: { fontFamily: fonts.ui.family, fontSize: 17, marginBottom: 12 },
-  tile: { flexDirection: "row", alignItems: "center", padding: 16, borderRadius: radius.sheet, borderWidth: 1, borderLeftWidth: 4, borderLeftColor: material.goldLeafDim, gap: 12 },
-  tileText: { flex: 1, gap: 2 },
-  game: { fontFamily: fonts.display.family, fontSize: 24, fontWeight: "600" },
-  meta: { fontFamily: fonts.ui.family, fontSize: 13 },
-  actions: { flexDirection: "row", gap: 8 },
-  btn: { minHeight: 44, minWidth: 64, paddingHorizontal: 14, borderRadius: radius.control, alignItems: "center", justifyContent: "center" },
-  btnText: { fontFamily: fonts.ui.family, fontWeight: "600", fontSize: 15 },
-  soon: { fontFamily: fonts.ui.family, fontSize: 13 },
-  settings: { minHeight: 44, justifyContent: "center", alignSelf: "center", marginTop: 12 },
+  head: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", minHeight: 48 },
+  title: { fontFamily: fonts.display.family, fontSize: 32, fontWeight: "600" },
+  pickRow: { flexDirection: "row", alignItems: "center" },
+  flex: { flex: 1 },
 });
