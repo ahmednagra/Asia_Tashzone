@@ -9,7 +9,7 @@ import argparse
 import signal
 import time
 
-from app.Services import AccountService, ModerationService, SanctionService
+from app.Services import AccountService, ModerationService, SanctionService, SessionService
 from app.Services import FeedbackService as feedback
 from app.Services import MatchmakingService as matchmaking
 from app.Services import RoomService as rooms
@@ -35,6 +35,7 @@ def run_once() -> dict[str, int]:
             ("evidence_purged", lambda: ModerationService.purge_evidence(db, settings)),
             ("sanctions_purged", lambda: SanctionService.purge_sanctions(db, settings)),
             ("auth_codes_purged", lambda: AccountService.purge_codes(db, settings)),
+            ("sessions_purged", lambda: SessionService.purge(db, settings)),
         ):
             total = 0
             for _ in range(20):  # bounded: at most 20 batches per rule per pass

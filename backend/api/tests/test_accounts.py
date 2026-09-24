@@ -173,3 +173,70 @@ def test_startup_creates_missing_tables_only(client):
         conn.execute(text("DROP TABLE auth_codes"))
     assert create_missing_tables() == ["auth_codes"]
     assert "auth_codes" in inspect(engine()).get_table_names()
+
+
+def bearer(token):
+    return {"Authorization": f"Bearer {token}"}
+
+
+def test_logout_ends_only_this_phones_session(client, mail):
+    _, phone_a = signed_up(client, mail)
+    phone_b = bearer(client.post("/api/v1/auth/login", json={"email": "asha@example.com", "password": "cards2026"}).json()["token"])
+    assert client.post("/api/v1/auth/logout", headers=phone_a).status_code == 204
+    assert client.get("/api/v1/players/me", headers=phone_a).json()["error"]["code"] == "UNAUTHORIZED"
+    assert client.get("/api/v1/players/me", headers=phone_b).status_code == 200
+
+
+def test_guest_tokens_are_sessions_too(client):
+    from test_players import claims
+
+    _, h = register(client)
+    assert "sid" in claims(h["Authorization"][7:])
+    assert client.post("/api/v1/auth/logout", headers=h).status_code == 204
+    assert client.get("/api/v1/players/me", headers=h).status_code == 401
+
+
+def test_sign_out_everywhere_keeps_this_phone_and_ends_old_style_tokens(client, mail):
+    from app.Core.security import sign_player_token
+
+    pid, phone_a = signed_up(client, mail)
+    phone_b = bearer(client.post("/api/v1/auth/login", json={"email": "asha@example.com", "password": "cards2026"}).json()["token"])
+    legacy = bearer(sign_player_token("p" * 40, pid, 1, 30))
+    assert client.get("/api/v1/players/me", headers=legacy).status_code == 200
+    fresh = bearer(client.post("/api/v1/auth/sign-out-everywhere", headers=phone_a).json()["token"])
+    for h in (phone_a, phone_b, legacy):
+        assert client.get("/api/v1/players/me", headers=h).status_code == 401
+    assert client.get("/api/v1/players/me", headers=fresh).status_code == 200
+
+
+def test_a_session_cannot_be_used_for_another_player(client):
+    from test_players import claims
+
+    from app.Core.security import sign_player_token
+
+    _, ha = register(client, "A")
+    pid_b, _ = register(client, "B")
+    sid_a = claims(ha["Authorization"][7:])["sid"]
+    forged = bearer(sign_player_token("p" * 40, pid_b, 1, 30, sid_a))
+    assert client.get("/api/v1/players/me", headers=forged).status_code == 401
+
+
+def test_old_and_revoked_sessions_are_purged(client):
+    from datetime import timedelta
+
+    from app.Models import PlayerSession, now
+    from app.Services import SessionService
+    from config.database import get_db
+    from config.settings import get_settings
+
+    register(client)
+    _, h = register(client, "B")
+    client.post("/api/v1/auth/logout", headers=h)
+    db = next(get_db())
+    for s in db.query(PlayerSession).all():
+        if s.revoked_at is not None:
+            s.revoked_at = now() - timedelta(days=31)
+    db.commit()
+    assert SessionService.purge(db, get_settings()) == 1
+    assert db.query(PlayerSession).count() == 1
+    db.close()

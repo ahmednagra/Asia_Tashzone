@@ -11,7 +11,6 @@ from sqlalchemy.orm import Session
 
 from app.Core.enforcement import aware
 from app.Core.errors import ApiError, unprocessable
-from app.Core.security import sign_player_token
 from app.Models import (
     AuthCode,
     Block,
@@ -24,12 +23,14 @@ from app.Models import (
     PlayerAccount,
     PlayerIdentity,
     PlayerProgress,
+    PlayerSession,
     PlayerStat,
     Report,
     ReportEvidence,
     RoomSeat,
     now,
 )
+from app.Services import SessionService
 from config.settings import Settings
 
 ADULT_AGE = 18
@@ -40,10 +41,6 @@ def protected_from_birth_year(birth_year: int | None, today: datetime | None = N
     if birth_year is None:
         return True
     return (today or now()).year - birth_year <= ADULT_AGE
-
-
-def token_for(settings: Settings, p: Player) -> str:
-    return sign_player_token(settings.player_token_secret, p.id, p.token_generation, settings.player_token_days)
 
 
 def register(db: Session, settings: Settings, display_name: str, avatar_id: int, birth_year: int | None, protected: bool | None) -> tuple[Player, str]:
@@ -58,7 +55,7 @@ def register(db: Session, settings: Settings, display_name: str, avatar_id: int,
     db.flush()  # the player row must exist before rows that reference it
     db.add(ParentalSettings(player_id=p.id))
     db.commit()
-    return p, token_for(settings, p)
+    return p, SessionService.issue(db, settings, p)
 
 
 def parental(db: Session, p: Player) -> ParentalSettings:
@@ -159,6 +156,7 @@ def delete_player(db: Session, p: Player) -> None:
         db.execute(delete(AuthCode).where(AuthCode.email == account.email).execution_options(synchronize_session=False))
     for stmt in (
         delete(PlayerAccount).where(PlayerAccount.player_id == p.id),
+        delete(PlayerSession).where(PlayerSession.player_id == p.id),
         delete(Feedback).where(Feedback.player_id == p.id),
         delete(MatchmakingTicket).where(MatchmakingTicket.player_id == p.id),
         delete(Block).where(Block.player_id == p.id),

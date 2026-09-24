@@ -1,6 +1,6 @@
 /** Room/matchmaking HTTP. Keeps the API's stable error code (`{error:{code}}`), stores the guest token on the device, and bounds every call with a timeout. */
 import { API_URL } from "../../lib/env";
-import { clearToken, readToken, sessionKind, writeToken } from "../../services/session";
+import { clearToken, forgetPendingLogout, readToken, rememberPendingLogout, sessionKind, takePendingLogout, writeToken } from "../../services/session";
 import type { Provider, ProviderCredential } from "../../services/googleAuth";
 import type { AppConfig, LinkView, MeView, ProgressBody, ProgressView, RestoreView, SessionView } from "../../types/api";
 import type { JoinTicket, RoomView, TicketView } from "./types";
@@ -45,7 +45,24 @@ async function registerGuest(displayName: string): Promise<string> {
   return me.token;
 }
 
+let pendingChecked = false;
+
+async function flushPendingLogout(): Promise<void> {
+  if (pendingChecked) return;
+  pendingChecked = true;
+  const stale = await takePendingLogout();
+  if (!stale) return;
+  try {
+    await request<void>("/api/v1/auth/logout", { method: "POST", token: stale });
+    await forgetPendingLogout();
+  } catch (e) {
+    if (e instanceof ApiFailure && e.status === 401) await forgetPendingLogout();
+    else pendingChecked = false;
+  }
+}
+
 async function token(displayName: string, fresh = false): Promise<string> {
+  flushPendingLogout().catch(() => {});
   if (!fresh) {
     const saved = await readToken();
     if (saved) return saved;
@@ -79,7 +96,17 @@ export async function freshGuest(displayName: string): Promise<void> {
 }
 
 export async function signOut(): Promise<void> {
+  const current = await readToken();
   await clearToken();
+  if (!current) return;
+  try {
+    await request<void>("/api/v1/auth/logout", { method: "POST", token: current });
+  } catch (e) {
+    if (!(e instanceof ApiFailure) || e.status !== 401) {
+      await rememberPendingLogout(current);
+      pendingChecked = false;
+    }
+  }
 }
 
 const identity = (c: ProviderCredential) => ({ provider: c.provider, id_token: c.idToken, ...(c.nonce ? { nonce: c.nonce } : {}) });

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, BackgroundTasks, Request
 
-from app.Core.security import DB, Config, CurrentPlayer
+from app.Core.security import DB, AnyPlayer, Config, CurrentPlayer
 from app.Http.Controllers.AccountController import AccountController
 from app.Schemas.accounts import CodeLoginIn, CodeRequestIn, PasswordChangeIn, PasswordLoginIn, PasswordResetIn, SignupIn
 
@@ -35,6 +35,11 @@ def reset_password(body: PasswordResetIn, request: Request, db: DB, settings: Co
 @router.put("/password")
 def change_password(body: PasswordChangeIn, request: Request, p: CurrentPlayer, db: DB, settings: Config):
     return AccountController.change_password(body, request, p, db, settings)
+
+
+@router.post("/logout", status_code=204)
+def sign_out(request: Request, p: AnyPlayer, db: DB):
+    return AccountController.sign_out(request, p, db)
 
 
 @router.post("/sign-out-everywhere")

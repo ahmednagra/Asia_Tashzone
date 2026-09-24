@@ -2,7 +2,7 @@ import hashlib
 
 from fastapi import BackgroundTasks, Request
 
-from app.Core.security import DB, Config, CurrentPlayer
+from app.Core.security import DB, AnyPlayer, Config, CurrentPlayer
 from app.Middleware.rate_limit import limit, limit_key
 from app.Schemas.accounts import CodeLoginIn, CodeRequestIn, PasswordChangeIn, PasswordLoginIn, PasswordResetIn, SignupIn
 from app.Services import AccountService
@@ -51,6 +51,10 @@ class AccountController:
     def change_password(body: PasswordChangeIn, request: Request, p: CurrentPlayer, db: DB, settings: Config):
         limit(request, f"password:{p.id}", per_hour=10, per_ip=False)
         return AccountService.change_password(db, settings, p, body.current_password, body.new_password)
+
+    @staticmethod
+    def sign_out(request: Request, p: AnyPlayer, db: DB):
+        AccountService.sign_out(db, getattr(request.state, "session_id", None))
 
     @staticmethod
     def sign_out_everywhere(p: CurrentPlayer, db: DB, settings: Config):

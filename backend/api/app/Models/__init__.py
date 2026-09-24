@@ -1,5 +1,5 @@
 """All models, importable as `from app.Models import Player` (and registered on Base.metadata for Alembic)."""
-from app.Models.accounts import AuthCode, PlayerAccount  # noqa: F401
+from app.Models.accounts import AuthCode, PlayerAccount, PlayerSession  # noqa: F401
 from app.Models.directory import Hand, InputRecordRow, RoomDirectory  # noqa: F401
 from app.Models.enforcement import Appeal, ModerationAudit, Moderator, ReportEvidence, Sanction, SanctionReport  # noqa: F401
 from app.Models.enums import (  # noqa: F401

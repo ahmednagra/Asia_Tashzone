@@ -38,3 +38,16 @@ class AuthCode(Base):
     created_at: Mapped[datetime] = mapped_column(TS, default=now, server_default=func.now())
     expires_at: Mapped[datetime] = mapped_column(TS)
     used_at: Mapped[datetime | None] = mapped_column(TS, nullable=True)
+
+
+class PlayerSession(Base):
+    __tablename__ = "player_sessions"
+    __table_args__ = (
+        Index("ix_player_sessions_player_id", "player_id"),
+        Index("ix_player_sessions_created_at", "created_at"),
+    )
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    player_id: Mapped[str] = mapped_column(ForeignKey("players.id", ondelete="CASCADE"))
+    created_at: Mapped[datetime] = mapped_column(TS, default=now, server_default=func.now())
+    last_seen_at: Mapped[datetime] = mapped_column(TS, default=now, server_default=func.now())
+    revoked_at: Mapped[datetime | None] = mapped_column(TS, nullable=True)

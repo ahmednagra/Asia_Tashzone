@@ -6,6 +6,7 @@ export type SessionKind = "guest" | "account";
 const KEY = "tashzone.session.v1";
 const KIND_KEY = "tashzone.session.kind.v1";
 const LEGACY_KEY = "tashzone.online.account.v1";
+const PENDING_LOGOUT_KEY = "tashzone.session.pending-logout.v1";
 
 let cached: { token: string | null; kind: SessionKind } | undefined;
 
@@ -36,6 +37,18 @@ export async function writeToken(token: string, kind: SessionKind): Promise<void
   cached = { token, kind };
   await SecureStore.setItemAsync(KEY, token);
   await SecureStore.setItemAsync(KIND_KEY, kind);
+}
+
+export async function rememberPendingLogout(token: string): Promise<void> {
+  await SecureStore.setItemAsync(PENDING_LOGOUT_KEY, token).catch(() => {});
+}
+
+export async function takePendingLogout(): Promise<string | null> {
+  return SecureStore.getItemAsync(PENDING_LOGOUT_KEY).catch(() => null);
+}
+
+export async function forgetPendingLogout(): Promise<void> {
+  await SecureStore.deleteItemAsync(PENDING_LOGOUT_KEY).catch(() => {});
 }
 
 export async function clearToken(): Promise<void> {

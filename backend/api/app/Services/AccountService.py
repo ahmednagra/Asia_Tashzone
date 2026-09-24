@@ -12,8 +12,7 @@ from sqlalchemy.orm import Session
 from app.Core.enforcement import aware, banned_error, is_banned
 from app.Core.errors import ApiError, conflict, forbidden
 from app.Models import AuthCode, Player, PlayerAccount, now
-from app.Services import Mailer
-from app.Services.PlayerService import token_for
+from app.Services import Mailer, SessionService
 from app.Utils.Logger import logger
 from config.settings import Settings
 
@@ -131,7 +130,7 @@ def _session(db: Session, settings: Settings, p: Player, account: PlayerAccount)
     account.last_login_at = now()
     p.last_seen_at = now()
     db.commit()
-    return {"player_id": p.id, "token": token_for(settings, p)}
+    return {"player_id": p.id, "token": SessionService.issue(db, settings, p)}
 
 
 def signup(db: Session, settings: Settings, p: Player, email: str, code: str, password: str) -> dict:
@@ -183,7 +182,7 @@ def reset_password(db: Session, settings: Settings, email: str, code: str, new_p
         raise ApiError(400, "INVALID_CODE", "That code is wrong or has expired")
     account.password_hash = hash_password(new_password)
     account.password_changed_at = now()
-    p.token_generation += 1
+    SessionService.revoke_all(db, p)
     logger.info("password_reset", extra={"player_id": p.id})
     return _session(db, settings, p, account)
 
@@ -197,15 +196,18 @@ def change_password(db: Session, settings: Settings, p: Player, current: str, ne
     _check_password_rules(new_password, account.email)
     account.password_hash = hash_password(new_password)
     account.password_changed_at = now()
-    p.token_generation += 1
+    SessionService.revoke_all(db, p)
     logger.info("password_changed", extra={"player_id": p.id})
     return _session(db, settings, p, account)
 
 
 def sign_out_everywhere(db: Session, settings: Settings, p: Player) -> dict:
-    p.token_generation += 1
-    db.commit()
-    return {"player_id": p.id, "token": token_for(settings, p)}
+    SessionService.revoke_all(db, p)
+    return {"player_id": p.id, "token": SessionService.issue(db, settings, p)}
+
+
+def sign_out(db: Session, session_id: str | None) -> None:
+    SessionService.revoke(db, session_id)
 
 
 def email_of(db: Session, p: Player) -> str | None:
