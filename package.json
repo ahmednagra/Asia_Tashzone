@@ -29,5 +29,26 @@
     "vite": "8.3.0",
     "vitest": "5.0.1",
     "ws": "8.21.3"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "react-native-tcp-socket@6.4.3": "patches/react-native-tcp-socket@6.4.3.patch",
+      "react-native-safe-area-context@5.7.0": "patches/react-native-safe-area-context@5.7.0.patch",
+      "@react-native-async-storage/async-storage@2.2.0": "patches/@react-native-async-storage__async-storage@2.2.0.patch",
+      "expo-file-system@57.0.7": "patches/expo-file-system@57.0.7.patch",
+      "expo-modules-core@57.0.19": "patches/expo-modules-core@57.0.19.patch"
+    },
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "react-dom"
+      ],
+      "allowedVersions": {
+        "react-native-reanimated>react-native-worklets": "0.10"
+      }
+    },
+    "allowedDeprecatedVersions": {
+      "text-encoding": "0.7.0",
+      "uuid": "7.0.3"
+    }
   }
 }
