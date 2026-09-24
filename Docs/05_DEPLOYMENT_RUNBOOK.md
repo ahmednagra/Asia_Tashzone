@@ -249,7 +249,7 @@ The API address is compiled in from `EXPO_PUBLIC_API_URL` (public, `https://` on
 | Build | Command (PC, in `tashzone/app`) |
 |---|---|
 | EAS test APK | `npx eas-cli login` then `npx eas-cli build --profile preview --platform android` |
-| Local release APK | `"D:\Office Works\tashzone\app\scripts\build-apk.bat"` (add `install` to push to a phone) — builds `assembleRelease`, raises `versionCode`, sets and prints `EXPO_PUBLIC_API_URL` |
+| Local release APK | `powershell -ExecutionPolicy Bypass -File D:\CardGame\app\scripts\build-apk.ps1` (add `-Install` to push to a connected phone). Builds from the repo itself; the path must have no spaces (use `D:\CardGame`). First run installs JDK 17 and the Android SDK into `D:\android-toolchain`; then `assembleRelease`, signed from `app\credentials`. APK and log: `build\` at the repo root |
 | Play build and upload | `npx eas-cli build --profile production --platform android` then `npx eas-cli submit --profile production --platform android` (Internal testing; first upload by hand) |
 
 **Two-phone test:** Phone 1 → online room → Create → Share code; Phone 2 → Join → code or `tashzone://room/CODE`; Phone 1 → Start; play to the end; `tz logs --tail=50 match-server` shows the room and result with no errors.
