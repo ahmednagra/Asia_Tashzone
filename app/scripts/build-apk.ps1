@@ -80,7 +80,7 @@ else { Write-Host 'Signing: DEBUG key (no app\credentials\keystore.properties): 
 
 Step 4 'pnpm install'
 Set-Location $Root
-Run 'pnpm' @('install', '--frozen-lockfile')
+Run 'pnpm' @('install', '--frozen-lockfile', '--config.confirmModulesPurge=false')
 
 Step 5 'build shared packages'
 Run 'pnpm' @('build')
