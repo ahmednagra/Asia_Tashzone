@@ -14,3 +14,4 @@ __pycache__/
 app/android/
 app/ios/
 app/.expo/
+/build/
