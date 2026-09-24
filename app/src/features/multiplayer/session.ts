@@ -32,7 +32,6 @@ export interface SessionState {
   /** seat names as the table shows them */
   names: string[];
   conn: ClientState["status"] | null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   view: any;
   controls: readonly Control[] | undefined;
   deadline: number | null;
@@ -218,7 +217,6 @@ type ClientBase = Pick<MatchClientOptions, "url" | "joinToken" | "engineBuildHas
  * so the wait, table and summary screens read one shape. `extra` sees every state/message first-hand (same-Wi-Fi
  * uses it for join outcomes and the host-gone timer); it runs only while this run is current.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function startClient(current: () => boolean, base: ClientBase, extra?: { onState?: (s: ClientState) => void; onMessage?: (m: any) => void }): MatchClient {
   const m: MatchClient = new MatchClient({
     ...base, versionCode: VERSION_CODE, randomSeed: randomSeedHex,
