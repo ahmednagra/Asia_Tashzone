@@ -44,6 +44,6 @@ const s = StyleSheet.create({
   flex: { flex: 1 },
   label: { fontFamily: fonts.ui.semibold, fontSize: 16 },
   sub: { fontFamily: fonts.ui.family, fontSize: 13, lineHeight: 18, marginTop: 2 },
-  tag: { fontFamily: fonts.ui.family, fontSize: 12 },
+  tag: { fontFamily: fonts.ui.family, fontSize: 13 },
   count: { fontFamily: fonts.ui.family, fontSize: 13 },
 });

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
 import { Caption } from "../../components/ui/Caption";
+import { ConfirmSheet } from "../../components/ui/ConfirmSheet";
 import { GoldButton } from "../../components/ui/GoldButton";
 import { Keypad } from "../../components/ui/Keypad";
 import { SettingsGroup, SettingsScreen } from "../../components/ui/Settings";
@@ -15,7 +16,7 @@ import { makePinRecord } from "./pinCrypto";
 /** Keypad with the lock-out and wrong-PIN messages of a `PinGate`; `note` is an extra line (e.g. a mismatch warning). */
 export function PinEntry({ prompt, gate, onComplete, note }: { prompt: string; gate: PinGate; onComplete: (pin: string) => void; note?: string | null }) {
   const locked = gate.secondsLeft > 0;
-  const problem = locked ? T.parent.lockedFor(gate.secondsLeft) : gate.triesLeft !== undefined ? T.parent.wrong(gate.triesLeft) : note;
+  const problem = locked ? T.parentExtra.lockedFor(gate.secondsLeft) : gate.failed ? T.parentExtra.checkFailed : gate.triesLeft !== undefined ? T.parent.wrong(gate.triesLeft) : note;
   return (
     <>
       <Caption center>{prompt}</Caption>
@@ -31,7 +32,9 @@ export function ParentScreen() {
   const { profile: p, update } = useProfile();
   const gate = usePinGate();
   const [unlocked, setUnlocked] = useState(false);
+  const [confirmRemove, setConfirmRemove] = useState(false);
   const t = T.parent;
+  const x = T.parentExtra;
 
   if (gate.hasPin && !unlocked) {
     return (
@@ -43,7 +46,7 @@ export function ParentScreen() {
   }
 
   const set = (k: "text" | "online" | "wifi") => (v: boolean) => update({ parent: { ...p.parent, [k]: v } });
-  const removePin = () => update({ parent: { ...p.parent, pinHash: undefined, salt: undefined, lock: undefined } });
+  const removePin = () => { setConfirmRemove(false); update({ parent: { ...p.parent, pinHash: undefined, salt: undefined, lock: undefined } }); };
   return (
     <SettingsScreen title={t.title}>
       {!gate.hasPin ? <StatusBanner tone="warn" title={t.noPinTitle} body={t.noPinBody} /> : null}
@@ -54,7 +57,9 @@ export function ParentScreen() {
       </SettingsGroup>
       <StatusBanner tone="warn" title={t.installTitle} body={t.installBody} />
       <GoldButton label={gate.hasPin ? t.changePin : t.setPin} onPress={() => router.push("/settings/parent-pin")} />
-      {gate.hasPin ? <GoldButton kind="glass" label={t.removePin} onPress={removePin} /> : null}
+      {gate.hasPin ? <GoldButton kind="glass" label={t.removePin} onPress={() => setConfirmRemove(true)} /> : null}
+      <ConfirmSheet visible={confirmRemove} title={x.removeTitle} facts={x.removeFacts} confirmLabel={x.removeDo} cancelLabel={x.keep}
+        onConfirm={removePin} onCancel={() => setConfirmRemove(false)} />
     </SettingsScreen>
   );
 }
@@ -69,6 +74,7 @@ export function ParentPinScreen() {
   const [step, setStep] = useState<Step>(gate.hasPin ? "current" : "fresh");
   const [first, setFirst] = useState("");
   const [note, setNote] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
   const t = T.pin;
 
   const done = async (pin: string) => {
@@ -79,9 +85,18 @@ export function ParentPinScreen() {
       setFirst(pin);
       setStep("confirm");
     } else if (pin === first) {
-      const rec = await makePinRecord(pin);
-      update({ parent: { ...p.parent, ...rec, lock: undefined } });
-      router.back();
+      setSaving(true);
+      try {
+        const rec = await makePinRecord(pin);
+        update({ parent: { ...p.parent, ...rec, lock: undefined } });
+        router.back();
+      } catch {
+        setNote(T.parentExtra.saveFailed);
+        setFirst("");
+        setStep("fresh");
+      } finally {
+        setSaving(false);
+      }
     } else {
       setNote(t.mismatch);
       setFirst("");
@@ -93,7 +108,7 @@ export function ParentPinScreen() {
   return (
     <SettingsScreen title={t.title}>
       <Caption center>{t.intro}</Caption>
-      <PinEntry key={step} prompt={prompt} gate={step === "current" ? gate : { ...gate, secondsLeft: 0, triesLeft: undefined }} onComplete={done} note={note} />
+      <PinEntry key={step} prompt={prompt} gate={step === "current" ? gate : { ...gate, secondsLeft: 0, triesLeft: undefined, failed: false, busy: saving }} onComplete={done} note={note} />
     </SettingsScreen>
   );
 }

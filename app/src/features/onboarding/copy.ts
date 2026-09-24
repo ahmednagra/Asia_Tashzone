@@ -1,6 +1,6 @@
 /** All onboarding strings in one place (translate later). */
 export const T = {
-  tagline: "Sixteen games from the subcontinent, on one table. Real rules, fair deals.",
+  tagline: "Card games from the subcontinent, on one table. Real rules, fair deals.",
   start: "Start playing",
   continueAs: (n: string) => `Continue as ${n}`,
   privacy: "No sign-up. Everything stays on this phone.",
@@ -9,8 +9,10 @@ export const T = {
   cont: "Continue",
   yearTitle: "Birth year",
   yearBody: "What year were you born? This stays on your phone and is never sent anywhere.",
-  earlier: "Earlier",
-  later: "Later",
+  pickYear: "Pick your birth year",
+  pickHint: "Tap a year, or jump by 1 or 10 years.",
+  noYear: "Birth year, not chosen",
+  yearLabel: (y: number) => `Birth year ${y}`,
   protect: "Skip this and TashZone uses Protected Mode: no typing to other players, and online rooms stay off until a parent turns them on.",
   bornIn: (y: number) => `I was born in ${y}`,
   skip: "Skip for now",
@@ -22,7 +24,7 @@ export const T = {
   nameTitle: "Your table name",
   nameLabel: "Your name", namePh: "Type a name", suggest: "Suggest another", clear: "Clear",
   pickAvatar: "Pick an avatar",
-  nameNote: "Type any name you like, or take one of ours. Suggested names never contain personal details, and the avatars are drawn — there are no photographs anywhere in TashZone.",
+  nameNote: "Any name you like. Avatars are drawn, never photographs.",
 } as const;
 
 export const LANGS = [

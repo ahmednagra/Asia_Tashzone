@@ -84,4 +84,16 @@ export const T = {
     soon: "Coming soon",
     note: "The table still uses the standard green felt. These are previews of what is planned; choosing one is not possible yet.",
   },
+  parentExtra: {
+    lockedFor: (s: number) => `Too many wrong tries. Try again in ${s >= 60 ? `${Math.ceil(s / 60)} min` : `${s} s`}.`,
+    checkFailed: "The PIN could not be checked. Try again.",
+    saveFailed: "The PIN could not be saved. Try again.",
+    removeTitle: "Remove the parent PIN?",
+    removeFacts: [
+      { mark: "1", title: "Anyone can change these switches", body: "Without a PIN, anyone using this phone can turn chat, online play and Wi-Fi tables on or off." },
+      { mark: "2", title: "You can set a new PIN any time", body: "Parent controls keep their current settings." },
+    ],
+    removeDo: "Remove PIN",
+    keep: "Keep the PIN",
+  },
 } as const;

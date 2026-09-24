@@ -4,7 +4,7 @@ import { Caption } from "../../components/ui/Caption";
 import { SettingsScreen } from "../../components/ui/Settings";
 import { StatusBanner } from "../../components/ui/StatusBanner";
 import { useTheme } from "../../context/ThemeContext";
-import { fonts, material } from "../../theme/tokens";
+import { fonts } from "../../theme/tokens";
 import { T } from "./copy";
 
 /** Table cloth designs from the mockup (name, base colour, accent). Decorative data for the preview; not applied to the table yet. */
@@ -23,7 +23,7 @@ const DESIGNS: { name: string; base: string; accent: string }[] = [
 
 /** Table designs gallery: a preview only. The table always renders the standard felt, so nothing here can be chosen yet. */
 export function ThemesScreen() {
-  const { c } = useTheme();
+  const { c, t: room } = useTheme();
   const t = T.themes;
   return (
     <SettingsScreen title={t.title}>
@@ -31,7 +31,7 @@ export function ThemesScreen() {
       <StatusBanner tone="info" title={t.soon} body={t.note} />
       <View style={s.grid}>
         {DESIGNS.map((d) => (
-          <View key={d.name} accessible accessibilityLabel={`${d.name}, ${t.soon}`} style={[s.cell, { borderColor: material.line }]}>
+          <View key={d.name} accessible accessibilityLabel={`${d.name}, ${t.soon}`} style={[s.cell, { borderColor: room.surface.border, borderWidth: room.surface.borderWidth, borderRadius: room.shape.radius, backgroundColor: room.surface.bg }]}>
             <View style={[s.swatch, { backgroundColor: d.base }]}>
               <View style={[s.band, { backgroundColor: d.accent }]} />
             </View>
@@ -45,8 +45,8 @@ export function ThemesScreen() {
 
 const s = StyleSheet.create({
   grid: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
-  cell: { width: "30.5%", borderWidth: 1, borderRadius: 12, overflow: "hidden", opacity: 0.8 },
+  cell: { width: "30.5%", overflow: "hidden", opacity: 0.8 },
   swatch: { height: 64, justifyContent: "flex-end" },
   band: { height: 10 },
-  name: { fontFamily: fonts.ui.semibold, fontSize: 12, padding: 8, minHeight: 44 },
+  name: { fontFamily: fonts.ui.semibold, fontSize: 13, padding: 8, minHeight: 44 },
 });

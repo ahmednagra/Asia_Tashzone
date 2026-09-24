@@ -4,7 +4,7 @@ export type Lang = "en" | "ur" | "hi" | "ne" | "bn";
 const LANGS: readonly Lang[] = ["en", "ur", "hi", "ne", "bn"];
 
 /** Wrong-PIN tracking, persisted so restarting the app does not reset the lock-out. */
-export interface PinLock { fails: number; until: number }
+export interface PinLock { fails: number; level: number; left: number; mark?: number }
 
 export interface Profile {
   onboarded: boolean;
@@ -44,7 +44,7 @@ export function mergeProfile(raw: unknown): Profile {
   const r = obj(raw);
   const d = DEFAULT_PROFILE;
   const sound = obj(r.sound), parent = obj(r.parent), stats = obj(r.stats), lock = obj(parent.lock);
-  const hasLock = typeof lock.fails === "number" && typeof lock.until === "number";
+  const hasLock = typeof lock.fails === "number";
   return {
     onboarded: bool(r.onboarded, d.onboarded),
     lang: LANGS.includes(r.lang as Lang) ? (r.lang as Lang) : d.lang,
@@ -59,7 +59,7 @@ export function mergeProfile(raw: unknown): Profile {
     parent: {
       pinHash: typeof parent.pinHash === "string" && typeof parent.salt === "string" ? parent.pinHash : undefined,
       salt: typeof parent.pinHash === "string" && typeof parent.salt === "string" ? parent.salt : undefined,
-      lock: hasLock ? { fails: count(lock.fails, 0), until: count(lock.until, 0) } : undefined,
+      lock: hasLock ? { fails: count(lock.fails, 0), level: count(lock.level, 0), left: count(lock.left, 0) } : undefined,
       text: bool(parent.text, d.parent.text), online: bool(parent.online, d.parent.online), wifi: bool(parent.wifi, d.parent.wifi),
     },
     stats: { matches: count(stats.matches, 0), wins: count(stats.wins, 0), streak: count(stats.streak, 0), bhabhi: count(stats.bhabhi, 0) },

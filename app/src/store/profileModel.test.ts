@@ -27,8 +27,10 @@ describe("mergeProfile", () => {
 
   it("keeps a PIN hash only together with its salt, and a well-formed lock", () => {
     expect(mergeProfile({ parent: { pinHash: "h" } }).parent.pinHash).toBeUndefined();
-    const p = mergeProfile({ parent: { pinHash: "h", salt: "s", lock: { fails: 3, until: 99 } } });
-    expect(p.parent).toMatchObject({ pinHash: "h", salt: "s", lock: { fails: 3, until: 99 } });
+    const p = mergeProfile({ parent: { pinHash: "h", salt: "s", lock: { fails: 3, level: 2, left: 99, mark: 5 } } });
+    expect(p.parent).toMatchObject({ pinHash: "h", salt: "s" });
+    expect(p.parent.lock).toEqual({ fails: 3, level: 2, left: 99 });
+    expect(mergeProfile({ parent: { lock: { fails: 1, until: 99 } } }).parent.lock).toEqual({ fails: 1, level: 0, left: 0 });
     expect(mergeProfile({ parent: { lock: { fails: "x" } } }).parent.lock).toBeUndefined();
   });
 });

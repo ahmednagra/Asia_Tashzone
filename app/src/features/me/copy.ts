@@ -17,6 +17,11 @@ export const T = {
   recent: "Recent games",
   recentHint: "Games you played most recently, newest first",
   localOnly: "Your record lives on this phone only. Nothing is uploaded, and clearing the app's data clears it.",
+  passport: "Mehfil passport",
+  onDevice: "On this phone",
+  ranks: { ustad: "Mehfil Ustad", player: "Mehfil Player", rising: "Rising Cardist", novice: "Shagird (Novice)" },
+  rankFor: (wins: number) => (wins >= 50 ? "ustad" : wins >= 20 ? "player" : wins >= 5 ? "rising" : "novice") as "ustad" | "player" | "rising" | "novice",
+  streakLine: (n: number) => `Win streak: ${n} matches in a row`,
   sheet: {
     title: "Your avatar",
     body: "Drawn marks, not photographs: there are no pictures of people anywhere in TashZone.",

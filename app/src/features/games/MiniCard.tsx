@@ -16,6 +16,6 @@ export function MiniCard({ rank, suit, width = 54, rotate = 0, dx = 0, dy = 0 }:
 }
 const s = StyleSheet.create({
   card: { backgroundColor: cards.face, position: "absolute", shadowColor: "#000", shadowOpacity: 0.35, shadowRadius: 5, shadowOffset: { width: 0, height: 3 }, elevation: 4 },
-  rank: { position: "absolute", top: 3, left: 5, fontFamily: fonts.cardIndex.family, fontWeight: "700" },
+  rank: { position: "absolute", top: 3, left: 5, fontFamily: fonts.cardIndex.family },
   pip: { position: "absolute", bottom: 2, alignSelf: "center", left: 0, right: 0, textAlign: "center" },
 });
