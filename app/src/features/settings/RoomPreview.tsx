@@ -5,16 +5,21 @@ import { cards, fonts, type ThemeSpec } from "../../theme/tokens";
 import { ButtonFace, buttonText } from "../../components/ui/GoldButton";
 import { surfaceStyle } from "../../components/ui/GlassCard";
 import { CardBack } from "../play/table/CardBack";
+import { U } from "../../components/ui/copy";
+import { useTheme } from "../../context/ThemeContext";
+import { displayFace } from "../../i18n";
 
 const FACES = [["A", "♠", "S"], ["K", "♥", "H"], ["Q", "♦", "D"]] as const;
 
 export function RoomPreview({ t, on, fourColor, onPress }: { t: ThemeSpec; on: boolean; fourColor: boolean; onPress: () => void }) {
   const suits = fourColor ? cards.fourColor : cards.twoColor;
+  const { lang } = useTheme();
   const caps = t.type.titleCase === "uppercase";
+  const latin = lang === "en";
   return (
-    <Pressable accessibilityRole="radio" accessibilityState={{ selected: on }} accessibilityLabel={`${t.label.en}. ${t.story}`} onPress={onPress}
+    <Pressable accessibilityRole="radio" accessibilityState={{ selected: on }} accessibilityLabel={`${t.label[lang]}. ${t.story[lang]}`} onPress={onPress}
       style={({ pressed }) => [s.room, { backgroundColor: t.c.bg, borderColor: on ? t.accent.color : t.c.borderSubtle, borderWidth: on ? 2 : 1, borderRadius: Math.max(8, t.shape.radius) }, pressed && { opacity: 0.9 }]}>
-      <Text numberOfLines={1} style={[s.name, { color: t.accent.color, fontFamily: t.type.display, fontSize: caps ? 15 : 20, letterSpacing: t.type.tracking * 0.6, textTransform: t.type.titleCase }]}>{t.label.en}</Text>
+      <Text numberOfLines={1} style={[s.name, { color: t.accent.color, letterSpacing: t.type.tracking * 0.6, textTransform: t.type.titleCase }, displayFace(t.type.display, caps && latin ? 15 : 20, lang)]}>{t.label[lang]}</Text>
       <View style={[s.feltRim, { borderRadius: t.shape.felt, backgroundColor: t.felt.rimStyle === "double" ? t.felt.deep : t.felt.rim, borderColor: t.felt.rim, borderWidth: t.felt.rimStyle === "double" ? 2 : 0 }]}>
         <LinearGradient colors={[t.felt.lit, t.felt.base, t.felt.deep]} start={{ x: 0.3, y: 0 }} end={{ x: 0.7, y: 1 }} style={[s.felt, { borderRadius: Math.max(3, t.shape.felt - 3) }]}>
           {t.felt.bands.map((b, i) => <View key={b} style={[s.band, { backgroundColor: b, top: `${18 + i * 44}%` }]} />)}
@@ -29,7 +34,7 @@ export function RoomPreview({ t, on, fourColor, onPress }: { t: ThemeSpec; on: b
         <Text style={[s.num, { color: t.value.bid, fontFamily: t.type.numerals }]}>4</Text>
         <Text style={[s.num, { color: t.value.coins, fontFamily: t.type.numerals }]}>85</Text>
       </View>
-      <ButtonFace t={t} style={s.btn}><Text style={[s.btnText, buttonText(t)]}>Play</Text></ButtonFace>
+      <ButtonFace t={t} style={s.btn}><Text numberOfLines={1} style={[s.btnText, buttonText(t)]}>{U.play}</Text></ButtonFace>
       <Text style={[s.check, { color: on ? t.accent.color : "transparent" }]}>●</Text>
     </Pressable>
   );

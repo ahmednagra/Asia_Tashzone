@@ -15,14 +15,13 @@ import { T } from "./copy";
 
 export function SettingsHome() {
   const router = useRouter();
-  const { c, t: room, fourColor, calm } = useTheme();
+  const { c, t: room, fourColor, calm, lang, rtl } = useTheme();
   const { profile: p } = useProfile();
   const [aboutOpen, setAboutOpen] = useState(false);
   const t = T.settings;
   const go = (href: string) => () => router.push(href as Href);
-  const onOff = (v: boolean) => (v ? t.on : t.off);
   const version = Constants.expoConfig?.version ?? "0.1.0";
-  const looks = [room.label.en, fourColor ? t.fourColor : null, calm ? t.calm : null].filter(Boolean).join(" · ");
+  const looks = [room.label[lang], fourColor ? t.fourColor : null, calm ? t.calm : null].filter(Boolean).join(" · ");
 
   return (
     <SettingsScreen title={t.title} back={false}>
@@ -35,17 +34,17 @@ export function SettingsHome() {
           <Text style={[s.name, { color: c.text }]} numberOfLines={1}>{p.name || t.player}</Text>
           <Text style={[s.stats, { color: c.textSecondary }]} numberOfLines={1}>{t.statsLine(p.stats.matches, p.stats.wins)}</Text>
         </View>
-        <Text style={{ color: room.accent.color, fontSize: 22 }}>›</Text>
+        <Text style={{ color: room.accent.color, fontSize: 22 }}>{rtl ? "‹" : "›"}</Text>
       </Pressable>
 
       <SettingsGroup title={t.groupLook}>
         <NavRow icon="◐" title={t.looks} caption={looks} onPress={go("/settings/appearance")} />
-        <NavRow icon="▶" title={t.playing} caption={`${t.hints} ${onOff(p.hints)} · ${t.clock} ${onOff(p.timer)}`} onPress={go("/settings/play")} />
-        <NavRow icon="♪" title={t.sound} caption={`${p.sound.master ? t.soundOn : t.silent} · ${t.haptics} ${onOff(p.sound.haptics)}`} onPress={go("/settings/sound")} />
+        <NavRow icon="▶" title={t.playing} caption={t.playLine(p.hints, p.timer)} onPress={go("/settings/play")} />
+        <NavRow icon="♪" title={t.sound} caption={t.soundLine(p.sound.master, p.sound.haptics)} onPress={go("/settings/sound")} />
       </SettingsGroup>
 
       <SettingsGroup title={t.groupFamily}>
-        <NavRow icon="A" title={t.language} caption={t.langNames[p.lang]} onPress={go("/onboarding/language")} />
+        <NavRow icon="A" title={t.language} caption={t.langNames[p.lang]} onPress={go("/onboarding/language?from=settings")} />
         <NavRow icon="⚿" title={t.parent} badge={p.parent.pinHash ? t.pinBadge : undefined} caption={p.parent.pinHash ? t.pinSet : t.pinNone} onPress={go("/settings/parent")} />
         <NavRow icon="▣" title={t.account} caption={t.accountHint} onPress={go("/settings/account")} />
       </SettingsGroup>

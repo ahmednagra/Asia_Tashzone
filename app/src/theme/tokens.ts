@@ -22,8 +22,8 @@ export type HapticLevel = "off" | "gentle" | "crisp" | "firm";
 
 export interface ThemeSpec {
   id: ThemeId;
-  label: { en: string; ur: string };
-  story: string;
+  label: { en: string; ur: string; hi: string; ne: string; bn: string };
+  story: { en: string; ur: string; hi: string; ne: string; bn: string };
   c: SemanticColors;
   accent: { color: string; on: string; dim: string; line: string; lineHard: string };
   value: { points: string; bid: string; coins: string };
@@ -42,7 +42,14 @@ export interface ThemeSpec {
 }
 
 const mehfil: ThemeSpec = {
-  id: "emerald", label: { en: "Mehfil", ur: "محفل" }, story: "A lamp-lit courtyard gathering on green baize.",
+  id: "emerald", label: { en: "Mehfil", ur: "محفل", hi: "महफ़िल", ne: "महफिल", bn: "মেহফিল" },
+  story: {
+    en: "A lamp-lit courtyard gathering on green baize.",
+    ur: "چراغوں سے روشن صحن میں سبز کپڑے پر محفل۔",
+    hi: "दीयों से रोशन आँगन में हरे कपड़े पर जमी महफ़िल।",
+    ne: "दियोले उज्यालो आँगनमा हरियो कपडामाथि जमेको महफिल।",
+    bn: "প্রদীপ জ্বলা উঠোনে সবুজ কাপড়ের ওপর জমজমাট আসর।",
+  },
   c: {
     bg: "#070F0D", surface: "#0D1915", surfaceRaised: "#12231D",
     text: "#F4ECD8", textSecondary: "#A0BDB1", textMuted: "#8AA69B",
@@ -68,7 +75,14 @@ const mehfil: ThemeSpec = {
 };
 
 const darbar: ThemeSpec = {
-  id: "gold", label: { en: "Darbar", ur: "دربار" }, story: "A royal court on a wedding night: madder velvet and brass.",
+  id: "gold", label: { en: "Darbar", ur: "دربار", hi: "दरबार", ne: "दरबार", bn: "দরবার" },
+  story: {
+    en: "A royal court on a wedding night: madder velvet and brass.",
+    ur: "شادی کی رات کا شاہی دربار: گہرا سرخ مخمل اور پیتل۔",
+    hi: "शादी की रात का शाही दरबार: गहरा लाल मख़मल और पीतल।",
+    ne: "बिहेको रातको शाही दरबार: गाढा रातो मखमल र पित्तल।",
+    bn: "বিয়ের রাতের রাজদরবার: গাঢ় লাল মখমল আর পিতল।",
+  },
   c: {
     bg: "#140806", surface: "#1F0F0B", surfaceRaised: "#2B1510",
     text: "#F7EBD3", textSecondary: "#D9BFA0", textMuted: "#B0957A",
@@ -94,7 +108,14 @@ const darbar: ThemeSpec = {
 };
 
 const arcade: ThemeSpec = {
-  id: "arcade", label: { en: "Arcade", ur: "آرکیڈ" }, story: "A modern deck-builder: ink navy, deep blue felt, chunky slabs.",
+  id: "arcade", label: { en: "Arcade", ur: "آرکیڈ", hi: "आर्केड", ne: "आर्केड", bn: "আর্কেড" },
+  story: {
+    en: "A modern deck-builder: ink navy, deep blue felt, chunky slabs.",
+    ur: "جدید ڈیک بلڈر: سیاہی جیسا نیلا، گہرا نیلا کپڑا، موٹے بٹن۔",
+    hi: "आधुनिक डेक-बिल्डर: स्याही-सा नीला, गहरा नीला कपड़ा, मोटे बटन।",
+    ne: "आधुनिक डेक-बिल्डर: मसी जस्तो नीलो, गाढा नीलो कपडा, मोटा बटन।",
+    bn: "আধুনিক ডেক-বিল্ডার: কালির মতো নীল, গাঢ় নীল কাপড়, মোটা বোতাম।",
+  },
   c: {
     bg: "#0B1220", surface: "#131C2E", surfaceRaised: "#1B2640",
     text: "#F5F1E8", textSecondary: "#B8C2D6", textMuted: "#8D98AE",

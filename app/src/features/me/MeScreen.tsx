@@ -10,6 +10,7 @@ import { SectionLabel } from "../../components/ui/SectionLabel";
 import { SettingsScreen } from "../../components/ui/Settings";
 import { TagPill } from "../../components/ui/TagPill";
 import { useTheme } from "../../context/ThemeContext";
+import { displayFace } from "../../i18n";
 import { GAMES } from "../../constants/games";
 import { useGameNav } from "../../hooks/useGameNav";
 import { useProfile } from "../../store/profile";
@@ -25,7 +26,8 @@ const GLYPH = { S: "♠", H: "♥", D: "♦", C: "♣" } as const;
 const RECENT_SHOWN = 3;
 
 export function MeScreen() {
-  const { c, t } = useTheme();
+  const { c, t, lang } = useTheme();
+  const latin = lang === "en";
   const { profile: p } = useProfile();
   const nav = useGameNav();
   const [sheet, setSheet] = useState(false);
@@ -43,14 +45,14 @@ export function MeScreen() {
     <SettingsScreen title={T.title} back={false} right={<Chip label={T.table} onPress={() => nav.router.push("/themes")} />}>
       <GlassCard style={s.passport}>
         <View style={s.between}>
-          <Text style={[s.passportLabel, { color: t.accent.color }]}>{T.passport.toUpperCase()}</Text>
+          <Text style={[s.passportLabel, { color: t.accent.color }, !latin && s.plain]}>{latin ? T.passport.toUpperCase() : T.passport}</Text>
           <TagPill gold text={T.onDevice} />
         </View>
 
         <View style={s.who}>
           <AvatarBadge index={p.avatar} size={60} selected onPress={() => setSheet(true)} label={T.changeAvatar} />
           <View style={s.grow}>
-            <Text numberOfLines={1} style={[{ color: c.text, fontFamily: t.type.display, letterSpacing: t.type.tracking, textTransform: t.type.titleCase, fontSize: caps ? 18 : 22 }]}>
+            <Text numberOfLines={1} style={[{ color: c.text, letterSpacing: t.type.tracking, textTransform: t.type.titleCase }, displayFace(t.type.display, caps ? 18 : 22, lang)]}>
               {p.name || T.defaultName}
             </Text>
             <Text style={[s.rank, { color: t.value.coins }]}>{rankTitle}</Text>
@@ -84,7 +86,7 @@ export function MeScreen() {
       ) : (
         <GlassCard style={s.empty}>
           <Text style={[s.star, { color: t.accent.color }]}>✦</Text>
-          <Text style={[s.emptyTitle, { color: c.text, fontFamily: t.type.display, letterSpacing: t.type.tracking, textTransform: t.type.titleCase }]}>{T.emptyTitle}</Text>
+          <Text style={[s.emptyTitle, { color: c.text, letterSpacing: t.type.tracking, textTransform: t.type.titleCase }, displayFace(t.type.display, 18, lang)]}>{T.emptyTitle}</Text>
           <Caption center>{T.emptyBody}</Caption>
           {dealTarget ? <GoldButton label={T.deal} onPress={() => nav.deal(dealTarget)} style={s.full} /> : null}
           <GoldButton kind="glass" label={T.browse} onPress={() => nav.router.push("/games")} style={s.full} />
@@ -108,6 +110,7 @@ const s = StyleSheet.create({
   passport: { gap: 10 },
   between: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   passportLabel: { fontFamily: fonts.ui.bold, fontSize: 13, letterSpacing: 1.4 },
+  plain: { letterSpacing: 0 },
   who: { flexDirection: "row", alignItems: "center", gap: 12 },
   grow: { flex: 1, minWidth: 0, gap: 2 },
   rank: { fontFamily: fonts.ui.semibold, fontSize: 13 },
@@ -119,6 +122,6 @@ const s = StyleSheet.create({
   label: { fontFamily: fonts.ui.family, fontSize: 13 },
   empty: { alignItems: "center", gap: 8, paddingVertical: 20 },
   star: { fontSize: 24 },
-  emptyTitle: { fontSize: 18 },
+  emptyTitle: { textAlign: "center" },
   full: { alignSelf: "stretch" },
 });

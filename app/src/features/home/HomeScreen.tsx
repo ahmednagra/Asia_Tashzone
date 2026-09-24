@@ -6,6 +6,7 @@ import { Chip } from "../../components/ui/Chip";
 import { TagPill } from "../../components/ui/TagPill";
 import { StatBox } from "../../components/ui/StatBox";
 import { useTheme } from "../../context/ThemeContext";
+import { displayFace } from "../../i18n";
 import { useProfile } from "../../store/profile";
 import { useGameNav } from "../../hooks/useGameNav";
 import { GAMES } from "../../constants/games";
@@ -17,7 +18,7 @@ const PLAYABLE_IDS = GAMES.filter(playable).map((g) => g.id);
 
 /** Home (mockup "home"): wordmark + level, stats, "pick a game" shelf, join shortcuts. */
 export function Home() {
-  const { t } = useTheme();
+  const { t, lang } = useTheme();
   const { profile } = useProfile();
   const { open, deal, router } = useGameNav();
   const { stats, recent } = profile;
@@ -31,7 +32,7 @@ export function Home() {
     <Screen>
       <View style={s.head}>
         <Text accessibilityRole="header" numberOfLines={1}
-          style={[s.title, { color: t.accent.color, fontFamily: t.type.display, letterSpacing: t.type.tracking, textTransform: t.type.titleCase, fontSize: caps ? 26 : 32 }]}>{T.home.title}</Text>
+          style={[s.title, { color: t.accent.color, letterSpacing: t.type.tracking, textTransform: t.type.titleCase }, displayFace(t.type.display, caps ? 26 : 32, lang)]}>{T.home.title}</Text>
         <TagPill gold text={`★ ${T.home.level(level)}`} />
       </View>
       <StatBox items={[

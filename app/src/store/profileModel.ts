@@ -1,7 +1,8 @@
 /** Pure profile model (no React Native imports) so it can be unit-tested. The provider lives in profile.tsx. */
 
-export type Lang = "en" | "ur" | "hi" | "ne" | "bn";
-const LANGS: readonly Lang[] = ["en", "ur", "hi", "ne", "bn"];
+import { LANG_CODES as LANGS, type Lang } from "../i18n";
+
+export type { Lang };
 
 /** Wrong-PIN tracking, persisted so restarting the app does not reset the lock-out. */
 export interface PinLock { fails: number; level: number; left: number; mark?: number }

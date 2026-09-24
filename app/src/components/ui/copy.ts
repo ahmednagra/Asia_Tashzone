@@ -2,6 +2,7 @@ import { localized } from "../../i18n";
 
 export const U = localized("ui", {
   en: {
+    avatar: "Avatar",
     back: "Back",
     close: "Close",
     del: "Delete",
@@ -19,6 +20,7 @@ export const U = localized("ui", {
     play: "Play",
   },
   ur: {
+    avatar: "اوتار",
     back: "واپس",
     close: "بند کریں",
     del: "مٹائیں",
@@ -36,6 +38,7 @@ export const U = localized("ui", {
     play: "کھیلیں",
   },
   hi: {
+    avatar: "अवतार",
     back: "वापस",
     close: "बंद करें",
     del: "मिटाएँ",
@@ -53,6 +56,7 @@ export const U = localized("ui", {
     play: "खेलें",
   },
   ne: {
+    avatar: "अवतार",
     back: "फर्कनुहोस्",
     close: "बन्द गर्नुहोस्",
     del: "मेटाउनुहोस्",
@@ -70,6 +74,7 @@ export const U = localized("ui", {
     play: "खेल्नुहोस्",
   },
   bn: {
+    avatar: "অবতার",
     back: "ফিরে যান",
     close: "বন্ধ করুন",
     del: "মুছুন",

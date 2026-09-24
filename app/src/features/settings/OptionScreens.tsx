@@ -13,10 +13,10 @@ import { useFeel } from "../../utils/feel";
 import { RoomPreview } from "./RoomPreview";
 import { T } from "./copy";
 
-const ORIENTATIONS: { value: OrientationOption; label: string }[] = [
+const orientations = (): { value: OrientationOption; label: string }[] => [
   { value: "auto", label: T.looks.orientAuto }, { value: "portrait", label: T.looks.orientPortrait }, { value: "landscape", label: T.looks.orientLandscape },
 ];
-const HAPTICS: { value: HapticStrength; label: string }[] = [
+const haptics = (): { value: HapticStrength; label: string }[] => [
   { value: "off", label: T.sound.hapticOff }, { value: "gentle", label: T.sound.hapticGentle }, { value: "crisp", label: T.sound.hapticCrisp }, { value: "firm", label: T.sound.hapticFirm },
 ];
 const VOLUMES: { value: number; label: string }[] = [25, 50, 75, 100].map((v) => ({ value: v, label: `${v}%` }));
@@ -42,7 +42,7 @@ export function AppearanceScreen() {
         <ToggleRow label={t.large} hint={t.largeHint} value={prefs.largeCards} onChange={(v) => patch({ largeCards: v })} />
         <ToggleRow label={t.motion} hint={t.motionHint} value={prefs.reducedMotion} onChange={(v) => patch({ reducedMotion: v })} />
       </SettingsGroup>
-      <ChipGroup label={t.orientation} options={ORIENTATIONS} value={prefs.orientation} onChange={(v) => patch({ orientation: v })} />
+      <ChipGroup label={t.orientation} options={orientations()} value={prefs.orientation} onChange={(v) => patch({ orientation: v })} />
       <NavRow icon="▦" title={t.designs} caption={t.designsHint} onPress={() => router.push("/themes")} />
     </SettingsScreen>
   );
@@ -83,7 +83,7 @@ export function SoundScreen() {
         <ToggleRow label={t.haptics} hint={t.hapticsHint} value={p.sound.haptics} onChange={set("haptics")} />
       </SettingsGroup>
       <ChipGroup label={t.volume} options={VOLUMES} value={prefs.sfxVolume} onChange={(v) => { setPrefs((prev) => ({ ...prev, sfxVolume: v })); feel("tap"); }} />
-      <ChipGroup label={t.strength} hint={t.strengthHint} options={HAPTICS} value={prefs.hapticStrength} onChange={(v) => { setPrefs((prev) => ({ ...prev, hapticStrength: v })); feel("play"); }} />
+      <ChipGroup label={t.strength} hint={t.strengthHint} options={haptics()} value={prefs.hapticStrength} onChange={(v) => { setPrefs((prev) => ({ ...prev, hapticStrength: v })); feel("play"); }} />
     </SettingsScreen>
   );
 }

@@ -10,11 +10,12 @@ import { useTheme, usePrefs } from "../../context/ThemeContext";
 import { useProfile } from "../../store/profile";
 import { Caption } from "../../components/ui/Caption";
 import { StepDots } from "../../components/ui/StepDots";
+import { displayFace } from "../../i18n";
 import { T } from "./copy";
 
 export function ModeScreen() {
   const router = useRouter();
-  const { c, t } = useTheme();
+  const { c, t, lang } = useTheme();
   const { profile, update } = useProfile();
   const [, setPrefs] = usePrefs();
   const choose = (easy: boolean) => {
@@ -25,7 +26,7 @@ export function ModeScreen() {
   const card = (title: string, body: string, on: boolean, easy: boolean) => (
     <SelectableCard on={on} label={`${title}. ${body}`} onPress={() => choose(easy)}>
       <View style={s.top}>
-        <Text style={{ flex: 1, color: c.text, fontFamily: t.type.display, fontSize: 18, letterSpacing: t.type.tracking, textTransform: t.type.titleCase }}>{title}</Text>
+        <Text style={[{ flex: 1, color: c.text, letterSpacing: t.type.tracking, textTransform: t.type.titleCase }, displayFace(t.type.display, 18, lang)]}>{title}</Text>
         {on ? <Text style={[s.chosen, { color: t.accent.on, backgroundColor: t.accent.color, borderRadius: t.shape.chip }]}>{T.chosen}</Text> : null}
       </View>
       <View style={{ marginTop: 6 }}><Caption>{body}</Caption></View>
