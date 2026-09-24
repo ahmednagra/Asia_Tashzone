@@ -404,3 +404,14 @@ A gate passes only when its evidence is recorded here. Definitions: `04_QUALITY_
 | 17 Sep 2026 | — | health, player creation, two-player Callbreak | 17 Sep 08:00 UTC build | — | pass | Part A |
 
 Never record secrets, card data or player data here.
+
+## Mobile over-the-air updates (EAS Update)
+
+Configured on 2026-09-24: `expo-updates`, `runtimeVersion: { policy: "appVersion" }`, `updates.url` for the EAS project, and a channel per build profile in `app/eas.json` (development, preview, production). `eas update:configure` is not needed; it sets exactly these.
+
+- **What can ship over the air:** JavaScript and assets only: text and translations, rules copy, festival dates, colours, layouts, bug fixes in app code.
+- **What needs a store build:** anything that changes native code: adding or upgrading a native package, `app.json` plugin or permission changes, a new `expo` SDK. Also bump `expo.version` in `app/app.json`, because updates only reach builds with the same runtime version (`appVersion`).
+- **Publish:** from `app/`, `eas update --channel production --message "<what changed>"`. Use `--channel preview` first and check on an internal build.
+- **In the app:** updates download on launch. A "Restart / Later" banner offers to apply them; it never appears during a game, a lobby or the tutorial.
+- **Roll back:** `eas update:rollback` (or republish the previous update) on the same channel.
+- Builds made before this configuration cannot receive updates; ship one store build first.

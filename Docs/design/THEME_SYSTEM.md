@@ -182,4 +182,16 @@ Steps:
 
 Balatro itself runs white text on its red. Store reviewers and automated audits still test WCAG 2.x, so the fill is darkened to `#C8372A` and the coral is kept as the top-edge highlight and as the `bid` value colour.
 
+### Festival rooms
+
+Two seasonal rooms: **Chand Raat** (`eid`, crescent card back) and **Diwali** (`diwali`, called Tihar in Nepali, diya card back). They appear in Appearance only inside their window; outside it the app shows Mehfil without changing the saved choice.
+
+| Festival | Dates (expected, South Asia) | Window |
+|---|---|---|
+| Eid al-Fitr | 2026-03-20, 2027-03-10, 2028-02-26, 2029-02-15, 2030-02-05 | 3 days before to 7 after |
+| Eid al-Adha | 2026-05-27, 2027-05-17, 2028-05-05, 2029-04-24, 2030-04-14 | 3 days before to 7 after |
+| Diwali / Tihar Laxmi Puja | 2026-11-08, 2027-10-29, 2028-10-17, 2029-11-05, 2030-10-26 | 5 days before to 7 after |
+
+Eid dates depend on moon sighting and can differ by a day between countries; the window absorbs that. Dates live in `FESTIVAL_DAYS` in `app/src/theme/tokens.ts` and can be corrected over the air. A test fails when fewer than two years of dates remain.
+
 **Legal note:** Balatro, Marvel Snap and the Teen Patti apps are style references only. Do not use their names, fonts or artwork.

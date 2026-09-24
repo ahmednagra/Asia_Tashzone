@@ -1,6 +1,6 @@
 /** Re-measures every theme claim so token edits cannot silently break accessibility or long-session comfort. */
 import { describe, expect, it } from "vitest";
-import { ALL_THEME_IDS, THEME_IDS, cards, contrast, festivalWindow, onTable, openFestivals, roomFor, themes, toThemeId } from "./tokens";
+import { ALL_THEME_IDS, THEME_IDS, cards, contrast, festivalWindow, lastFestivalYear, onTable, openFestivals, roomFor, themes, toThemeId } from "./tokens";
 
 const solid = (v: string) => /^#[0-9a-fA-F]{6}$/.test(v);
 
@@ -111,6 +111,22 @@ describe("festival rooms", () => {
     expect(roomFor("diwali", new Date(2026, 10, 10)).id).toBe("diwali");
     expect(roomFor("diwali", new Date(2026, 6, 1)).id).toBe("emerald");
     expect(roomFor("gold", new Date(2026, 6, 1)).id).toBe("gold");
+  });
+
+  it("cover Eid (both) and Diwali every year through 2030", () => {
+    const days = (y: number, from: number, to: number) => Array.from({ length: to - from + 1 }, (_, i) => new Date(y, 0, from + i));
+    for (let y = 2026; y <= 2030; y++) {
+      const year = days(y, 1, 365);
+      expect(year.filter((d) => festivalWindow("eid", d)).length, `eid ${y}`).toBeGreaterThanOrEqual(20);
+      expect(year.some((d) => festivalWindow("diwali", d)), `diwali ${y}`).toBe(true);
+    }
+    expect(festivalWindow("eid", new Date(2028, 1, 23))).not.toBeNull();
+    expect(festivalWindow("diwali", new Date(2026, 10, 7))).not.toBeNull();
+    expect(festivalWindow("diwali", new Date(2026, 10, 11))).not.toBeNull();
+  });
+
+  it("keep at least two years of dates ahead", () => {
+    expect(lastFestivalYear()).toBeGreaterThanOrEqual(new Date().getFullYear() + 2);
   });
 
   it("stay distinct from the three permanent rooms", () => {

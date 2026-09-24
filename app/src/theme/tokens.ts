@@ -213,8 +213,11 @@ const deepavali: ThemeSpec = {
 export const themes: Record<ThemeId, ThemeSpec> = { emerald: mehfil, gold: darbar, arcade, eid: chandRaat, diwali: deepavali };
 
 const FESTIVAL_DAYS: Record<FestivalId, readonly (readonly [string, number, number])[]> = {
-  eid: [["2026-03-20", 3, 7], ["2026-05-27", 3, 7], ["2027-03-10", 3, 7], ["2027-05-17", 3, 7], ["2028-02-27", 3, 7], ["2028-05-05", 3, 7]],
-  diwali: [["2026-11-08", 5, 7], ["2027-10-29", 5, 7], ["2028-10-17", 5, 7]],
+  eid: [
+    ["2026-03-20", 3, 7], ["2026-05-27", 3, 7], ["2027-03-10", 3, 7], ["2027-05-17", 3, 7], ["2028-02-26", 3, 7], ["2028-05-05", 3, 7],
+    ["2029-02-15", 3, 7], ["2029-04-24", 3, 7], ["2030-02-05", 3, 7], ["2030-04-14", 3, 7],
+  ],
+  diwali: [["2026-11-08", 5, 7], ["2027-10-29", 5, 7], ["2028-10-17", 5, 7], ["2029-11-05", 5, 7], ["2030-10-26", 5, 7]],
 };
 
 const DAY = 86_400_000;
@@ -230,6 +233,8 @@ export function festivalWindow(id: FestivalId, now: Date = new Date()): { start:
   }
   return null;
 }
+
+export const lastFestivalYear = (): number => Math.max(...Object.values(FESTIVAL_DAYS).flat().map(([iso]) => Number(iso.slice(0, 4))));
 
 export const openFestivals = (now: Date = new Date()): FestivalId[] => FESTIVAL_IDS.filter((id) => festivalWindow(id, now));
 export const isFestival = (id: ThemeId): id is FestivalId => (FESTIVAL_IDS as readonly string[]).includes(id);
