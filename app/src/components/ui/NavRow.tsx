@@ -7,7 +7,7 @@ import { TagPill } from "./TagPill";
 
 /** Tappable glass row: icon slot, title, caption, optional badge and chevron (mockup `.panel.row` list items). `disabled` draws it dashed and inert. */
 export function NavRow({ icon, title, caption, badge, onPress, disabled }: { icon?: string; title: string; caption?: string; badge?: string; onPress?: () => void; disabled?: boolean }) {
-  const { c, t } = useTheme();
+  const { c, t, rtl } = useTheme();
   return (
     <View style={disabled ? s.off : undefined} accessibilityState={{ disabled: !!disabled }}>
       <GlassCard onPress={disabled ? undefined : onPress} label={`${title}${caption ? `. ${caption}` : ""}`} style={[s.row, disabled && s.dashed]}>
@@ -17,7 +17,7 @@ export function NavRow({ icon, title, caption, badge, onPress, disabled }: { ico
           {caption ? <Text style={[s.cap, { color: c.textMuted }]}>{caption}</Text> : null}
         </View>
         {badge ? <TagPill text={badge} /> : null}
-        {!disabled && <Text style={{ color: t.accent.color, fontSize: 24 }}>›</Text>}
+        {!disabled && <Text style={{ color: t.accent.color, fontSize: 24 }}>{rtl ? "‹" : "›"}</Text>}
       </GlassCard>
     </View>
   );

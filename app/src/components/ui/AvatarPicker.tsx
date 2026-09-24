@@ -17,9 +17,9 @@ export function AvatarBadge({ index, size = 50, selected, onPress, label }: { in
 }
 
 /** Grid of every avatar; used by the You tab sheet (and reusable by onboarding). */
-export function AvatarPicker({ value, onChange }: { value: number; onChange: (i: number) => void }) {
+export function AvatarPicker({ value, onChange, label = "Avatar" }: { value: number; onChange: (i: number) => void; label?: string }) {
   return (
-    <View accessibilityRole="radiogroup" accessibilityLabel="Avatar" style={s.grid}>
+    <View accessibilityRole="radiogroup" accessibilityLabel={label} style={s.grid}>
       {AVATARS.map((_, i) => <AvatarBadge key={i} index={i} size={56} selected={value % AVATARS.length === i} onPress={() => onChange(i)} />)}
     </View>
   );

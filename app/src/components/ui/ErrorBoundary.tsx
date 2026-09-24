@@ -1,6 +1,7 @@
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { fonts, themes } from "../../theme/tokens";
+import { U } from "./copy";
 
 interface Props { children: React.ReactNode; onReset?: () => void; where?: string }
 interface State { error: Error | null }
@@ -17,10 +18,10 @@ export class ErrorBoundary extends React.Component<Props, State> {
     const c = themes.emerald.c;
     return (
       <View style={[s.root, { backgroundColor: c.bg }]} accessibilityRole="alert">
-        <Text style={[s.title, { color: c.text }]}>Something went wrong{this.props.where ? ` in ${this.props.where}` : ""}.</Text>
-        <Text style={[s.body, { color: c.textSecondary }]}>Your profile and settings are safe. Try again, and if it keeps happening, restart the app.</Text>
+        <Text style={[s.title, { color: c.text }]}>{U.crashTitle(this.props.where)}</Text>
+        <Text style={[s.body, { color: c.textSecondary }]}>{U.crashBody}</Text>
         <Pressable accessibilityRole="button" onPress={this.reset} style={[s.btn, { backgroundColor: c.primary }]}>
-          <Text style={[s.btnText, { color: c.onPrimary }]}>Try again</Text>
+          <Text style={[s.btnText, { color: c.onPrimary }]}>{U.tryAgain}</Text>
         </Pressable>
       </View>
     );

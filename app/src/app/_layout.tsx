@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
+import { StyleSheet, View } from "react-native";
 import { Redirect, Stack, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useFonts } from "expo-font";
@@ -11,6 +12,7 @@ import { NotoNastaliqUrdu_400Regular } from "@expo-google-fonts/noto-nastaliq-ur
 import { ThemeProvider, useTheme } from "../context/ThemeContext";
 import { ProfileProvider, useProfile } from "../store/profile";
 import { ErrorBoundary } from "../components/ui/ErrorBoundary";
+import { setLang } from "../i18n";
 import { RoomSwitch } from "../components/ui/RoomSwitch";
 import { StorageNotice } from "../components/ui/StorageNotice";
 
@@ -23,10 +25,12 @@ const LOCKS: Record<string, ScreenOrientation.OrientationLock> = {
 };
 
 function Shell({ fontsReady }: { fontsReady: boolean }) {
-  const { c, ready: themeReady, orientation } = useTheme();
+  const { c, ready: themeReady, orientation, rtl } = useTheme();
   const { profile, ready } = useProfile();
   const segments = useSegments();
   const allReady = fontsReady && themeReady && ready;
+
+  useLayoutEffect(() => { setLang(profile.lang); }, [profile.lang]);
 
   useEffect(() => { if (allReady) SplashScreen.hideAsync().catch(() => {}); }, [allReady]);
   useEffect(() => { ScreenOrientation.lockAsync(LOCKS[orientation] ?? LOCKS.auto!).catch(() => {}); }, [orientation]);
@@ -34,12 +38,12 @@ function Shell({ fontsReady }: { fontsReady: boolean }) {
   if (!allReady) return null;
   if (!profile.onboarded && segments[0] !== "onboarding") return <Redirect href="/onboarding/welcome" />;
   return (
-    <>
+    <View style={[s.root, { backgroundColor: c.bg, direction: rtl ? "rtl" : "ltr" }]}>
       <StatusBar style="light" />
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: c.bg }, animation: "fade_from_bottom" }} />
       <RoomSwitch />
       <StorageNotice />
-    </>
+    </View>
   );
 }
 
@@ -58,3 +62,5 @@ export default function RootLayout() {
     </ErrorBoundary>
   );
 }
+
+const s = StyleSheet.create({ root: { flex: 1 } });

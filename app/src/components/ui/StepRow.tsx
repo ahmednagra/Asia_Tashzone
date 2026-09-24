@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { fonts } from "../../theme/tokens";
 import { useTheme } from "../../context/ThemeContext";
 import { GlassCard } from "./GlassCard";
+import { U } from "./copy";
 
 /** Numbered instruction card (mockup hotspot steps: `.panel.lift.row` + `.mono`). */
 export function StepRow({ n, title, body }: { n: number; title: string; body: string }) {
@@ -10,7 +11,7 @@ export function StepRow({ n, title, body }: { n: number; title: string; body: st
   return (
     <GlassCard style={s.row}>
       <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={[s.num, { backgroundColor: t.accent.color, borderRadius: t.shape.chip === 999 ? 17 : t.shape.radius }]}><Text style={[s.n, { color: t.accent.on, fontFamily: t.type.numerals }]}>{n}</Text></View>
-      <View style={s.text} accessible accessibilityLabel={`Step ${n}. ${title}. ${body}`}>
+      <View style={s.text} accessible accessibilityLabel={U.step(n, title, body)}>
         <Text style={[s.title, { color: c.text }]}>{title}</Text>
         <Text style={[s.body, { color: c.textSecondary }]}>{body}</Text>
       </View>

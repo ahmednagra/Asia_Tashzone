@@ -2,6 +2,7 @@ import React, { useCallback, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { fonts } from "../../theme/tokens";
 import { useTheme } from "../../context/ThemeContext";
+import { U } from "./copy";
 
 interface KeypadProps {
   /** number of digits to collect (4 for the parent PIN, table PINs use the same) */
@@ -21,7 +22,7 @@ interface KeypadProps {
 const KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "⌫"] as const;
 
 /** Numeric keypad with a digit display (mockup `.pinbox` + `.keypad`). Keys are 64 dp, well above the 44 dp minimum. */
-export function Keypad({ digits, onComplete, masked = true, disabled, clearOnComplete = true, label = "Code" }: KeypadProps) {
+export function Keypad({ digits, onComplete, masked = true, disabled, clearOnComplete = true, label = U.code }: KeypadProps) {
   const { c, t } = useTheme();
   const [value, setValue] = useState("");
 
@@ -38,7 +39,7 @@ export function Keypad({ digits, onComplete, masked = true, disabled, clearOnCom
 
   return (
     <View style={s.wrap}>
-      <View style={s.boxes} accessible accessibilityLabel={`${label}, ${value.length} of ${digits} digits entered`}>
+      <View style={s.boxes} accessible accessibilityLabel={U.digits(label, value.length, digits)}>
         {Array.from({ length: digits }, (_, i) => (
           <View key={i} style={[s.box, { borderRadius: Math.min(12, t.shape.radius), borderColor: i === value.length ? t.accent.color : c.borderControl, borderWidth: i === value.length ? 2 : 1, backgroundColor: c.surface }]}>
             <Text style={[s.boxText, { color: c.text }]}>{i < value.length ? (masked ? "•" : value[i]) : ""}</Text>
@@ -48,7 +49,7 @@ export function Keypad({ digits, onComplete, masked = true, disabled, clearOnCom
       <View style={s.pad}>
         {KEYS.map((k, i) =>
           k ? (
-            <Pressable key={k} accessibilityRole="button" accessibilityLabel={k === "⌫" ? "Delete" : k} accessibilityState={{ disabled: !!disabled }} onPress={() => press(k)}
+            <Pressable key={k} accessibilityRole="button" accessibilityLabel={k === "⌫" ? U.del : k} accessibilityState={{ disabled: !!disabled }} onPress={() => press(k)}
               style={({ pressed }) => [s.key, { borderWidth: 1, borderColor: c.borderControl, backgroundColor: c.surface, borderRadius: t.shape.chip === 999 ? 32 : t.shape.radius, opacity: disabled ? 0.45 : pressed ? 0.7 : 1 }]}>
               <Text style={[s.keyText, { color: c.text }]}>{k}</Text>
             </Pressable>

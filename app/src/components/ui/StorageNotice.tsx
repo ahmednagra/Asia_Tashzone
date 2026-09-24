@@ -5,6 +5,7 @@ import { fonts } from "../../theme/tokens";
 import { useTheme } from "../../context/ThemeContext";
 import { useProfile } from "../../store/profile";
 import { StatusBanner } from "./StatusBanner";
+import { U } from "./copy";
 
 export function StorageNotice() {
   const { c } = useTheme();
@@ -14,9 +15,9 @@ export function StorageNotice() {
   if (!storageError || dismissed) return null;
   return (
     <View style={[s.wrap, { top: inset.top + 8 }]} pointerEvents="box-none">
-      <StatusBanner tone="warn" title="Your progress can't be saved right now" body="Changes work until you close the app. Free up some space on your phone, then reopen TashZone.">
+      <StatusBanner tone="warn" title={U.storageTitle} body={U.storageBody}>
         <Pressable accessibilityRole="button" onPress={() => setDismissed(true)} style={s.btn} hitSlop={8}>
-          <Text style={[s.btnText, { color: c.text }]}>OK</Text>
+          <Text style={[s.btnText, { color: c.text }]}>{U.ok}</Text>
         </Pressable>
       </StatusBanner>
     </View>

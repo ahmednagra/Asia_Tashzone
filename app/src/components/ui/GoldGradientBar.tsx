@@ -6,7 +6,7 @@ import { ButtonFace, buttonText } from "./GoldButton";
 
 /** Wide gold call-to-action with title, caption and chevron (mockup `.btn.pri.shine` with two lines). */
 export function GoldGradientBar({ title, caption, onPress, disabled }: { title: string; caption?: string; onPress: () => void; disabled?: boolean }) {
-  const { t } = useTheme();
+  const { t, rtl } = useTheme();
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={caption ? `${title}. ${caption}` : title} accessibilityState={{ disabled: !!disabled }} disabled={disabled} onPress={onPress}
       style={({ pressed }) => ({ opacity: disabled ? 0.45 : pressed ? 0.9 : 1 })}>
@@ -15,7 +15,7 @@ export function GoldGradientBar({ title, caption, onPress, disabled }: { title: 
           <Text style={[s.title, buttonText(t)]}>{title}</Text>
           {caption ? <Text style={[s.cap, { color: t.button.ink }]}>{caption}</Text> : null}
         </View>
-        <Text style={[s.chev, { color: t.button.ink }]}>›</Text>
+        <Text style={[s.chev, { color: t.button.ink }]}>{rtl ? "‹" : "›"}</Text>
       </ButtonFace>
     </Pressable>
   );

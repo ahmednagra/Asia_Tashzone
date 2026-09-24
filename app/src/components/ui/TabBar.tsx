@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { fonts } from "../../theme/tokens";
 import { useTheme } from "../../context/ThemeContext";
+import { U } from "./copy";
 
 interface Route { key: string; name: string }
 interface TabBarProps {
@@ -15,13 +16,14 @@ const GLYPH: Record<string, string> = { index: "▶", games: "♠", me: "☺", s
 
 /** Bottom tab bar (mockup `.tabbar`): Play, Games, You, Settings. */
 export function TabBar({ state, descriptors, navigation }: TabBarProps) {
-  const { c, t } = useTheme();
+  const { c, t, lang } = useTheme();
+  const latin = lang === "en";
   const inset = useSafeAreaInsets();
   return (
     <View style={[s.bar, { paddingBottom: inset.bottom + 6, backgroundColor: t.tab.bg, borderColor: t.tab.border, borderTopWidth: t.tab.borderWidth }]}>
       {state.routes.map((route, i) => {
         const on = state.index === i;
-        const label = descriptors[route.key]?.options.title ?? route.name;
+        const label = U.tabs[route.name as keyof typeof U.tabs] ?? descriptors[route.key]?.options.title ?? route.name;
         const color = on ? t.accent.color : c.textMuted;
         return (
           <Pressable key={route.key} accessibilityRole="tab" accessibilityState={{ selected: on }} accessibilityLabel={label} style={s.tab}
@@ -32,7 +34,7 @@ export function TabBar({ state, descriptors, navigation }: TabBarProps) {
             <View style={[s.glyph, on && t.tab.pill ? { backgroundColor: t.tab.pill } : null]}>
               <Text style={{ fontSize: 20, color }}>{GLYPH[route.name] ?? "•"}</Text>
             </View>
-            <Text style={[s.label, { color, textTransform: t.button.caps ? "uppercase" : "none", letterSpacing: t.button.caps ? 0.8 : 0 }]}>{label}</Text>
+            <Text style={[s.label, { color, textTransform: t.button.caps && latin ? "uppercase" : "none", letterSpacing: t.button.caps && latin ? 0.8 : 0 }]}>{label}</Text>
           </Pressable>
         );
       })}

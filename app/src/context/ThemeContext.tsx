@@ -1,7 +1,8 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { AccessibilityInfo } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { type SemanticColors, type ThemeId, type ThemeSpec, themes, toThemeId } from "../theme/tokens";
+import { type Lang, getLang, isRTL, subscribeLang } from "../i18n";
 
 export type OrientationOption = "auto" | "portrait" | "landscape";
 export type HapticStrength = "off" | "gentle" | "crisp" | "firm";
@@ -22,6 +23,8 @@ export interface Theme extends ThemePrefs {
   c: SemanticColors;
   calm: boolean;
   ready: boolean;
+  lang: Lang;
+  rtl: boolean;
 }
 
 export const DEFAULT_PREFS: ThemePrefs = {
@@ -36,7 +39,7 @@ export const DEFAULT_PREFS: ThemePrefs = {
 };
 const KEY = "tashzone.theme.v1";
 
-const initial: Theme = { ...DEFAULT_PREFS, t: themes.emerald, c: themes.emerald.c, calm: false, ready: false };
+const initial: Theme = { ...DEFAULT_PREFS, t: themes.emerald, c: themes.emerald.c, calm: false, ready: false, lang: "en", rtl: false };
 const Ctx = createContext<Theme>(initial);
 type SetPrefs = (next: ThemePrefs | ((prev: ThemePrefs) => ThemePrefs)) => void;
 const PrefsCtx = createContext<[ThemePrefs, SetPrefs]>([DEFAULT_PREFS, () => {}]);
@@ -66,6 +69,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false);
   const [osCalm, setOsCalm] = useState(false);
   const touched = useRef(false);
+  const lang = useSyncExternalStore(subscribeLang, getLang, getLang);
   const writes = useRef<Promise<unknown>>(Promise.resolve());
 
   useEffect(() => {
@@ -95,8 +99,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const value = useMemo<Theme>(() => {
     const t = themes[prefs.name] ?? themes.emerald;
-    return { ...prefs, t, c: t.c, calm: prefs.reducedMotion || osCalm, ready };
-  }, [prefs, osCalm, ready]);
+    return { ...prefs, t, c: t.c, calm: prefs.reducedMotion || osCalm, ready, lang, rtl: isRTL(lang) };
+  }, [prefs, osCalm, ready, lang]);
   const pair = useMemo<[ThemePrefs, SetPrefs]>(() => [prefs, setPrefs], [prefs, setPrefs]);
   return (
     <PrefsCtx.Provider value={pair}>

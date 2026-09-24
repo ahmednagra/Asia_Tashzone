@@ -14,5 +14,5 @@ export function TagPill({ text, gold }: { text: string; gold?: boolean }) {
 }
 const s = StyleSheet.create({
   pill: { borderWidth: 1, paddingHorizontal: 9, paddingVertical: 3 },
-  text: { fontFamily: fonts.ui.family, fontSize: 12 },
+  text: { fontFamily: fonts.ui.family, fontSize: 13 },
 });

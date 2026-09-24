@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } fro
 import { LinearGradient } from "expo-linear-gradient";
 import { fonts, minTouchTarget, type ThemeSpec } from "../../theme/tokens";
 import { useTheme } from "../../context/ThemeContext";
+import { getLang } from "../../i18n";
 
 export function ButtonFace({ t, style, children }: { t: ThemeSpec; style?: StyleProp<ViewStyle>; children: React.ReactNode }) {
   const b = t.button;
@@ -25,12 +26,14 @@ export function ButtonFace({ t, style, children }: { t: ThemeSpec; style?: Style
 }
 
 export function buttonText(t: ThemeSpec) {
+  if (getLang() !== "en") return { color: t.button.ink, textTransform: "none" as const, letterSpacing: 0 };
   return { color: t.button.ink, textTransform: t.button.caps ? ("uppercase" as const) : ("none" as const), letterSpacing: t.button.caps ? 1.4 : 0 };
 }
 
 /** Primary button (mockup `.btn`): `gold` = the room's primary, `glass` = outlined secondary. */
 export function GoldButton({ label, onPress, kind = "gold", disabled, style }: { label: string; onPress: () => void; kind?: "gold" | "glass"; disabled?: boolean; style?: StyleProp<ViewStyle> }) {
-  const { c, t } = useTheme();
+  const { c, t, lang } = useTheme();
+  const latin = lang === "en";
   const slab = t.surface.kind === "slab";
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={label} accessibilityState={{ disabled: !!disabled }} disabled={disabled} onPress={onPress}
@@ -41,7 +44,7 @@ export function GoldButton({ label, onPress, kind = "gold", disabled, style }: {
         </ButtonFace>
       ) : (
         <View style={[s.btn, { borderRadius: t.shape.button, borderWidth: slab ? 2 : 1, borderColor: slab ? t.surface.border : c.borderControl, backgroundColor: t.surface.kind === "glass" ? t.surface.bg : c.surface }]}>
-          <Text style={[s.text, { color: c.text, textTransform: t.button.caps ? "uppercase" : "none", letterSpacing: t.button.caps ? 1.2 : 0 }]}>{label}</Text>
+          <Text style={[s.text, { color: c.text, textTransform: t.button.caps && latin ? "uppercase" : "none", letterSpacing: t.button.caps && latin ? 1.2 : 0 }]}>{label}</Text>
         </View>
       )}
     </Pressable>
