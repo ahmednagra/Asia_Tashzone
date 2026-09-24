@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Puts the previous release back (Docs/specs/05_DEPLOYMENT_RUNBOOK.md; v1 Docs/06-deployment.md Part C2). Run from your PC:
+# Puts the previous release back (Docs/05_DEPLOYMENT_RUNBOOK.md Part C2). Run from your PC:
 #
 #   bash backend/deploy/rollback.sh
 #
@@ -46,4 +46,4 @@ say "Checking the API"
 curl -fsS -m 25 "$API_URL/health" || echo "  /health did not answer"
 echo
 say "Code rolled back. The failed release is kept at /srv/tashzone/repo.failed.
-If it had run a migration, restore the pre-release dump as well — Docs/06-deployment.md Part D2."
+If it had run a migration, restore the pre-release dump as well — Docs/05_DEPLOYMENT_RUNBOOK.md Part D2."

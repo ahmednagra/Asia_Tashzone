@@ -21,7 +21,7 @@ const { withAppBuildGradle, withGradleProperties, withProjectBuildGradle } = req
  * Parent PIN on the phone only (L38). Uninstalling loses all of it, with no cloud save in v1.0 to restore from.
  *
  * The keystore is irreplaceable. Losing it means no existing install can ever be updated again; the only
- * recovery is a new package name and everyone reinstalling. See `Docs/06-deployment.md` Part K.
+ * recovery is a new package name and everyone reinstalling. See `Docs/05_DEPLOYMENT_RUNBOOK.md` Part J.
  */
 
 const LOADER = `

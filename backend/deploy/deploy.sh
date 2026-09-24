@@ -12,12 +12,12 @@
 #
 # --publish-apk does not deploy code. It uploads app/android/app/build/outputs/apk/release/app-release.apk
 # to /srv/tashzone/releases, points the APP_* release variables in /srv/tashzone/.env at it and restarts the
-# api container so they are read. Build first (app\scripts\build-apk.bat), then publish.
+# api container so they are read. Build first (app\scripts\build-apk.ps1), then publish.
 #
 # First time on a freshly reinstalled server: run backend/deploy/server-setup.sh ON the server once (Docker,
 # firewall, swap, /srv/tashzone, generated secrets, nightly backup), then run this script from your PC.
 #
-# It is the scripted form of `Docs/specs/05_DEPLOYMENT_RUNBOOK.md` (v1: `Docs/06-deployment.md` Part C1), and it refuses rather than guesses: a failed
+# It is the scripted form of `Docs/specs/05_DEPLOYMENT_RUNBOOK.md` (Part C1), and it refuses rather than guesses: a failed
 # gate, a missing secret, a failed migration or a failed health check all stop it with a message that says
 # what to do. Nothing here is irreversible until the migrations run, and the backup taken immediately before
 # them is what makes even that recoverable (`--rollback`, or Part D2).
@@ -60,14 +60,14 @@ if [ "$PUBLISH_APK" -eq 1 ]; then
   GRADLE="$ROOT/app/android/app/build.gradle"
 
   [ -f "$APK" ] || die "No APK at $APK
-Build one first: app\\scripts\\build-apk.bat"
+Build one first: powershell -ExecutionPolicy Bypass -File app\\scripts\\build-apk.ps1"
   [ -f "$GRADLE" ] || die "No $GRADLE, so the version this APK carries cannot be read."
 
-  # Read from build.gradle rather than from a flag: build-apk.bat raises the number there immediately before
+  # Read from build.gradle rather than from a flag: build-apk.ps1 raises the number immediately before
   # compiling, so it is what the binary actually contains. A number typed by hand can be wrong, and an APK
   # advertised under the wrong versionCode either never offers itself or offers itself forever.
-  CODE="$(sed -n 's/.*versionCode[[:space:]]\{1,\}\([0-9]\{1,\}\).*/\1/p' "$GRADLE" | head -1)"
-  NAME="$(sed -n 's/.*versionName[[:space:]]\{1,\}"\([^"]*\)".*/\1/p' "$GRADLE" | head -1)"
+  CODE="$(sed -n 's/.*versionCode[[:space:]=]\{1,\}\([0-9]\{1,\}\).*/\1/p' "$GRADLE" | head -1)"
+  NAME="$(sed -n 's/.*versionName[[:space:]=]\{1,\}"\([^"]*\)".*/\1/p' "$GRADLE" | head -1)"
   [ -n "$CODE" ] && [ -n "$NAME" ] || die "Could not read versionCode/versionName from $GRADLE"
 
   SIZE="$(wc -c < "$APK" | tr -d ' ')"

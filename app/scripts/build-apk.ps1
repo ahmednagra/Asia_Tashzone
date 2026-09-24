@@ -98,8 +98,15 @@ Run 'pnpm' @('install', '--frozen-lockfile', '--config.confirmModulesPurge=false
 Step 5 'build shared packages'
 Run 'pnpm' @('build')
 
-Step 6 'expo prebuild (android)'
+Step 6 'raise versionCode, then expo prebuild (android)'
 Set-Location $App
+$appJson = Join-Path $App 'app.json'
+$text = [IO.File]::ReadAllText($appJson)
+if ($text -notmatch '"versionCode":\s*(\d+)') { Fail 'no expo.android.versionCode in app/app.json' }
+$was = [int]$Matches[1]
+$next = $was + 1
+[IO.File]::WriteAllText($appJson, ($text -replace '"versionCode":\s*\d+', ('"versionCode": ' + $next)), (New-Object Text.UTF8Encoding $false))
+Write-Host "versionCode $was -> $next (commit app/app.json after a build you ship)"
 $env:NODE_ENV = 'production'
 Run 'npx' @('expo', 'prebuild', '--platform', 'android', '--clean', '--no-install')
 $gradleFile = Join-Path $App 'android\app\build.gradle'

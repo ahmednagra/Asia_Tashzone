@@ -17,6 +17,7 @@
     },
     "android": {
       "package": "com.tashzone.app",
+      "versionCode": 9,
       "permissions": [
         "android.permission.INTERNET",
         "android.permission.ACCESS_NETWORK_STATE",

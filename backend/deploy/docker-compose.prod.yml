@@ -25,7 +25,7 @@ services:
       # Creates the least-privilege role tz_match on first initialisation; Alembic 0001 grants it rows it may touch.
       - ./initdb:/docker-entrypoint-initdb.d:ro
     # Point-in-time recovery is not on yet: nightly pg_dump (backup.sh) restores to 03:30 UTC. Before the public
-    # release, enable WAL archiving (Docs/06-deployment.md Part D3):
+    # release, enable WAL archiving (Docs/05_DEPLOYMENT_RUNBOOK.md Part D3):
     # command: >-
     #   postgres -c wal_level=replica -c archive_mode=on
     #   -c archive_command='test ! -f /var/lib/postgresql/archive/%f && cp %p /var/lib/postgresql/archive/%f'
