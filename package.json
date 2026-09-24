@@ -16,7 +16,8 @@
     "bundle:profiles": "pnpm --filter @tashzone/engine bundle:profiles",
     "digest": "pnpm --filter @tashzone/engine digest",
     "e2e": "node .github/scripts/e2e-fullstack.mjs",
-    "test:api": "cd backend/api && uv run pytest -q"
+    "test:api": "cd backend/api && uv run pytest -q",
+    "postinstall": "node app/scripts/fix-native-modules.mjs"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
@@ -31,13 +32,6 @@
     "ws": "8.21.3"
   },
   "pnpm": {
-    "patchedDependencies": {
-      "react-native-tcp-socket@6.4.3": "patches/react-native-tcp-socket@6.4.3.patch",
-      "react-native-safe-area-context@5.7.0": "patches/react-native-safe-area-context@5.7.0.patch",
-      "@react-native-async-storage/async-storage@2.2.0": "patches/@react-native-async-storage__async-storage@2.2.0.patch",
-      "expo-file-system@57.0.7": "patches/expo-file-system@57.0.7.patch",
-      "expo-modules-core@57.0.19": "patches/expo-modules-core@57.0.19.patch"
-    },
     "peerDependencyRules": {
       "ignoreMissing": [
         "react-dom"

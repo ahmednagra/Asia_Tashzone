@@ -123,7 +123,7 @@ Write-Host "CPU types: $abis$(if (-not $AllAbis) { '   (add -AllAbis for old 32-
 Step 4 'dependencies'
 Set-Location $Root
 $installStamp = Join-Path $Root 'node_modules\.tz-install'
-$installPrint = Get-Fingerprint @((Join-Path $Root 'pnpm-lock.yaml'), (Join-Path $Root 'package.json'), (Join-Path $Root 'patches'), (Join-Path $App 'package.json')) ''
+$installPrint = Get-Fingerprint @((Join-Path $Root 'pnpm-lock.yaml'), (Join-Path $Root 'package.json'), (Join-Path $App 'scripts\fix-native-modules.mjs'), (Join-Path $App 'package.json')) ''
 if ($Clean -or -not (Test-Path $installStamp) -or ((Get-Content $installStamp -Raw).Trim() -ne $installPrint)) {
   Run 'pnpm' @('install', '--frozen-lockfile', '--config.confirmModulesPurge=false')
   Set-Content -Path $installStamp -Value $installPrint -NoNewline
@@ -146,7 +146,7 @@ Write-Host "versionCode $was -> $next (commit app/app.json after a build you shi
 $env:NODE_ENV = 'production'
 $gradleFile = Join-Path $App 'android\app\build.gradle'
 $prebuildStamp = Join-Path $App 'android\.tz-prebuild'
-$nativePrint = Get-Fingerprint @($appJson, (Join-Path $App 'package.json'), (Join-Path $App 'plugins'), (Join-Path $App 'assets\icon.png'), (Join-Path $App 'assets\adaptive-icon.png'), (Join-Path $App 'assets\adaptive-background.png'), (Join-Path $App 'assets\splash-icon.png'), (Join-Path $Root 'pnpm-lock.yaml'), (Join-Path $Root 'patches')) "signed=$signed"
+$nativePrint = Get-Fingerprint @($appJson, (Join-Path $App 'package.json'), (Join-Path $App 'plugins'), (Join-Path $App 'assets\icon.png'), (Join-Path $App 'assets\adaptive-icon.png'), (Join-Path $App 'assets\adaptive-background.png'), (Join-Path $App 'assets\splash-icon.png'), (Join-Path $Root 'pnpm-lock.yaml'), (Join-Path $App 'scripts\fix-native-modules.mjs')) "signed=$signed"
 $fresh = $Clean -or -not (Test-Path $gradleFile) -or -not (Test-Path $prebuildStamp) -or ((Get-Content $prebuildStamp -Raw).Trim() -ne $nativePrint)
 if ($fresh) {
   Write-Host 'native config changed (or -Clean): regenerating android\'
