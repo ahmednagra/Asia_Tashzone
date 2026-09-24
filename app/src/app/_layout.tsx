@@ -5,6 +5,7 @@ import { StatusBar } from "expo-status-bar";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import * as ScreenOrientation from "expo-screen-orientation";
+import * as SystemUI from "expo-system-ui";
 import { Jost_400Regular, Jost_500Medium, Jost_600SemiBold, Jost_700Bold } from "@expo-google-fonts/jost";
 import { CormorantGaramond_600SemiBold } from "@expo-google-fonts/cormorant-garamond";
 import { BodoniModa_700Bold } from "@expo-google-fonts/bodoni-moda";
@@ -34,6 +35,7 @@ function Shell({ fontsReady }: { fontsReady: boolean }) {
   useLayoutEffect(() => { setLang(profile.lang); }, [profile.lang]);
 
   useEffect(() => { if (allReady) SplashScreen.hideAsync().catch(() => {}); }, [allReady]);
+  useEffect(() => { SystemUI.setBackgroundColorAsync(c.bg).catch(() => {}); }, [c.bg]);
   useEffect(() => { ScreenOrientation.lockAsync(LOCKS[orientation] ?? LOCKS.auto!).catch(() => {}); }, [orientation]);
 
   if (!allReady) return null;
