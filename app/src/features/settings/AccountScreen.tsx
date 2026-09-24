@@ -15,7 +15,7 @@ import { useProfile } from "../../store/profile";
 import { exportProfile, importProfile } from "../../store/profileModel";
 import { A } from "../account/copy";
 import { authMessage } from "../account/errors";
-import { type AccountState, type LinkResult, accountState, linkProvider, signOutEverywhere, signOutHere, switchToLinked, unlinkProvider } from "../account/flows";
+import { type AccountState, type LinkResult, accountState, linkProvider, signOutHere, switchToLinked, unlinkProvider } from "../account/flows";
 import { nick } from "../onboarding/copy";
 import { type Provider, SignInError } from "../../services/googleAuth";
 import { T } from "./copy";
@@ -95,7 +95,6 @@ export function AccountScreen() {
       return null;
     });
   };
-  const everywhere = () => work(async () => { await signOutEverywhere(profile); return t.signOutAllDone; });
 
   const backup = () => { Share.share({ title: t.shareMsgTitle, message: exportProfile(profile) }).catch(() => {}); };
   const restore = () => {
@@ -111,16 +110,17 @@ export function AccountScreen() {
   };
 
   const email = state?.email ?? null;
+  const signedIn = !!email || (state?.linked.length ?? 0) > 0;
   const providerLabel = (p: Provider) => (p === "google" ? t.google : t.playGames);
 
   return (
     <SettingsScreen title={t.title}>
-      {email ? <StatusBanner title={t.signedInAs(email)} /> : <StatusBanner title={t.noAccountTitle} body={t.noAccountBody} />}
+      {email ? <StatusBanner title={t.signedInAs(email)} /> : signedIn ? <StatusBanner title={t.signedIn} /> : <StatusBanner title={t.noAccountTitle} body={t.noAccountBody} />}
 
-      {email ? (
+      {signedIn ? (
         <>
-          <NavRow icon="✎" title={A.changeTitle} caption={t.passwordHint} onPress={() => router.push("/account/password")} disabled={busy} />
-          <NavRow icon="⇄" title={t.signOutAll} caption={t.signOutAllHint} onPress={everywhere} disabled={busy} />
+          {email ? <NavRow icon="✎" title={A.changeTitle} caption={t.passwordHint} onPress={() => router.push("/account/password")} disabled={busy} /> : null}
+          <NavRow icon="⇄" title={A.devicesTitle} caption={A.devicesHint} onPress={() => router.push("/account/devices")} disabled={busy} />
           <NavRow icon="⎋" title={t.signOut} caption={t.signOutHint} onPress={() => setDialog("signOut")} disabled={busy} />
         </>
       ) : state?.emailAccounts ? (

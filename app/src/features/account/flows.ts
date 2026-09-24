@@ -76,6 +76,14 @@ export async function signOutEverywhere(profile: Profile): Promise<void> {
   await adoptToken(session.token);
 }
 
+export async function listDevices(profile: Profile) {
+  return (await account.sessions(nameOf(profile))).sessions;
+}
+
+export function signOutDevice(id: string, profile: Profile): Promise<void> {
+  return account.endSession(nameOf(profile), id);
+}
+
 export async function signOutHere(): Promise<void> {
   await signOut();
 }

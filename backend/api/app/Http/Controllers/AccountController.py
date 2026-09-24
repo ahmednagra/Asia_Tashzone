@@ -5,7 +5,7 @@ from fastapi import BackgroundTasks, Request
 from app.Core.security import DB, AnyPlayer, Config, CurrentPlayer
 from app.Middleware.rate_limit import limit, limit_key
 from app.Schemas.accounts import CodeLoginIn, CodeRequestIn, PasswordChangeIn, PasswordLoginIn, PasswordResetIn, SignupIn
-from app.Services import AccountService
+from app.Services import AccountService, SessionService
 from app.Services.AccountService import normalize_email
 
 FIFTEEN_MINUTES = 15 * 60
@@ -27,7 +27,7 @@ class AccountController:
     def signup(body: SignupIn, request: Request, p: CurrentPlayer, db: DB, settings: Config):
         limit(request, "signup", per_hour=settings.logins_per_ip_per_hour)
         _per_email("verify", body.email, settings.logins_per_email_per_15_minutes, FIFTEEN_MINUTES)
-        return AccountService.signup(db, settings, p, body.email, body.code, body.password)
+        return AccountService.signup(db, settings, p, body.email, body.code, body.password, getattr(request.state, "session_id", None))
 
     @staticmethod
     def login_password(body: PasswordLoginIn, request: Request, db: DB, settings: Config):
@@ -55,6 +55,15 @@ class AccountController:
     @staticmethod
     def sign_out(request: Request, p: AnyPlayer, db: DB):
         AccountService.sign_out(db, getattr(request.state, "session_id", None))
+
+    @staticmethod
+    def sessions(request: Request, p: CurrentPlayer, db: DB, settings: Config):
+        return {"sessions": SessionService.active(db, settings, p, getattr(request.state, "session_id", None))}
+
+    @staticmethod
+    def end_session(session_id: str, request: Request, p: CurrentPlayer, db: DB):
+        limit(request, f"end_session:{p.id}", per_minute=20, per_ip=False)
+        SessionService.revoke_own(db, p, session_id)
 
     @staticmethod
     def sign_out_everywhere(p: CurrentPlayer, db: DB, settings: Config):

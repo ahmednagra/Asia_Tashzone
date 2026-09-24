@@ -133,7 +133,7 @@ def _session(db: Session, settings: Settings, p: Player, account: PlayerAccount)
     return {"player_id": p.id, "token": SessionService.issue(db, settings, p)}
 
 
-def signup(db: Session, settings: Settings, p: Player, email: str, code: str, password: str) -> dict:
+def signup(db: Session, settings: Settings, p: Player, email: str, code: str, password: str, session_id: str | None = None) -> dict:
     _require_mail(settings)
     email = normalize_email(email)
     if p.protected:
@@ -150,6 +150,7 @@ def signup(db: Session, settings: Settings, p: Player, email: str, code: str, pa
         db.rollback()
         raise conflict("EMAIL_TAKEN", "That email already has a TashZone account") from exc
     logger.info("account_created", extra={"player_id": p.id})
+    SessionService.revoke(db, session_id)
     return _session(db, settings, p, account)
 
 

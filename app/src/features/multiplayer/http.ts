@@ -1,8 +1,9 @@
 /** Room/matchmaking HTTP. Keeps the API's stable error code (`{error:{code}}`), stores the guest token on the device, and bounds every call with a timeout. */
+import { DEVICE_NAME } from "../../lib/device";
 import { API_URL } from "../../lib/env";
 import { clearToken, forgetPendingLogout, readToken, rememberPendingLogout, sessionKind, takePendingLogout, writeToken } from "../../services/session";
 import type { Provider, ProviderCredential } from "../../services/googleAuth";
-import type { AppConfig, LinkView, MeView, ProgressBody, ProgressView, RestoreView, SessionView } from "../../types/api";
+import type { AppConfig, DeviceSession, LinkView, MeView, ProgressBody, ProgressView, RestoreView, SessionView } from "../../types/api";
 import type { JoinTicket, RoomView, TicketView } from "./types";
 
 const TIMEOUT_MS = 10_000;
@@ -17,7 +18,7 @@ async function request<T>(path: string, init: { method?: string; body?: unknown;
   try {
     const res = await fetch(`${API_URL}${path}`, {
       method: init.method ?? "GET", signal: ctl.signal,
-      headers: { "content-type": "application/json", ...(init.token ? { authorization: `Bearer ${init.token}` } : {}) },
+      headers: { "content-type": "application/json", ...(DEVICE_NAME ? { "x-device-name": DEVICE_NAME } : {}), ...(init.token ? { authorization: `Bearer ${init.token}` } : {}) },
       body: init.body === undefined ? undefined : JSON.stringify(init.body),
     });
     if (res.status === 204) return undefined as T;
@@ -88,7 +89,9 @@ export async function hasAccount(): Promise<boolean> {
 }
 
 export async function adoptToken(next: string): Promise<void> {
+  const previous = await readToken();
   await writeToken(next, "account");
+  if (previous && previous !== next) request<void>("/api/v1/auth/logout", { method: "POST", token: previous }).catch(() => {});
 }
 
 export async function freshGuest(displayName: string): Promise<void> {
@@ -129,6 +132,8 @@ export const account = {
     request<SessionView>("/api/v1/auth/password/reset", { method: "POST", body: { email, code, new_password: newPassword } }),
   changePassword: (name: string, current: string, next: string) =>
     authed(name, (t) => request<SessionView>("/api/v1/auth/password", { method: "PUT", token: t, body: { current_password: current, new_password: next } })),
+  sessions: (name: string) => authed(name, (t) => request<{ sessions: DeviceSession[] }>("/api/v1/auth/sessions", { token: t })),
+  endSession: (name: string, id: string) => authed(name, (t) => request<void>(`/api/v1/auth/sessions/${encodeURIComponent(id)}`, { method: "DELETE", token: t })),
   signOutEverywhere: (name: string) => authed(name, (t) => request<SessionView>("/api/v1/auth/sign-out-everywhere", { method: "POST", token: t })),
   putProgress: (name: string, body: ProgressBody) => authed(name, (t) => request<ProgressView>("/api/v1/players/me/progress", { method: "PUT", token: t, body })),
 };

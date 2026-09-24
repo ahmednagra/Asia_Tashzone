@@ -1,4 +1,4 @@
-from fastapi import APIRouter, BackgroundTasks, Request
+from fastapi import APIRouter, BackgroundTasks, Path, Request
 
 from app.Core.security import DB, AnyPlayer, Config, CurrentPlayer
 from app.Http.Controllers.AccountController import AccountController
@@ -40,6 +40,16 @@ def change_password(body: PasswordChangeIn, request: Request, p: CurrentPlayer, 
 @router.post("/logout", status_code=204)
 def sign_out(request: Request, p: AnyPlayer, db: DB):
     return AccountController.sign_out(request, p, db)
+
+
+@router.get("/sessions")
+def sessions(request: Request, p: CurrentPlayer, db: DB, settings: Config):
+    return AccountController.sessions(request, p, db, settings)
+
+
+@router.delete("/sessions/{session_id}", status_code=204)
+def end_session(request: Request, p: CurrentPlayer, db: DB, session_id: str = Path(min_length=1, max_length=36)):
+    return AccountController.end_session(session_id, request, p, db)
 
 
 @router.post("/sign-out-everywhere")

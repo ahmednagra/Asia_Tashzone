@@ -240,3 +240,43 @@ def test_old_and_revoked_sessions_are_purged(client):
     assert SessionService.purge(db, get_settings()) == 1
     assert db.query(PlayerSession).count() == 1
     db.close()
+
+
+def test_your_devices_lists_named_sessions_and_signs_one_out(client, mail):
+    _, guest = register(client, "Asha")
+    ask(client, "asha@example.com", "signup")
+    signup = client.post("/api/v1/auth/signup", json={"email": "asha@example.com", "code": mail[-1]["code"], "password": "cards2026"}, headers=guest)
+    phone_a = bearer(signup.json()["token"])
+    assert client.get("/api/v1/players/me", headers=guest).status_code == 401
+    b = client.post("/api/v1/auth/login", json={"email": "asha@example.com", "password": "cards2026"},
+                    headers={"X-Device-Name": "Samsung\x00 SM-A546E   "}).json()["token"]
+    phone_b = bearer(b)
+    listed = client.get("/api/v1/auth/sessions", headers=phone_a).json()["sessions"]
+    assert len(listed) == 2
+    mine = [s for s in listed if s["current"]]
+    other = [s for s in listed if not s["current"]]
+    assert len(mine) == 1 and other[0]["device_name"] == "Samsung SM-A546E"
+    assert client.delete(f"/api/v1/auth/sessions/{other[0]['id']}", headers=phone_a).status_code == 204
+    assert client.get("/api/v1/players/me", headers=phone_b).status_code == 401
+    assert client.get("/api/v1/players/me", headers=phone_a).status_code == 200
+    assert [s["current"] for s in client.get("/api/v1/auth/sessions", headers=phone_a).json()["sessions"]] == [True]
+
+
+def test_you_cannot_sign_out_someone_elses_device(client):
+    from test_players import claims
+
+    _, ha = register(client, "A")
+    _, hb = register(client, "B")
+    sid_b = claims(hb["Authorization"][7:])["sid"]
+    r = client.delete(f"/api/v1/auth/sessions/{sid_b}", headers=ha)
+    assert r.status_code == 404 and r.json()["error"]["code"] == "SESSION_NOT_FOUND"
+    assert client.get("/api/v1/players/me", headers=hb).status_code == 200
+
+
+def test_device_names_are_cleaned_and_capped():
+    from app.Core.device import clean_device_name
+
+    assert clean_device_name("  Pixel\n 8\tPro ") == "Pixel 8 Pro"
+    assert clean_device_name("x" * 200) == "x" * 60
+    assert clean_device_name("\x00\x01") is None and clean_device_name(None) is None
+    assert clean_device_name("Pixel\x008") == "Pixel 8"

@@ -7,6 +7,7 @@ from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.responses import Response
 
+from app.Core.device import set_device_name
 from app.Utils.Logger import logger
 
 _SAFE_ID = re.compile(r"^[A-Za-z0-9-]{8,64}$")
@@ -17,6 +18,7 @@ class RequestIdMiddleware(BaseHTTPMiddleware):
         incoming = request.headers.get("x-request-id", "")
         request_id = incoming if _SAFE_ID.match(incoming) else str(uuid.uuid4())
         request.state.request_id = request_id
+        set_device_name(request.headers.get("x-device-name"))
         started = time.perf_counter()
         response = await call_next(request)
         response.headers["x-request-id"] = request_id

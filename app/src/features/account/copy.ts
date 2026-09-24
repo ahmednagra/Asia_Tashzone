@@ -18,6 +18,10 @@ export const A = localized("accountAuth", {
     errUnavailable: "Email sign-in isn't available right now.", errBanned: "This account can't sign in right now.", errExpired: "Please sign in again.",
     errFailed: "Something went wrong. Try again.",
     welcome: "Signed in.", created: "Account created. Your record is backed up.", passwordSaved: "Password changed.",
+    devicesTitle: "Your devices", devicesHint: "See where you are signed in", thisPhone: "This phone",
+    unknownDevice: "Unknown device", activeToday: "Active today", lastActive: (date: string) => `Last active ${date}`,
+    signOutDeviceTitle: "Sign out this device?", signOutDeviceBody: "It will need to sign in again to use your account.", signOutDeviceDo: "Sign out",
+    deviceSignedOut: "Device signed out.", noOthers: "No other devices are signed in.",
   },
   ur: {
     signInTitle: "سائن اِن", createTitle: "اکاؤنٹ بنائیں", forgotTitle: "پاس ورڈ نیا بنائیں", changeTitle: "پاس ورڈ بدلیں",
@@ -36,6 +40,10 @@ export const A = localized("accountAuth", {
     errUnavailable: "ای میل سے سائن اِن ابھی دستیاب نہیں۔", errBanned: "یہ اکاؤنٹ ابھی سائن اِن نہیں کر سکتا۔", errExpired: "دوبارہ سائن اِن کریں۔",
     errFailed: "کچھ گڑبڑ ہو گئی۔ دوبارہ کوشش کریں۔",
     welcome: "سائن اِن ہو گیا۔", created: "اکاؤنٹ بن گیا۔ آپ کا ریکارڈ محفوظ ہے۔", passwordSaved: "پاس ورڈ بدل گیا۔",
+    devicesTitle: "آپ کے آلات", devicesHint: "دیکھیں کہاں سائن اِن ہے", thisPhone: "یہ فون",
+    unknownDevice: "نامعلوم آلہ", activeToday: "آج فعال", lastActive: (date: string) => `آخری بار فعال ${date}`,
+    signOutDeviceTitle: "اس آلے سے سائن آؤٹ کریں؟", signOutDeviceBody: "اکاؤنٹ استعمال کرنے کے لیے اسے دوبارہ سائن اِن کرنا ہو گا۔", signOutDeviceDo: "سائن آؤٹ",
+    deviceSignedOut: "آلے سے سائن آؤٹ ہو گیا۔", noOthers: "کوئی اور آلہ سائن اِن نہیں۔",
   },
   hi: {
     signInTitle: "साइन-इन", createTitle: "खाता बनाएँ", forgotTitle: "पासवर्ड बदलें", changeTitle: "पासवर्ड बदलें",
@@ -54,6 +62,10 @@ export const A = localized("accountAuth", {
     errUnavailable: "ईमेल से साइन-इन अभी उपलब्ध नहीं।", errBanned: "यह खाता अभी साइन-इन नहीं कर सकता।", errExpired: "फिर से साइन-इन करें।",
     errFailed: "कुछ गड़बड़ हो गई। फिर कोशिश करें।",
     welcome: "साइन-इन हो गया।", created: "खाता बन गया। आपका रिकॉर्ड सुरक्षित है।", passwordSaved: "पासवर्ड बदल गया।",
+    devicesTitle: "आपके डिवाइस", devicesHint: "देखें कहाँ साइन-इन है", thisPhone: "यह फ़ोन",
+    unknownDevice: "अनजान डिवाइस", activeToday: "आज सक्रिय", lastActive: (date: string) => `आख़िरी बार सक्रिय ${date}`,
+    signOutDeviceTitle: "इस डिवाइस से साइन-आउट करें?", signOutDeviceBody: "खाता इस्तेमाल करने के लिए इसे फिर से साइन-इन करना होगा।", signOutDeviceDo: "साइन-आउट",
+    deviceSignedOut: "डिवाइस से साइन-आउट हो गया।", noOthers: "कोई और डिवाइस साइन-इन नहीं है।",
   },
   ne: {
     signInTitle: "साइन-इन", createTitle: "खाता बनाउनुहोस्", forgotTitle: "पासवर्ड नयाँ बनाउनुहोस्", changeTitle: "पासवर्ड बदल्नुहोस्",
@@ -72,6 +84,10 @@ export const A = localized("accountAuth", {
     errUnavailable: "इमेलबाट साइन-इन अहिले उपलब्ध छैन।", errBanned: "यो खाताले अहिले साइन-इन गर्न सक्दैन।", errExpired: "फेरि साइन-इन गर्नुहोस्।",
     errFailed: "केही गडबड भयो। फेरि प्रयास गर्नुहोस्।",
     welcome: "साइन-इन भयो।", created: "खाता बन्यो। तपाईंको रेकर्ड सुरक्षित छ।", passwordSaved: "पासवर्ड बदलियो।",
+    devicesTitle: "तपाईंका डिभाइस", devicesHint: "कहाँ साइन-इन छ हेर्नुहोस्", thisPhone: "यो फोन",
+    unknownDevice: "अज्ञात डिभाइस", activeToday: "आज सक्रिय", lastActive: (date: string) => `अन्तिम पटक सक्रिय ${date}`,
+    signOutDeviceTitle: "यो डिभाइसबाट साइन-आउट गर्ने?", signOutDeviceBody: "खाता चलाउन यसलाई फेरि साइन-इन गर्नुपर्छ।", signOutDeviceDo: "साइन-आउट",
+    deviceSignedOut: "डिभाइसबाट साइन-आउट भयो।", noOthers: "अरू कुनै डिभाइस साइन-इन छैन।",
   },
   bn: {
     signInTitle: "সাইন-ইন", createTitle: "অ্যাকাউন্ট খুলুন", forgotTitle: "পাসওয়ার্ড নতুন করুন", changeTitle: "পাসওয়ার্ড বদলান",
@@ -90,5 +106,9 @@ export const A = localized("accountAuth", {
     errUnavailable: "ইমেল দিয়ে সাইন-ইন এখন পাওয়া যাচ্ছে না।", errBanned: "এই অ্যাকাউন্ট এখন সাইন-ইন করতে পারবে না।", errExpired: "আবার সাইন-ইন করুন।",
     errFailed: "কিছু ভুল হয়েছে। আবার চেষ্টা করুন।",
     welcome: "সাইন-ইন হয়েছে।", created: "অ্যাকাউন্ট খোলা হয়েছে। আপনার রেকর্ড সুরক্ষিত।", passwordSaved: "পাসওয়ার্ড বদলানো হয়েছে।",
+    devicesTitle: "আপনার ডিভাইস", devicesHint: "কোথায় সাইন-ইন আছে দেখুন", thisPhone: "এই ফোন",
+    unknownDevice: "অজানা ডিভাইস", activeToday: "আজ সক্রিয়", lastActive: (date: string) => `শেষ সক্রিয় ${date}`,
+    signOutDeviceTitle: "এই ডিভাইস থেকে সাইন-আউট করবেন?", signOutDeviceBody: "অ্যাকাউন্ট ব্যবহার করতে এটিকে আবার সাইন-ইন করতে হবে।", signOutDeviceDo: "সাইন-আউট",
+    deviceSignedOut: "ডিভাইস থেকে সাইন-আউট হয়েছে।", noOthers: "আর কোনো ডিভাইস সাইন-ইন নেই।",
   },
 });

@@ -51,3 +51,4 @@ class PlayerSession(Base):
     created_at: Mapped[datetime] = mapped_column(TS, default=now, server_default=func.now())
     last_seen_at: Mapped[datetime] = mapped_column(TS, default=now, server_default=func.now())
     revoked_at: Mapped[datetime | None] = mapped_column(TS, nullable=True)
+    device_name: Mapped[str | None] = mapped_column(String(60), nullable=True)

@@ -22,6 +22,7 @@ export interface MeView {
 export interface LinkView { provider: string; linked_at: string }
 export interface RestoreView { player_id: string; token: string }
 export type SessionView = RestoreView;
+export interface DeviceSession { id: string; device_name: string | null; created_at: string; last_seen_at: string; current: boolean }
 export interface ProgressBody {
   xp: number;
   matches: number;
