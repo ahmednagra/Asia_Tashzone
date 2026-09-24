@@ -15,6 +15,7 @@ import { ErrorBoundary } from "../components/ui/ErrorBoundary";
 import { setLang } from "../i18n";
 import { RoomSwitch } from "../components/ui/RoomSwitch";
 import { StorageNotice } from "../components/ui/StorageNotice";
+import { UpdateNotice } from "../components/ui/UpdateNotice";
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -43,6 +44,7 @@ function Shell({ fontsReady }: { fontsReady: boolean }) {
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: c.bg }, animation: "fade_from_bottom" }} />
       <RoomSwitch />
       <StorageNotice />
+      <UpdateNotice />
     </View>
   );
 }

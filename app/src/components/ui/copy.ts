@@ -2,6 +2,10 @@ import { localized } from "../../i18n";
 
 export const U = localized("ui", {
   en: {
+    updateTitle: "Update ready",
+    updateBody: "Restart to get the latest fixes.",
+    restart: "Restart",
+    later: "Later",
     unavailable: "not available",
     avatar: "Avatar",
     back: "Back",
@@ -21,6 +25,10 @@ export const U = localized("ui", {
     play: "Play",
   },
   ur: {
+    updateTitle: "اپ ڈیٹ تیار ہے",
+    updateBody: "تازہ درستیاں لینے کے لیے ری اسٹارٹ کریں۔",
+    restart: "ری اسٹارٹ",
+    later: "بعد میں",
     unavailable: "دستیاب نہیں",
     avatar: "اوتار",
     back: "واپس",
@@ -40,6 +48,10 @@ export const U = localized("ui", {
     play: "کھیلیں",
   },
   hi: {
+    updateTitle: "अपडेट तैयार है",
+    updateBody: "नए सुधार पाने के लिए रीस्टार्ट करें।",
+    restart: "रीस्टार्ट",
+    later: "बाद में",
     unavailable: "उपलब्ध नहीं",
     avatar: "अवतार",
     back: "वापस",
@@ -59,6 +71,10 @@ export const U = localized("ui", {
     play: "खेलें",
   },
   ne: {
+    updateTitle: "अपडेट तयार छ",
+    updateBody: "नयाँ सुधार पाउन रिस्टार्ट गर्नुहोस्।",
+    restart: "रिस्टार्ट",
+    later: "पछि",
     unavailable: "उपलब्ध छैन",
     avatar: "अवतार",
     back: "पछाडि",
@@ -78,6 +94,10 @@ export const U = localized("ui", {
     play: "खेल्नुहोस्",
   },
   bn: {
+    updateTitle: "আপডেট তৈরি",
+    updateBody: "নতুন সংশোধন পেতে রিস্টার্ট করুন।",
+    restart: "রিস্টার্ট",
+    later: "পরে",
     unavailable: "পাওয়া যাচ্ছে না",
     avatar: "অবতার",
     back: "ফিরুন",

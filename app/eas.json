@@ -12,7 +12,8 @@
       },
       "env": {
         "EXPO_PUBLIC_API_URL": "https://api.141-148-193-78.sslip.io"
-      }
+      },
+      "channel": "development"
     },
     "preview": {
       "distribution": "internal",
@@ -21,7 +22,8 @@
       },
       "env": {
         "EXPO_PUBLIC_API_URL": "https://api.141-148-193-78.sslip.io"
-      }
+      },
+      "channel": "preview"
     },
     "production": {
       "autoIncrement": true,
@@ -31,7 +33,8 @@
       },
       "env": {
         "EXPO_PUBLIC_API_URL": "https://api.141-148-193-78.sslip.io"
-      }
+      },
+      "channel": "production"
     }
   },
   "submit": {

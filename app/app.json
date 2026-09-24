@@ -79,6 +79,14 @@
       "typedRoutes": true
     },
     "icon": "./assets/icon.png",
-    "backgroundColor": "#070F0D"
+    "backgroundColor": "#070F0D",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/5ca7b4b8-fb4c-458e-95f5-e5d4c27f5360",
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0
+    }
   }
 }
