@@ -31,37 +31,37 @@ export interface HowToText {
 }
 
 const EN: HowToText = {
-  intro: "The basics that every game here builds on. Each game's own rules are one tap away.",
+  intro: "The basics every game here builds on. Each game's own rules are one tap away.",
   sections: {
     ranks: {
       title: "Cards and ranks",
-      body: ["One deck has 52 cards in four suits: spades, hearts, diamonds and clubs.", "Within a suit, cards rank from the 2 up to the ace. The ace is the highest."],
+      body: ["A deck has 52 cards in four suits: spades, hearts, diamonds and clubs.", "In each suit, cards rank from 2 up to ace. The ace is highest."],
       captions: ["Low to high: 2, 5, 10, jack, queen, king, ace"],
     },
     tricks: {
       title: "Tricks",
       body: [
-        "A trick is one round of play. The first player leads any card, and each player plays one card in turn.",
-        "The highest card of the led suit wins the trick, and its winner leads the next one.",
+        "A trick is one round of play. The first player leads any card; then each player plays one card in turn.",
+        "The highest card of the led suit wins the trick, and the winner leads next.",
       ],
-      captions: ["Hearts are led. The king of hearts is highest and wins"],
+      captions: ["Hearts led. The king of hearts is highest and wins"],
     },
     follow: {
       title: "Following suit",
-      body: ["If you hold a card of the led suit, you play one. If you do not, the game's own rules say what you may play instead."],
-      captions: ["Hearts are led. With a heart in hand, you play a heart"],
+      body: ["Hold a card of the led suit? Play one. If not, the game's own rules say what you may play."],
+      captions: ["Hearts led. You hold a heart, so you play a heart"],
     },
     trump: {
       title: "Trump",
       body: [
-        "In games with a trump suit, any trump beats every card of the other suits.",
-        "Callbreak and Call Bridge always use spades. In Court Piece a player names the trump after the first 5 cards. Bhabhi has no trump.",
+        "Where there is a trump suit, any trump beats every card of the other suits.",
+        "Callbreak and Call Bridge always use spades. In Court Piece, a player names trump after the first 5 cards. Bhabhi has no trump.",
       ],
-      captions: ["Hearts are led, spades are trump. A small spade beats the king of hearts"],
+      captions: ["Hearts led, spades trump. A small spade beats the king of hearts"],
     },
     teams: {
       title: "Solo and partners",
-      body: ["Callbreak, Call Bridge and Bhabhi are every player for themselves.", "Court Piece is played in teams: partners sit opposite each other and win tricks together."],
+      body: ["In Callbreak, Call Bridge and Bhabhi, it's every player for themselves.", "Court Piece is played in teams: partners sit opposite and win tricks together."],
       captions: [],
     },
   },

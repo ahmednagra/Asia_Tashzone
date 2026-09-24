@@ -16,47 +16,47 @@ const GAMES_DATA_EN = {
   },
   games: {
     callbreak: {
-      description: "Take at least as many tricks as you called. Spades are always trump.",
+      description: "Win at least the tricks you call. Spades are always trump.",
       rules: [
         { label: "The deal", text: "13 cards each." },
-        { label: "Legal move", text: "Follow the led suit if you can; a spade beats any other suit." },
-        { label: "Scoring", text: "Make your call to score it, extra tricks add 0.1 each, a miss loses your call." },
-        { label: "Winning", text: "Highest total after the chosen number of rounds." },
+        { label: "Legal move", text: "Follow suit and beat the top card if you can. Out of the suit? Play a spade if it would win." },
+        { label: "Scoring", text: "Make your call to score it, plus 0.1 per extra trick. Miss it and lose your call." },
+        { label: "Winning", text: "Highest total after the chosen rounds." },
       ],
     },
     callbridge: {
-      description: "Call how many tricks you will take, then make your call or one more.",
+      description: "Call your tricks, then win exactly that many or one more.",
       rules: [
         { label: "The deal", text: "13 cards each." },
-        { label: "Legal move", text: "Follow suit if you can; otherwise play a spade if you have one." },
-        { label: "Scoring", text: "Calls run from 2 to 12; you must make your call or one more." },
-        { label: "Winning", text: "Highest total after the chosen number of hands." },
+        { label: "Legal move", text: "Follow suit if you can. Out of the suit? Play a spade if it would win." },
+        { label: "Scoring", text: "Calls run 2 to 12. Win exactly your call or one more." },
+        { label: "Winning", text: "Highest total after the chosen hands." },
       ],
     },
-    marriage: { description: "Draw and discard to build sequences and marriages before anyone else." },
+    marriage: { description: "Draw and discard to build sequences and marriages first." },
     courtpiece: {
       alias: "Rung · Coat Pees",
-      description: "Win seven of thirteen tricks with your partner; win streaks to score a court.",
+      description: "Win 7 of 13 tricks with your partner. Sweep them all for a court.",
       rules: [
-        { label: "The deal", text: "5 cards, trump is chosen, then the rest." },
-        { label: "Legal move", text: "Follow suit if able; otherwise any card." },
-        { label: "Scoring", text: "Tricks won in a row collect the pile; first to seven wins the hand." },
-        { label: "Winning", text: "First team to the points target." },
+        { label: "The deal", text: "5 cards, trump is named, then 8 more." },
+        { label: "Legal move", text: "Follow suit if you can; otherwise any card." },
+        { label: "Scoring", text: "Two tricks in a row take the pile; first to 7 tricks wins the hand." },
+        { label: "Winning", text: "First team to the target points." },
       ],
     },
     twentynine: { description: "Bid points with a partner, pick the trump and take the high cards." },
     bhabhi: {
       alias: "Thulla · Get Away",
-      description: "Get rid of all your cards. The last player still holding cards is the Bhabhi.",
+      description: "Get rid of all your cards. The last one holding cards is the Bhabhi.",
       rules: [
         { label: "The deal", text: "The whole deck, as equal as possible." },
         { label: "Turn order", text: "The ace of spades leads the first trick." },
-        { label: "Legal move", text: "Follow suit if you can. If you cannot, any card interrupts the trick: a thulla." },
-        { label: "Winning", text: "Escape with no cards. The last one holding cards is the Bhabhi." },
+        { label: "Legal move", text: "Follow suit if you can. If not, any card is a thulla and stops the trick." },
+        { label: "Winning", text: "Empty your hand to get away. The last one holding cards is the Bhabhi." },
       ],
     },
-    seep: { alias: "Sweep", description: "Capture cards from the floor by matching values and build houses." },
-    teenpatti: { description: "A three-card showdown: hold the best hand when the cards are shown." },
+    seep: { alias: "Sweep", description: "Capture floor cards by matching values, and build houses." },
+    teenpatti: { description: "Three cards each: the best hand at the showdown wins." },
   },
   setup: {
     rounds: "Rounds", hands: "Hands", points: "Points to win",
@@ -65,7 +65,7 @@ const GAMES_DATA_EN = {
     presets: {
       "callbreak.np@1": {
         classic: { label: "Classic", hint: "Call 1–8, extra tricks add 0.1, no-spade hands redealt" },
-        "easy-follow": { label: "Easy follow", hint: "Follow suit; no need to beat the card" },
+        "easy-follow": { label: "Easy follow", hint: "Follow suit; no need to beat the top card" },
         "call-bridge-classic": { label: "Call Bridge", hint: "Call 2–13, no bonus for extra tricks" },
         standard: { label: "Nepal standard", hint: "Call 1–13, ask for a redeal with a weak hand" },
         "lakdi-india": { label: "Lakdi", hint: "Standard rules, played clockwise" },
@@ -74,19 +74,19 @@ const GAMES_DATA_EN = {
         standard: { label: "Standard", hint: "Call 2–12; make your call or one more" },
       },
       "courtpiece.tz@1": {
-        double: { label: "Double Sir", hint: "Win two tricks in a row to collect them" },
+        double: { label: "Double Sir", hint: "Win two tricks in a row to take the pile" },
         single: { label: "Single Sir", hint: "First team to 7 tricks wins the hand" },
-        "double-ace": { label: "Double Sir with Ace", hint: "Two aces in a row do not collect the pile" },
+        "double-ace": { label: "Double Sir with Ace", hint: "Two aces in a row don't take the pile" },
       },
       "bhabhi.tz@1": {
         standard: { label: "Standard", hint: "A thulla ends the trick; win with your last card and you draw" },
-        "full-trick": { label: "Full trick", hint: "Everyone plays, then the pickup happens" },
+        "full-trick": { label: "Full trick", hint: "Everyone plays before the pickup" },
         "quick-escape": { label: "Quick escape", hint: "Your last card always gets you away" },
         "take-hand": { label: "Take-the-hand", hint: "You may take the next player's cards" },
       },
     },
   },
-  genericError: "That move is not allowed right now",
+  genericError: "That move isn't allowed now",
 };
 
 export type GamesData = typeof GAMES_DATA_EN;
@@ -202,14 +202,14 @@ const ERRORS_EN = {
   NOT_YOUR_TURN: "Wait for your turn",
   MUST_FOLLOW_SUIT: "Follow the lead suit",
   MUST_BEAT: "Play a higher card of the lead suit",
-  MUST_TRUMP: "No card of the lead suit: play a trump",
+  MUST_TRUMP: "Out of the lead suit: play a trump",
   MUST_OVERTRUMP: "Play a higher trump",
-  MUST_NOT_LEAD_TRUMP: "You may not lead a spade on the first trick",
+  MUST_NOT_LEAD_TRUMP: "You can't lead a spade on the first trick",
   MUST_LEAD_ACE_OF_SPADES: "Start with the ace of spades",
-  CALL_OUT_OF_RANGE: "Choose one of the numbers shown",
-  CARD_NOT_IN_HAND: "That card is no longer in your hand",
-  WRONG_PHASE: "That cannot be done at this moment",
-  MATCH_OVER: "This game has finished",
+  CALL_OUT_OF_RANGE: "Pick one of the numbers shown",
+  CARD_NOT_IN_HAND: "That card isn't in your hand any more",
+  WRONG_PHASE: "You can't do that right now",
+  MATCH_OVER: "This game is over",
 };
 export type ErrorCodes = typeof ERRORS_EN;
 
