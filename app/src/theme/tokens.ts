@@ -5,7 +5,7 @@
  * come from the mockup and are decorative only — never used for text or state.
  */
 
-export type ThemeName = "dark" | "light";
+export type ThemeName = "gold" | "emerald" | "dark" | "light";
 
 export interface SemanticColors {
   bg: string; surface: string; surfaceRaised: string;
@@ -16,23 +16,38 @@ export interface SemanticColors {
   tableFelt: string;
 }
 
+const goldTheme: SemanticColors = {
+  bg: "#0E0F12", surface: "#171A1F", surfaceRaised: "#20242B",
+  text: "#F2EEE4", textSecondary: "#B9B3A6", textMuted: "#8F897D",
+  primary: "#D4A646", onPrimary: "#1B1D21",
+  success: "#3FB67A", warning: "#F08A3C", error: "#F06A6A", info: "#5AA9E6",
+  borderControl: "#666E7C", borderSubtle: "#2C313A",
+  tableFelt: "#0F3B2E",
+};
+
+const emeraldTheme: SemanticColors = {
+  bg: "#070F0D", surface: "#0D1915", surfaceRaised: "#12231D",
+  text: "#F4ECD8", textSecondary: "#A0BDB1", textMuted: "#8AA69B",
+  primary: "#D4A646", onPrimary: "#1B1D21",
+  success: "#7FE0B0", warning: "#F0B45A", error: "#F06A6A", info: "#5AA9E6",
+  borderControl: "#666E7C", borderSubtle: "#2C313A",
+  tableFelt: "#0F4A3C",
+};
+
+const lightTheme: SemanticColors = {
+  bg: "#F6F3EC", surface: "#FFFFFF", surfaceRaised: "#FFFFFF",
+  text: "#1B1D21", textSecondary: "#4A4F57", textMuted: "#676C74",
+  primary: "#8A6512", onPrimary: "#FFFFFF",
+  success: "#1F7A4D", warning: "#A8520F", error: "#B3261E", info: "#1B5FA8",
+  borderControl: "#8C8577", borderSubtle: "#D9D3C7",
+  tableFelt: "#154A37",
+};
+
 export const colors: Record<ThemeName, SemanticColors> = {
-  dark: {
-    bg: "#0E0F12", surface: "#171A1F", surfaceRaised: "#20242B",
-    text: "#F2EEE4", textSecondary: "#B9B3A6", textMuted: "#8F897D",
-    primary: "#D4A646", onPrimary: "#1B1D21",
-    success: "#3FB67A", warning: "#F08A3C", error: "#F06A6A", info: "#5AA9E6",
-    borderControl: "#666E7C", borderSubtle: "#2C313A",
-    tableFelt: "#0F3B2E",
-  },
-  light: {
-    bg: "#F6F3EC", surface: "#FFFFFF", surfaceRaised: "#FFFFFF",
-    text: "#1B1D21", textSecondary: "#4A4F57", textMuted: "#676C74",
-    primary: "#8A6512", onPrimary: "#FFFFFF",
-    success: "#1F7A4D", warning: "#A8520F", error: "#B3261E", info: "#1B5FA8",
-    borderControl: "#8C8577", borderSubtle: "#D9D3C7",
-    tableFelt: "#154A37",
-  },
+  gold: goldTheme,
+  emerald: emeraldTheme,
+  dark: goldTheme,
+  light: lightTheme,
 };
 
 /** Anything drawn on the felt; ≥ 4.5:1 on both felts. */

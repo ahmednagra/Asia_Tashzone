@@ -14,14 +14,13 @@ import { GAMES } from "../../constants/games";
 import { useGameNav } from "../../hooks/useGameNav";
 import { useProfile } from "../../store/profile";
 import { winRate } from "../../store/profileModel";
-import { fonts } from "../../theme/tokens";
+import { fonts, onTable, radius } from "../../theme/tokens";
 import { avatarName } from "../onboarding/AvatarView";
 import { AvatarSheet } from "./AvatarSheet";
 import { T } from "./copy";
 
 const GLYPH = { S: "♠", H: "♥", D: "♦", C: "♣" } as const;
 
-/** You tab (mockup `me`): identity, real stats from the saved profile, recent games, avatar sheet. */
 export function MeScreen() {
   const { c } = useTheme();
   const { profile: p } = useProfile();
@@ -31,15 +30,42 @@ export function MeScreen() {
   const recent = p.recent.map((id) => GAMES.find((g) => g.id === id)).filter((g): g is (typeof GAMES)[number] => !!g);
   const dealTarget = recent.find((g) => g.status === "play") ?? GAMES.find((g) => g.status === "play");
 
+  const rankTitle =
+    p.stats.wins >= 50
+      ? "Mehfil Ustad"
+      : p.stats.wins >= 20
+      ? "Mehfil Player"
+      : p.stats.wins >= 5
+      ? "Rising Cardist"
+      : "Shagird (Novice)";
+
   return (
     <SettingsScreen title={T.title} back={false} right={<Chip label={T.table} onPress={() => nav.router.push("/themes")} />}>
-      <GlassCard style={s.who}>
-        <AvatarBadge index={p.avatar} size={56} selected onPress={() => setSheet(true)} label={T.changeAvatar} />
-        <View style={s.grow}>
-          <Text numberOfLines={1} style={[s.name, { color: c.text }]}>{p.name || T.defaultName}</Text>
-          <Caption tone="muted">{played ? T.summary(p.stats.matches, avatarName(p.avatar)) : `${T.noHands} · ${avatarName(p.avatar)}`}</Caption>
+      <GlassCard style={s.passportCard}>
+        <View style={s.passportHeader}>
+          <Text style={s.passportLabel}>MEHFIL PASSPORT</Text>
+          <View style={s.onDeviceBadge}>
+            <Text style={s.onDeviceText}>100% On-Device</Text>
+          </View>
         </View>
-        <Chip label={T.edit} onPress={() => setSheet(true)} />
+
+        <View style={s.who}>
+          <AvatarBadge index={p.avatar} size={60} selected onPress={() => setSheet(true)} label={T.changeAvatar} />
+          <View style={s.grow}>
+            <View style={s.nameTitleRow}>
+              <Text numberOfLines={1} style={[s.name, { color: c.text }]}>{p.name || T.defaultName}</Text>
+            </View>
+            <Text style={s.rankTitle}>{rankTitle}</Text>
+            <Caption tone="muted">{played ? T.summary(p.stats.matches, avatarName(p.avatar)) : `${T.noHands} · ${avatarName(p.avatar)}`}</Caption>
+          </View>
+          <Chip label={T.edit} onPress={() => setSheet(true)} />
+        </View>
+
+        {p.stats.streak > 1 && (
+          <View style={s.streakBanner}>
+            <Text style={s.streakText}>🔥 Active Win Streak: {p.stats.streak} Matches</Text>
+          </View>
+        )}
       </GlassCard>
 
       {played ? (
@@ -74,12 +100,94 @@ export function MeScreen() {
 }
 
 const s = StyleSheet.create({
-  who: { flexDirection: "row", alignItems: "center", gap: 12 },
-  grow: { flex: 1, minWidth: 0 },
-  name: { fontFamily: fonts.display.family, fontSize: 20, fontWeight: "700" },
-  between: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-  empty: { alignItems: "center", gap: 8, padding: 18 },
-  star: { fontSize: 26 },
-  emptyTitle: { fontFamily: fonts.display.family, fontSize: 18, fontWeight: "700" },
-  full: { alignSelf: "stretch" },
+  passportCard: {
+    padding: 14,
+    gap: 10,
+    borderWidth: 1.5,
+    borderColor: onTable.gold,
+  },
+  passportHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  passportLabel: {
+    fontSize: 10.5,
+    letterSpacing: 1.4,
+    fontWeight: "700",
+    color: onTable.gold,
+  },
+  onDeviceBadge: {
+    backgroundColor: "rgba(227, 189, 110, 0.15)",
+    borderWidth: 1,
+    borderColor: onTable.gold,
+    borderRadius: 999,
+    paddingHorizontal: 8,
+    paddingVertical: 1.5,
+  },
+  onDeviceText: {
+    fontSize: 9.5,
+    fontWeight: "600",
+    color: onTable.gold,
+  },
+  who: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  nameTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  rankTitle: {
+    fontSize: 11.5,
+    fontWeight: "600",
+    color: onTable.gold,
+  },
+  streakBanner: {
+    backgroundColor: "rgba(240, 138, 60, 0.15)",
+    borderWidth: 1,
+    borderColor: onTable.warning,
+    borderRadius: radius.control,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    alignItems: "center",
+  },
+  streakText: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: onTable.warning,
+  },
+  grow: {
+    flex: 1,
+    minWidth: 0,
+    gap: 2,
+  },
+  name: {
+    fontFamily: fonts.display.family,
+    fontSize: 20,
+    fontWeight: "700",
+  },
+  between: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  empty: {
+    alignItems: "center",
+    gap: 8,
+    paddingVertical: 20,
+  },
+  star: {
+    fontSize: 24,
+  },
+  emptyTitle: {
+    fontFamily: fonts.display.family,
+    fontSize: 18,
+    fontWeight: "600",
+  },
+  full: {
+    alignSelf: "stretch",
+  },
 });

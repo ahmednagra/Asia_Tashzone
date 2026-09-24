@@ -3,27 +3,78 @@ import { useColorScheme } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { type SemanticColors, type ThemeName, colors } from "../theme/tokens";
 
-/** `system: true` (the default) follows the device scheme and ignores `name`. */
-export interface ThemePrefs { name: ThemeName; fourColor: boolean; reducedMotion: boolean; largeCards: boolean; system?: boolean }
-interface Theme extends Omit<ThemePrefs, "system"> { c: SemanticColors }
+export type OrientationOption = "auto" | "portrait" | "landscape";
+export type HapticStrength = "off" | "gentle" | "crisp" | "firm";
 
-const DEFAULTS: ThemePrefs = { name: "dark", fourColor: false, reducedMotion: false, largeCards: false, system: true };
+export interface ThemePrefs {
+  name: ThemeName;
+  fourColor: boolean;
+  reducedMotion: boolean;
+  largeCards: boolean;
+  system?: boolean;
+  orientation?: OrientationOption;
+  hapticStrength?: HapticStrength;
+  sfxVolume?: number;
+  ambienceVolume?: number;
+}
+
+interface Theme extends Omit<ThemePrefs, "system"> {
+  c: SemanticColors;
+  orientation: OrientationOption;
+  system: boolean;
+  hapticStrength: HapticStrength;
+  sfxVolume: number;
+  ambienceVolume: number;
+}
+
+const DEFAULTS: ThemePrefs = {
+  name: "emerald",
+  fourColor: false,
+  reducedMotion: false,
+  largeCards: false,
+  system: false,
+  orientation: "auto",
+  hapticStrength: "crisp",
+  sfxVolume: 80,
+  ambienceVolume: 40,
+};
 const KEY = "tashzone.theme.v1";
 
-const Ctx = createContext<Theme>({ ...DEFAULTS, c: colors.dark });
+const Ctx = createContext<Theme>({
+  ...DEFAULTS,
+  orientation: "auto",
+  system: false,
+  hapticStrength: "crisp",
+  sfxVolume: 80,
+  ambienceVolume: 40,
+  c: colors.emerald,
+});
 const PrefsCtx = createContext<[ThemePrefs, (p: ThemePrefs) => void]>([DEFAULTS, () => {}]);
 
-/** Reads saved prefs defensively; anything malformed falls back to the default for that field. */
 function parsePrefs(raw: unknown): ThemePrefs {
   const r = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
   const b = (v: unknown, d: boolean) => (typeof v === "boolean" ? v : d);
+  const num = (v: unknown, d: number) => (typeof v === "number" && Number.isFinite(v) ? v : d);
+  const orient = (v: unknown): OrientationOption =>
+    v === "portrait" || v === "landscape" || v === "auto" ? v : "auto";
+  const haptic = (v: unknown): HapticStrength =>
+    v === "off" || v === "gentle" || v === "crisp" || v === "firm" ? v : "crisp";
+  const themeName = (v: unknown): ThemeName =>
+    v === "gold" ? "gold" : v === "light" ? "light" : "emerald";
+
   return {
-    name: r.name === "light" ? "light" : "dark",
-    fourColor: b(r.fourColor, false), reducedMotion: b(r.reducedMotion, false), largeCards: b(r.largeCards, false), system: b(r.system, true),
+    name: themeName(r.name),
+    fourColor: b(r.fourColor, false),
+    reducedMotion: b(r.reducedMotion, false),
+    largeCards: b(r.largeCards, false),
+    system: b(r.system, false),
+    orientation: orient(r.orientation),
+    hapticStrength: haptic(r.hapticStrength),
+    sfxVolume: num(r.sfxVolume, 80),
+    ambienceVolume: num(r.ambienceVolume, 40),
   };
 }
 
-/** Owns the display preferences (theme, four-colour deck, reduced motion, large cards), saved on the device. */
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const scheme = useColorScheme();
   const [prefs, setPrefsState] = useState<ThemePrefs>(DEFAULTS);
@@ -40,13 +91,35 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setPrefsState(next);
     try {
       AsyncStorage.setItem(KEY, JSON.stringify(next)).catch(() => {});
-    } catch {
-      /* storage unavailable: the choice still applies for this session */
-    }
+    } catch {}
   }, []);
 
-  const effective: ThemeName = prefs.system !== false ? (scheme === "light" ? "light" : "dark") : prefs.name;
-  const value = useMemo<Theme>(() => ({ name: effective, fourColor: prefs.fourColor, reducedMotion: prefs.reducedMotion, largeCards: prefs.largeCards, c: colors[effective] }), [effective, prefs.fourColor, prefs.reducedMotion, prefs.largeCards]);
+  const effective: ThemeName = prefs.system ? (scheme === "light" ? "light" : "emerald") : prefs.name;
+  const value = useMemo<Theme>(
+    () => ({
+      name: effective,
+      fourColor: prefs.fourColor,
+      reducedMotion: prefs.reducedMotion,
+      largeCards: prefs.largeCards,
+      system: !!prefs.system,
+      orientation: prefs.orientation ?? "auto",
+      hapticStrength: prefs.hapticStrength ?? "crisp",
+      sfxVolume: prefs.sfxVolume ?? 80,
+      ambienceVolume: prefs.ambienceVolume ?? 40,
+      c: colors[effective] ?? colors.emerald,
+    }),
+    [
+      effective,
+      prefs.fourColor,
+      prefs.reducedMotion,
+      prefs.largeCards,
+      prefs.system,
+      prefs.orientation,
+      prefs.hapticStrength,
+      prefs.sfxVolume,
+      prefs.ambienceVolume,
+    ]
+  );
   const pair = useMemo<[ThemePrefs, (p: ThemePrefs) => void]>(() => [prefs, setPrefs], [prefs, setPrefs]);
   return (
     <PrefsCtx.Provider value={pair}>

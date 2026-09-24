@@ -1,0 +1,1789 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>TashZone — Interactive UI Artifact & 3D Mehfil Concept (Full Suite)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=Jost:wght@400;500;600;700&family=Bodoni+Moda:wght@700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --obsidian: #070f0d;
+      --surface: #0d1915;
+      --raised: #12231d;
+      --felt-lit: #1a7458;
+      --felt: #0f4a3c;
+      --felt-deep: #062019;
+      --felt-rim: #03110d;
+      --walnut: #2e1c11;
+      --walnut-lit: #6a4626;
+      --gold: #e3bd6e;
+      --gold-hot: #f6e0b0;
+      --gold-dim: #9d7a32;
+      --ivory: #f4ecd8;
+      --muted: #a0bdb1;
+      --glass: rgba(255, 255, 255, 0.055);
+      --line: rgba(227, 189, 110, 0.22);
+      --line-hard: rgba(227, 189, 110, 0.45);
+      --suit-red: #d13028;
+      --suit-black: #16181d;
+      --suit-dia: #d13028;
+      --suit-club: #16181d;
+      --ui: 'Jost', sans-serif;
+      --display: 'Cormorant Garamond', serif;
+      --face: 'Bodoni Moda', serif;
+    }
+
+    /* Four-colour deck mode */
+    body.four-color {
+      --suit-dia: #1b4f9c; /* Blue diamonds */
+      --suit-club: #1b6b3a; /* Green clubs */
+    }
+
+    /* Light mode override */
+    body.light-theme {
+      --obsidian: #e9eeeb;
+      --surface: #f4f7f5;
+      --raised: #ffffff;
+      --ivory: #0f1c17;
+      --muted: #4d5f57;
+      --glass: rgba(15, 28, 23, 0.05);
+      --line: rgba(122, 85, 24, 0.26);
+      --line-hard: rgba(122, 85, 24, 0.45);
+      --felt-lit: #238b6c;
+      --felt: #155c4b;
+      --felt-deep: #0c3329;
+      --felt-rim: #061b15;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #020605;
+      color: var(--ivory);
+      font-family: var(--ui);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+      overflow-x: hidden;
+    }
+
+    /* Top Demo Control Ribbon */
+    .demo-bar {
+      width: 100%;
+      max-width: 960px;
+      background: rgba(18, 35, 29, 0.95);
+      border: 1.5px solid var(--line-hard);
+      border-radius: 18px;
+      padding: 12px 18px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.7);
+      z-index: 1000;
+    }
+    .demo-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .demo-badge {
+      background: var(--gold);
+      color: #070f0d;
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 999px;
+      letter-spacing: 0.8px;
+    }
+    .demo-title {
+      font-family: var(--display);
+      font-size: 21px;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 1px;
+    }
+    .demo-tabs, .demo-controls {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .tab-btn, .ctrl-btn {
+      background: var(--glass);
+      border: 1px solid var(--line);
+      color: var(--ivory);
+      padding: 6px 13px;
+      border-radius: 999px;
+      font-family: var(--ui);
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .tab-btn:hover, .ctrl-btn:hover {
+      background: rgba(227, 189, 110, 0.12);
+      border-color: var(--line-hard);
+    }
+    .tab-btn.active, .ctrl-btn.active {
+      background: var(--gold);
+      color: #070f0d;
+      border-color: var(--gold-hot);
+      box-shadow: 0 0 14px rgba(227, 189, 110, 0.4);
+    }
+
+    /* Phone Device Simulator Frame */
+    .device-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      perspective: 1400px;
+    }
+    .phone-frame {
+      width: 390px;
+      height: 830px;
+      background: var(--obsidian);
+      border: 10px solid #202422;
+      border-radius: 46px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 25px 65px rgba(0,0,0,0.85), 0 0 0 2px rgba(227, 189, 110, 0.22);
+      transition: all 0.4s cubic-bezier(0.2, 0.9, 0.25, 1);
+    }
+    /* Landscape Mode */
+    .phone-frame.landscape {
+      width: 830px;
+      height: 410px;
+    }
+
+    /* Dynamic Island / Speaker Notch */
+    .notch {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 24px;
+      background: #000;
+      border-radius: 14px;
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    /* View Container inside simulator */
+    .screen-view {
+      position: absolute;
+      inset: 0;
+      padding-top: 36px;
+      padding-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .screen-view.hidden { display: none; }
+
+    /* ══════════════════════════════════════════════════════════════════════
+       GAME SCREEN: 3D ZERO-SCROLL MEHFIL TABLE
+       ══════════════════════════════════════════════════════════════════════ */
+    .game-screen {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 0 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 1. Header Bar */
+    .game-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 38px;
+      padding: 0 4px;
+      z-index: 10;
+    }
+    .icon-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      background: var(--glass);
+      color: var(--gold);
+      display: grid;
+      place-items: center;
+      font-size: 15px;
+      cursor: pointer;
+    }
+    .status-capsule {
+      font-family: var(--display);
+      font-size: 15.5px;
+      font-weight: 600;
+      color: var(--gold-hot);
+      letter-spacing: 0.5px;
+      text-align: center;
+    }
+
+    /* 2. 3D Felt Arena */
+    .arena-3d {
+      flex: 1;
+      min-height: 0;
+      position: relative;
+      margin: 2px 0;
+      perspective: 1100px;
+    }
+    .walnut-rail {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(155deg, var(--walnut-lit), var(--walnut), #130a05);
+      border-radius: 36px;
+      padding: 7px;
+      box-shadow: 0 16px 36px rgba(0,0,0,0.7), inset 0 2px 2px rgba(255,222,165,0.3);
+      position: relative;
+      transform: rotateX(16deg);
+      transform-origin: 50% 60%;
+      transition: all 0.4s ease;
+    }
+    /* Ruby Kat Flash Effect */
+    .walnut-rail.ruby-flash {
+      box-shadow: 0 0 35px rgba(209, 48, 40, 0.9), inset 0 0 20px rgba(209, 48, 40, 0.7);
+      border-color: #d13028 !important;
+    }
+
+    .cloth-felt {
+      width: 100%;
+      height: 100%;
+      border-radius: 30px;
+      background: radial-gradient(circle at 50% 38%, var(--felt-lit) 0%, var(--felt) 44%, var(--felt-deep) 80%, var(--felt-rim) 100%);
+      border: 1.5px solid var(--gold-dim);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 8px;
+    }
+    /* Breathing Spotlight */
+    .spotlight {
+      position: absolute;
+      top: -20%;
+      left: 10%;
+      right: 10%;
+      height: 85%;
+      background: radial-gradient(ellipse at 50% 30%, rgba(246, 224, 176, 0.22), rgba(26, 116, 88, 0.08) 60%, transparent 80%);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: breathe 5s ease-in-out infinite alternate;
+    }
+    @keyframes breathe {
+      0% { opacity: 0.4; transform: scale(0.96); }
+      100% { opacity: 0.85; transform: scale(1.04); }
+    }
+    .cloth-inner {
+      position: absolute;
+      inset: 12px;
+      border: 1px dashed var(--line);
+      border-radius: 22px;
+      pointer-events: none;
+    }
+
+    /* HUD Chips */
+    .hud-chips {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      z-index: 2;
+    }
+    .chip {
+      background: rgba(0,0,0,0.35);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 2px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gold);
+    }
+
+    /* Seats around the table */
+    .seat-row-top {
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
+      z-index: 2;
+    }
+    .seat-row-mid {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex: 1;
+      z-index: 2;
+    }
+    .seat-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      cursor: pointer;
+      position: relative;
+    }
+    .avatar-ring {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      padding: 2px;
+      display: grid;
+      place-items: center;
+      transition: all 0.3s ease;
+    }
+    .avatar-ring.turn {
+      border-color: var(--gold);
+      box-shadow: 0 0 16px var(--gold-hot);
+      animation: turnPulse 1.3s infinite alternate;
+    }
+    @keyframes turnPulse {
+      from { transform: scale(1); }
+      to { transform: scale(1.15); }
+    }
+    .avatar-core {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: var(--walnut);
+      border: 1.5px solid var(--gold-dim);
+      display: grid;
+      place-items: center;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--gold-hot);
+    }
+    .seat-plate {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--felt-rim);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 1px 7px 1px 9px;
+      font-size: 11px;
+      color: var(--ivory);
+    }
+    .seat-badge {
+      background: rgba(255,255,255,0.08);
+      border-radius: 999px;
+      padding: 0 4px;
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    /* 3D Trick Center */
+    .trick-center {
+      position: relative;
+      width: 165px;
+      height: 125px;
+      margin: 0 auto;
+      display: grid;
+      place-items: center;
+    }
+    .trick-card {
+      position: absolute;
+      width: 48px;
+      height: 68px;
+      border-radius: 6px;
+      background: #fffdf6;
+      border: 1px solid rgba(0,0,0,0.15);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 3px 4px;
+      font-weight: 700;
+      font-family: var(--face);
+      transition: all 0.4s cubic-bezier(0.2, 0.9, 0.25, 1);
+    }
+    .trick-card.spades, .trick-card.clubs { color: var(--suit-black); }
+    .trick-card.hearts { color: var(--suit-red); }
+    .trick-card.diamonds { color: var(--suit-dia); }
+
+    /* Trick Sweeper motion classes */
+    .trick-card.sweep-stack {
+      top: 30px !important;
+      left: 58px !important;
+      transform: rotate(0deg) scale(0.9) !important;
+    }
+    .trick-card.sweep-to-seat {
+      top: -60px !important;
+      left: 140px !important;
+      transform: scale(0.2) rotate(45deg) !important;
+      opacity: 0 !important;
+    }
+
+    /* 3. MePlate & Action Bridge */
+    .bridge-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 6px;
+      background: rgba(13, 25, 21, 0.85);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      margin: 3px 0;
+      z-index: 10;
+    }
+    .me-summary {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .me-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1.5px solid var(--gold);
+      background: #1a4f3b;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      color: var(--gold-hot);
+      font-size: 13px;
+    }
+    .me-details {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+    .me-name-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.5px;
+      font-weight: 600;
+    }
+    .turn-pill {
+      background: var(--gold);
+      color: #070f0d;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 999px;
+      letter-spacing: 0.5px;
+    }
+    .me-instruction {
+      font-size: 11px;
+      color: var(--gold);
+    }
+    .bridge-actions {
+      display: flex;
+      gap: 4px;
+    }
+    .action-chip {
+      background: var(--glass);
+      border: 1px solid var(--line);
+      color: var(--ivory);
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+    .action-chip.primary {
+      border-color: var(--gold);
+      color: var(--gold-hot);
+      font-weight: 600;
+    }
+
+    /* 4. Radial 3D Hand Fan */
+    .hand-stage {
+      height: 120px;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      z-index: 20;
+    }
+    .fan-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 380px;
+      height: 100%;
+    }
+    .playing-card {
+      position: absolute;
+      width: 58px;
+      height: 82px;
+      border-radius: 7px;
+      background: #fffdf8;
+      border: 1px solid rgba(0,0,0,0.15);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      padding: 3px 5px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: grab;
+      transform-origin: bottom center;
+      transition: transform 0.26s cubic-bezier(0.2, 0.9, 0.25, 1), box-shadow 0.26s ease, opacity 0.3s ease, filter 0.3s ease;
+      user-select: none;
+      touch-action: none;
+    }
+    .playing-card:active { cursor: grabbing; }
+
+    .playing-card.spades, .playing-card.clubs { color: var(--suit-black); }
+    .playing-card.hearts { color: var(--suit-red); }
+    .playing-card.diamonds { color: var(--suit-dia); }
+
+    .playing-card .c-index {
+      font-family: var(--face);
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .playing-card .c-pip {
+      font-size: 12px;
+      margin-top: -3px;
+    }
+    .playing-card .c-center {
+      position: absolute;
+      right: 4px;
+      bottom: 2px;
+      font-size: 26px;
+      opacity: 0.9;
+    }
+
+    /* Smart Suit Dimming & Guidance */
+    .playing-card.dimmed {
+      opacity: 0.38;
+      filter: grayscale(0.5) brightness(0.7);
+      cursor: not-allowed;
+    }
+    .playing-card.highlighted {
+      box-shadow: 0 0 0 2px var(--gold-hot), 0 8px 20px rgba(227, 189, 110, 0.5);
+      animation: legalPulse 1.8s infinite alternate;
+    }
+    @keyframes legalPulse {
+      from { transform: translateY(-4px); }
+      to { transform: translateY(-7px); }
+    }
+
+    /* 3D Hover & Armed Lift */
+    .playing-card:hover {
+      box-shadow: 0 14px 26px rgba(0,0,0,0.7), 0 0 0 2px var(--gold);
+    }
+    .playing-card.armed {
+      transform: translateY(-24px) rotate(0deg) scale(1.12) !important;
+      z-index: 200 !important;
+      border-color: var(--gold-hot);
+      box-shadow: 0 18px 30px rgba(0,0,0,0.85), 0 0 16px var(--gold-hot);
+    }
+    .playing-card.dragging {
+      transition: none !important;
+      z-index: 300 !important;
+      box-shadow: 0 24px 40px rgba(0,0,0,0.9), 0 0 22px var(--gold);
+    }
+
+    /* Floating Game Action Tray */
+    .floating-tray {
+      position: absolute;
+      bottom: 110px;
+      left: 10px;
+      right: 10px;
+      background: rgba(13, 25, 21, 0.96);
+      border: 1.5px solid var(--gold);
+      border-radius: 16px;
+      padding: 10px 12px;
+      box-shadow: 0 16px 36px rgba(0,0,0,0.9);
+      z-index: 150;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      animation: slideUp 0.3s ease;
+    }
+    .floating-tray.hidden { display: none; }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .tray-title {
+      font-family: var(--display);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--gold);
+      display: flex;
+      justify-content: space-between;
+    }
+    .bid-row {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+    .bid-btn {
+      min-width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      background: var(--glass);
+      color: var(--ivory);
+      font-size: 16px;
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+    }
+    .bid-btn.suggested {
+      border-color: var(--gold);
+      background: rgba(227, 189, 110, 0.2);
+      color: var(--gold-hot);
+    }
+
+    /* ══════════════════════════════════════════════════════════════════════
+       SETTINGS SCREEN: LUXURY GAMING CONSOLE
+       ══════════════════════════════════════════════════════════════════════ */
+    .settings-screen {
+      flex: 1;
+      padding: 0 14px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .settings-header {
+      font-family: var(--display);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--gold);
+      text-align: center;
+      padding: 4px 0;
+    }
+
+    /* Hero Player Plate */
+    .player-hero {
+      background: linear-gradient(135deg, rgba(227, 189, 110, 0.12), rgba(255, 255, 255, 0.04));
+      border: 1.5px solid var(--line-hard);
+      border-radius: 18px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+    .hero-glow {
+      position: absolute;
+      right: -20px;
+      top: -20px;
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: var(--gold);
+      opacity: 0.12;
+      filter: blur(16px);
+    }
+    .hero-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 2px solid var(--gold);
+      background: #194a3a;
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+      box-shadow: 0 0 12px rgba(227, 189, 110, 0.4);
+    }
+    .hero-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .hero-name {
+      font-family: var(--display);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ivory);
+    }
+    .hero-subtitle {
+      font-size: 12px;
+      color: var(--gold);
+      font-weight: 500;
+    }
+    .hero-edit-btn {
+      background: var(--glass);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gold-hot);
+      cursor: pointer;
+    }
+
+    /* Sensory Quick-Deck */
+    .quick-deck {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+    .quick-pill {
+      background: var(--glass);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 8px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .quick-pill.active {
+      border-color: var(--gold);
+      background: rgba(227, 189, 110, 0.14);
+      box-shadow: 0 0 10px rgba(227, 189, 110, 0.25);
+    }
+    .quick-icon { font-size: 17px; }
+    .quick-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--muted);
+      text-align: center;
+    }
+    .quick-pill.active .quick-label {
+      color: var(--gold-hot);
+    }
+
+    /* Live Miniature Table Stage Preview in Settings */
+    .live-preview-card {
+      background: var(--glass);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .live-preview-stage {
+      height: 96px;
+      background: linear-gradient(155deg, var(--walnut-lit), var(--walnut));
+      border-radius: 16px;
+      padding: 5px;
+      perspective: 600px;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.5);
+    }
+    .live-preview-cloth {
+      height: 100%;
+      border-radius: 12px;
+      background: radial-gradient(circle at 50% 38%, var(--felt-lit) 0%, var(--felt) 50%, var(--felt-deep) 100%);
+      border: 1px solid var(--gold-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transform: rotateX(16deg);
+    }
+    .mini-hand {
+      display: flex;
+      gap: -10px;
+      align-items: center;
+    }
+    .mini-card {
+      width: 26px;
+      height: 38px;
+      background: #fff;
+      border-radius: 3px;
+      border: 1px solid #ccc;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 700;
+      margin-left: -8px;
+    }
+    .mini-card:first-child { margin-left: 0; }
+    .mini-card.spades { color: var(--suit-black); }
+    .mini-card.hearts { color: var(--suit-red); }
+    .mini-card.diamonds { color: var(--suit-dia); }
+    .mini-card.clubs { color: var(--suit-club); }
+
+    /* Granular Audio Sliders Deck */
+    .audio-mix-card {
+      background: var(--glass);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .audio-slider-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .slider-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--ivory);
+    }
+    .slider-val {
+      color: var(--gold);
+      font-weight: 700;
+    }
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(227, 189, 110, 0.2);
+      outline: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--gold);
+      cursor: pointer;
+      box-shadow: 0 0 6px var(--gold-hot);
+    }
+
+    /* Haptic Intensity Selector */
+    .haptic-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .haptic-btn {
+      flex: 1;
+      padding: 6px 0;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--glass);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .haptic-btn.active {
+      border-color: var(--gold);
+      background: rgba(227, 189, 110, 0.2);
+      color: var(--gold-hot);
+      font-weight: 700;
+    }
+
+    /* Storage Transparency Dashboard */
+    .storage-card {
+      background: var(--glass);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .storage-stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      padding: 8px;
+      text-align: center;
+    }
+    .stat-box { display: flex; flex-direction: column; }
+    .stat-number { font-size: 14px; font-weight: 700; color: var(--gold); }
+    .stat-title { font-size: 9.5px; color: var(--muted); }
+    .storage-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .storage-btn {
+      flex: 1;
+      padding: 7px 0;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--glass);
+      color: var(--ivory);
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+    }
+    .storage-btn.danger {
+      border-color: rgba(209, 48, 40, 0.4);
+      color: #ff857d;
+    }
+
+    /* Grouped Glass Cards */
+    .settings-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .group-label {
+      font-size: 10.5px;
+      letter-spacing: 1.2px;
+      font-weight: 700;
+      color: var(--muted);
+      padding-left: 4px;
+      text-transform: uppercase;
+    }
+    .group-card {
+      background: var(--glass);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .setting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 14px;
+      border-bottom: 1px solid rgba(227, 189, 110, 0.1);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .setting-row:last-child { border-bottom: none; }
+    .setting-row:hover { background: rgba(227, 189, 110, 0.06); }
+    .row-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .row-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: rgba(227, 189, 110, 0.1);
+      display: grid;
+      place-items: center;
+      color: var(--gold);
+      font-size: 15px;
+    }
+    .row-text {
+      display: flex;
+      flex-direction: column;
+    }
+    .row-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ivory);
+    }
+    .row-caption {
+      font-size: 11.5px;
+      color: var(--muted);
+    }
+    .row-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--gold);
+      font-size: 13px;
+    }
+
+    /* Segmented Controls (Theme & Orientation) */
+    .segmented-control {
+      display: flex;
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 999px;
+      padding: 3px;
+      gap: 3px;
+      border: 1px solid var(--line);
+    }
+    .segment-opt {
+      flex: 1;
+      text-align: center;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .segment-opt.selected {
+      background: var(--gold);
+      color: #070f0d;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+
+    /* Toast Notification in Simulator */
+    .sim-toast {
+      position: absolute;
+      top: 48%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(6, 32, 25, 0.95);
+      border: 1.5px solid var(--gold);
+      border-radius: 12px;
+      padding: 8px 16px;
+      font-size: 13px;
+      color: var(--gold-hot);
+      font-weight: 600;
+      z-index: 500;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+    .sim-toast.show { opacity: 1; }
+
+    /* Modal Sheet Simulator */
+    .sheet-modal {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(8px);
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .sheet-modal.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .sheet-body {
+      background: #0d1915;
+      border-top: 1.5px solid var(--gold);
+      border-radius: 28px 28px 0 0;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.25, 1);
+    }
+    .sheet-modal.open .sheet-body {
+      transform: translateY(0);
+    }
+    .about-crest {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 2px solid var(--gold);
+      background: var(--walnut);
+      color: var(--gold-hot);
+      font-size: 26px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto;
+    }
+    .about-title {
+      font-family: var(--display);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--gold);
+      text-align: center;
+      letter-spacing: 2px;
+    }
+    .about-card {
+      background: var(--glass);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1.4;
+      color: var(--muted);
+    }
+    .about-card b {
+      color: var(--ivory);
+      display: block;
+      margin-bottom: 2px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Demo Control Ribbon -->
+  <div class="demo-bar">
+    <div class="demo-title-group">
+      <span class="demo-title">♠ TashZone Full Concept Suite</span>
+      <span class="demo-badge">V2 ADVANCED</span>
+    </div>
+
+    <div class="demo-tabs">
+      <button class="tab-btn active" onclick="switchView('game')">🎮 3D Game Screen</button>
+      <button class="tab-btn" onclick="switchView('settings')">⚙️ Luxury Settings</button>
+    </div>
+
+    <div class="demo-controls">
+      <button class="ctrl-btn" id="orientBtn" onclick="toggleOrientation()">📱 Portrait</button>
+      <button class="ctrl-btn" id="themeBtn" onclick="toggleTheme()">🌗 Dark/Light</button>
+      <button class="ctrl-btn" id="fourColBtn" onclick="toggleFourColor()">🃏 4-Colour Deck</button>
+      <button class="ctrl-btn" onclick="triggerSweepAnimation()">🧹 Sweep Trick</button>
+      <button class="ctrl-btn" onclick="triggerKatFlash()">⚡ Ruby Flash</button>
+      <button class="ctrl-btn" id="dimBtn" onclick="toggleSmartDimming()">💡 Smart Dimming</button>
+    </div>
+  </div>
+
+  <!-- Device Simulator Frame -->
+  <div class="device-container">
+    <div class="phone-frame" id="phone">
+      <div class="notch"></div>
+      <div class="sim-toast" id="simToast">Move Played!</div>
+
+      <!-- ═════════ 1. GAME SCREEN (ZERO SCROLL 3D MEHFIL) ═════════ -->
+      <div class="screen-view" id="gameView">
+        <div class="game-screen">
+
+          <!-- Header -->
+          <div class="game-header">
+            <div class="icon-btn" onclick="switchView('settings')">☰</div>
+            <div class="status-capsule">TRICK 4 OF 13 · SPADES LED</div>
+            <div class="icon-btn" onclick="showToast('Tracker opened')">▦</div>
+          </div>
+
+          <!-- 3D Felt Arena -->
+          <div class="arena-3d">
+            <div class="walnut-rail" id="walnutRail">
+              <div class="cloth-felt">
+                <div class="spotlight"></div>
+                <div class="cloth-inner"></div>
+
+                <!-- HUD Row -->
+                <div class="hud-chips">
+                  <div class="chip">Deal 1/4</div>
+                  <div class="chip">Trump: ♠</div>
+                  <div class="chip">Your Call: 4</div>
+                </div>
+
+                <!-- Top Seat -->
+                <div class="seat-row-top">
+                  <div class="seat-node">
+                    <div class="avatar-ring">
+                      <div class="avatar-core">B2</div>
+                    </div>
+                    <div class="seat-plate">
+                      <span>Arsalan</span>
+                      <span class="seat-badge">3/4</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Middle Arena: Left Seat - 3D Trick - Right Seat -->
+                <div class="seat-row-mid">
+                  <!-- Left Seat -->
+                  <div class="seat-node">
+                    <div class="avatar-ring">
+                      <div class="avatar-core">B1</div>
+                    </div>
+                    <div class="seat-plate">
+                      <span>Hamza</span>
+                      <span class="seat-badge">2/3</span>
+                    </div>
+                  </div>
+
+                  <!-- 3D Trick Center Stage with Card Collector Motion -->
+                  <div class="trick-center" id="trickCenter">
+                    <div class="trick-card spades" id="tc1" style="top: 10px; left: 58px; transform: rotate(-8deg);">
+                      <div>
+                        <div class="c-index">K</div>
+                        <div class="c-pip">♠</div>
+                      </div>
+                      <div style="font-size: 22px; text-align: right; opacity: 0.85;">♠</div>
+                    </div>
+                    <div class="trick-card hearts" id="tc2" style="top: 36px; left: 24px; transform: rotate(-24deg);">
+                      <div>
+                        <div class="c-index">A</div>
+                        <div class="c-pip">♥</div>
+                      </div>
+                      <div style="font-size: 22px; text-align: right; opacity: 0.85;">♥</div>
+                    </div>
+                    <div class="trick-card spades" id="tc3" style="top: 28px; left: 94px; transform: rotate(18deg);">
+                      <div>
+                        <div class="c-index">J</div>
+                        <div class="c-pip">♠</div>
+                      </div>
+                      <div style="font-size: 22px; text-align: right; opacity: 0.85;">♠</div>
+                    </div>
+                  </div>
+
+                  <!-- Right Seat (Active Turn Glow Demo) -->
+                  <div class="seat-node" id="seatRight">
+                    <div class="avatar-ring turn">
+                      <div class="avatar-core">B3</div>
+                    </div>
+                    <div class="seat-plate" style="border-color: var(--gold);">
+                      <span>Zainab</span>
+                      <span class="seat-badge">1/2</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Bottom Notice / Status -->
+                <div style="text-align: center; font-size: 11px; color: var(--gold); z-index: 2;">
+                  Drag/flick your card up or tap twice to play!
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- MePlate & Bridge Bar -->
+          <div class="bridge-bar">
+            <div class="me-summary">
+              <div class="me-avatar">M</div>
+              <div class="me-details">
+                <div class="me-name-row">
+                  <span>Muhammad</span>
+                  <span class="turn-pill">YOUR TURN</span>
+                </div>
+                <div class="me-instruction">Play a Spade if you have one</div>
+              </div>
+            </div>
+            <div class="bridge-actions">
+              <div class="action-chip" onclick="toggleFloatingTray()">⚡ Bids</div>
+              <div class="action-chip primary" onclick="showToast('Hint: Play Ace of Spades')">💡 Hint</div>
+            </div>
+          </div>
+
+          <!-- Radial 3D Hand Fan with Flick-to-Play Physics -->
+          <div class="hand-stage" id="handStage">
+            <div class="fan-wrapper" id="handCards">
+              <!-- Dynamically generated 13-card curved fan -->
+            </div>
+          </div>
+
+          <!-- Floating Contextual Tray -->
+          <div class="floating-tray hidden" id="callTray">
+            <div class="tray-title">
+              <span>Make Your Call (Tricks)</span>
+              <span style="font-size: 11px; color: var(--gold-hot);">Suggested: 4</span>
+            </div>
+            <div class="bid-row">
+              <div class="bid-btn" onclick="pickBid(1)">1</div>
+              <div class="bid-btn" onclick="pickBid(2)">2</div>
+              <div class="bid-btn" onclick="pickBid(3)">3</div>
+              <div class="bid-btn suggested" onclick="pickBid(4)">4</div>
+              <div class="bid-btn" onclick="pickBid(5)">5</div>
+              <div class="bid-btn" onclick="pickBid(6)">6</div>
+              <div class="bid-btn" onclick="pickBid(7)">7</div>
+              <div class="bid-btn" onclick="pickBid(8)">8</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ═════════ 2. SETTINGS SCREEN (LUXURY CONSOLE) ═════════ -->
+      <div class="screen-view hidden" id="settingsView">
+        <div class="settings-screen">
+          <div class="settings-header">SETTINGS</div>
+
+          <!-- 1. Player Hero Profile Card -->
+          <div class="player-hero">
+            <div class="hero-glow"></div>
+            <div class="hero-avatar">🎴</div>
+            <div class="hero-info">
+              <div class="hero-name">Muhammad Ahmed</div>
+              <div class="hero-subtitle">Mehfil Veteran · 42 Wins · 🔥 5 Streak</div>
+            </div>
+            <button class="hero-edit-btn" onclick="showToast('Profile editing')">Edit ✎</button>
+          </div>
+
+          <!-- 2. Sensory Quick-Deck (1-Tap Toggles) -->
+          <div class="quick-deck">
+            <div class="quick-pill active" onclick="togglePill(this)">
+              <div class="quick-icon">🔊</div>
+              <div class="quick-label">Sound ON</div>
+            </div>
+            <div class="quick-pill active" onclick="togglePill(this)">
+              <div class="quick-icon">📳</div>
+              <div class="quick-label">Vibrate</div>
+            </div>
+            <div class="quick-pill active" onclick="togglePill(this)">
+              <div class="quick-icon">⏱</div>
+              <div class="quick-label">Clock ON</div>
+            </div>
+            <div class="quick-pill active" onclick="togglePill(this)">
+              <div class="quick-icon">💡</div>
+              <div class="quick-label">Hints ON</div>
+            </div>
+          </div>
+
+          <!-- 3. Live Miniature Table Stage Preview in Settings -->
+          <div class="settings-group">
+            <div class="group-label">LIVE FELT & DECK PREVIEW</div>
+            <div class="live-preview-card">
+              <div class="live-preview-stage">
+                <div class="live-preview-cloth">
+                  <div class="mini-hand">
+                    <div class="mini-card spades">A♠</div>
+                    <div class="mini-card hearts">K♥</div>
+                    <div class="mini-card diamonds">Q♦</div>
+                    <div class="mini-card clubs">J♣</div>
+                  </div>
+                </div>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 11px; color: var(--gold);">Four-Colour Tournament Deck</span>
+                <button class="ctrl-btn" style="padding: 3px 9px; font-size: 11px;" onclick="toggleFourColor()">Toggle 4-Color</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Screen Orientation Segmented Control -->
+          <div class="settings-group">
+            <div class="group-label">SCREEN ORIENTATION</div>
+            <div class="segmented-control" id="orientSegment">
+              <div class="segment-opt selected" onclick="selectSegment('orientSegment', this, 'portrait')">📱 Portrait</div>
+              <div class="segment-opt" onclick="selectSegment('orientSegment', this, 'landscape')">🖥 Landscape</div>
+              <div class="segment-opt" onclick="selectSegment('orientSegment', this, 'auto')">🔄 Auto (Sensor)</div>
+            </div>
+          </div>
+
+          <!-- 5. Theme Mode Segmented Control -->
+          <div class="settings-group">
+            <div class="group-label">THEME & COLOR SCHEME</div>
+            <div class="segmented-control" id="themeSegment">
+              <div class="segment-opt selected" onclick="selectThemeSegment(this, 'dark')">🌙 Midnight Emerald</div>
+              <div class="segment-opt" onclick="selectThemeSegment(this, 'light')">☀️ Ivory Silk</div>
+              <div class="segment-opt" onclick="selectThemeSegment(this, 'system')">🌗 System</div>
+            </div>
+          </div>
+
+          <!-- 6. Granular Audio Mixing & Haptics Deck -->
+          <div class="settings-group">
+            <div class="group-label">GRANULAR AUDIO & HAPTIC MIXING</div>
+            <div class="audio-mix-card">
+              <div class="audio-slider-row">
+                <div class="slider-label-row">
+                  <span>Table Move SFX (Card snaps & slams)</span>
+                  <span class="slider-val" id="sfxVal">80%</span>
+                </div>
+                <input type="range" min="0" max="100" value="80" oninput="document.getElementById('sfxVal').textContent = this.value + '%'">
+              </div>
+
+              <div class="audio-slider-row">
+                <div class="slider-label-row">
+                  <span>Mehfil Atmosphere (Tea-house ambient loop)</span>
+                  <span class="slider-val" id="ambVal">45%</span>
+                </div>
+                <input type="range" min="0" max="100" value="45" oninput="document.getElementById('ambVal').textContent = this.value + '%'">
+              </div>
+
+              <div style="font-size: 11px; color: var(--gold); margin-top: 4px;">Haptic Strength:</div>
+              <div class="haptic-row">
+                <div class="haptic-btn" onclick="selectHaptic(this)">Off</div>
+                <div class="haptic-btn" onclick="selectHaptic(this)">Gentle</div>
+                <div class="haptic-btn active" onclick="selectHaptic(this)">Crisp</div>
+                <div class="haptic-btn" onclick="selectHaptic(this)">Firm</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 7. Data Transparency & Storage Dashboard -->
+          <div class="settings-group">
+            <div class="group-label">DATA & STORAGE DASHBOARD</div>
+            <div class="storage-card">
+              <div class="storage-stats-row">
+                <div class="stat-box">
+                  <span class="stat-number">42</span>
+                  <span class="stat-title">Stored Matches</span>
+                </div>
+                <div class="stat-box">
+                  <span class="stat-number">18 KB</span>
+                  <span class="stat-title">Data Size</span>
+                </div>
+                <div class="stat-box">
+                  <span class="stat-number">1.2 MB</span>
+                  <span class="stat-title">Asset Cache</span>
+                </div>
+              </div>
+              <div class="storage-actions">
+                <button class="storage-btn" onclick="showToast('Backup JSON copied to clipboard!')">Export Backup JSON</button>
+                <button class="storage-btn danger" onclick="showToast('Temporary cache cleared!')">Clear Cache</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 8. Safety & Identity Group -->
+          <div class="settings-group">
+            <div class="group-label">SAFETY & ACCOUNT</div>
+            <div class="group-card">
+              <div class="setting-row" onclick="showToast('Parent controls PIN gate')">
+                <div class="row-left">
+                  <div class="row-icon">⚿</div>
+                  <div class="row-text">
+                    <span class="row-title">Parental Controls</span>
+                    <span class="row-caption">Protect online rooms & Wi-Fi tables</span>
+                  </div>
+                </div>
+                <div class="row-right"><span style="background: rgba(227,189,110,0.15); border: 1px solid var(--gold); border-radius: 999px; padding: 2px 7px; font-size: 10px;">PIN SET</span> ›</div>
+              </div>
+              <div class="setting-row" onclick="showToast('Language choices')">
+                <div class="row-left">
+                  <div class="row-icon">A</div>
+                  <div class="row-text">
+                    <span class="row-title">Language</span>
+                    <span class="row-caption">English (Urdu, Hindi, Nepali, Bangla)</span>
+                  </div>
+                </div>
+                <div class="row-right">›</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 9. About & Heritage -->
+          <div class="settings-group">
+            <div class="group-label">ABOUT & HERITAGE</div>
+            <div class="group-card">
+              <div class="setting-row" onclick="openAboutModal()">
+                <div class="row-left">
+                  <div class="row-icon">ℹ</div>
+                  <div class="row-text">
+                    <span class="row-title">About TashZone</span>
+                    <span class="row-caption">Fair play RNG · Privacy oath · 16 Games</span>
+                  </div>
+                </div>
+                <div class="row-right">›</div>
+              </div>
+              <div class="setting-row" onclick="showToast('Rules sheet opened')">
+                <div class="row-left">
+                  <div class="row-icon">§</div>
+                  <div class="row-text">
+                    <span class="row-title">Official Rules & Terms</span>
+                    <span class="row-caption">Court Piece, Callbreak, Bhabhi…</span>
+                  </div>
+                </div>
+                <div class="row-right">›</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Version Footer -->
+          <div style="text-align: center; padding: 12px 0 24px; font-size: 11px; color: var(--muted);">
+            <div style="color: var(--gold); letter-spacing: 2px; margin-bottom: 2px;">♠ ♥ TashZone ♦ ♣</div>
+            Version 0.1.0 (Phase 6) · Built for Authentic Mehfil
+          </div>
+
+        </div>
+      </div>
+
+      <!-- About Sheet Modal Popup -->
+      <div class="sheet-modal" id="aboutModal" onclick="closeAboutModal(event)">
+        <div class="sheet-body" onclick="event.stopPropagation()">
+          <div class="about-crest">♠</div>
+          <div class="about-title">TASHZONE</div>
+          <div style="text-align: center; font-size: 12px; color: var(--gold);">Sixteen South Asian Card Games · Authentic Mehfil</div>
+
+          <div class="about-card">
+            <b>⚖ Cryptographic Fair Play</b>
+            Every deal is generated using verifiable cryptographic pseudo-randomness (CSPRNG). No rigging, no dynamic difficulty, no house edge.
+          </div>
+
+          <div class="about-card">
+            <b>🛡 100% Privacy & Offline-First</b>
+            No account required. Zero telemetry, zero analytics tracking, and no external ad trackers. Your data never leaves this phone.
+          </div>
+
+          <div class="about-card">
+            <b>✦ Regional Card Heritage</b>
+            Court Piece (Rang), Callbreak, Bhabhi Thulla, Mendikot, 28, Kachuful, Teen Do Paanch, and 16 classics preserved with authentic regional house rules.
+          </div>
+
+          <button class="tab-btn active" style="width: 100%; padding: 10px; margin-top: 4px;" onclick="closeAboutModal()">Close</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // 1. Build Radial 3D Hand Fan with Flick & Drag Physics
+    const cardsData = [
+      { r: '2', s: '♠', suit: 'spades' },
+      { r: '4', s: '♠', suit: 'spades' },
+      { r: '7', s: '♠', suit: 'spades' },
+      { r: '10', s: '♠', suit: 'spades' },
+      { r: 'Q', s: '♠', suit: 'spades' },
+      { r: 'A', s: '♠', suit: 'spades' },
+      { r: '5', s: '♥', suit: 'hearts' },
+      { r: '9', s: '♥', suit: 'hearts' },
+      { r: 'K', s: '♥', suit: 'hearts' },
+      { r: '3', s: '♦', suit: 'diamonds' },
+      { r: 'J', s: '♦', suit: 'diamonds' },
+      { r: '8', s: '♣', suit: 'clubs' },
+      { r: 'A', s: '♣', suit: 'clubs' },
+    ];
+
+    const handWrapper = document.getElementById('handCards');
+    const N = cardsData.length;
+    const cardW = 56;
+    const totalW = 340;
+    const step = (totalW - cardW) / (N - 1);
+    const degPerCard = 2.4;
+
+    cardsData.forEach((c, i) => {
+      const u = i - (N - 1) / 2;
+      const rot = u * degPerCard;
+      const arcDrop = u * u * 0.42;
+      const left = i * step + 12;
+
+      const el = document.createElement('div');
+      el.className = `playing-card ${c.suit}`;
+      el.id = `card-${i}`;
+      el.style.left = `${left}px`;
+      el.style.bottom = `${12 - arcDrop}px`;
+      el.style.transform = `rotate(${rot}deg)`;
+      el.style.zIndex = i + 1;
+
+      el.innerHTML = `
+        <div>
+          <div class="c-index">${c.r}</div>
+          <div class="c-pip">${c.s}</div>
+        </div>
+        <div class="c-center">${c.s}</div>
+      `;
+
+      // Drag / Flick Gesture handling
+      let startY = 0, currentY = 0, isDragging = false;
+
+      el.addEventListener('pointerdown', (e) => {
+        startY = e.clientY;
+        isDragging = true;
+        el.setPointerCapture(e.pointerId);
+        el.classList.add('dragging');
+      });
+
+      el.addEventListener('pointermove', (e) => {
+        if (!isDragging) return;
+        currentY = e.clientY - startY;
+        if (currentY < 0) { // Dragging upwards towards felt
+          el.style.transform = `translateY(${currentY}px) scale(1.1) rotate(0deg)`;
+        }
+      });
+
+      el.addEventListener('pointerup', (e) => {
+        if (!isDragging) return;
+        isDragging = false;
+        el.classList.remove('dragging');
+        el.releasePointerCapture(e.pointerId);
+
+        // If flicked up past threshold (> 60px), play into trick!
+        if (currentY < -60) {
+          playCardIntoTrick(c, el);
+        } else {
+          // Snap back into place or handle tap
+          if (Math.abs(currentY) < 6) {
+            handleCardTap(el);
+          } else {
+            el.style.transform = `rotate(${rot}deg)`;
+          }
+        }
+        currentY = 0;
+      });
+
+      handWrapper.appendChild(el);
+    });
+
+    function handleCardTap(el) {
+      const isArmed = el.classList.contains('armed');
+      document.querySelectorAll('.playing-card').forEach(p => p.classList.remove('armed'));
+      if (!isArmed) {
+        el.classList.add('armed');
+      } else {
+        showToast('Card played!');
+      }
+    }
+
+    function playCardIntoTrick(card, el) {
+      showToast(`Flicked ${card.r}${card.s} to trick!`);
+      el.style.opacity = '0';
+      setTimeout(() => {
+        el.style.opacity = '1';
+        el.style.transform = '';
+      }, 1800);
+    }
+
+    // 2. View Switching
+    function switchView(view) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      if (view === 'game') {
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        document.getElementById('gameView').classList.remove('hidden');
+        document.getElementById('settingsView').classList.add('hidden');
+      } else {
+        document.querySelectorAll('.tab-btn')[1].classList.add('active');
+        document.getElementById('gameView').classList.add('hidden');
+        document.getElementById('settingsView').classList.remove('hidden');
+      }
+    }
+
+    // 3. Orientation Toggle
+    let isLandscape = false;
+    function toggleOrientation() {
+      isLandscape = !isLandscape;
+      const phone = document.getElementById('phone');
+      const btn = document.getElementById('orientBtn');
+      if (isLandscape) {
+        phone.classList.add('landscape');
+        btn.textContent = '🖥 Landscape';
+        btn.classList.add('active');
+      } else {
+        phone.classList.remove('landscape');
+        btn.textContent = '📱 Portrait';
+        btn.classList.remove('active');
+      }
+    }
+
+    // 4. Theme & 4-Color Toggle
+    function toggleTheme() {
+      document.body.classList.toggle('light-theme');
+    }
+    function toggleFourColor() {
+      document.body.classList.toggle('four-color');
+      const btn = document.getElementById('fourColBtn');
+      btn.classList.toggle('active');
+      showToast(document.body.classList.contains('four-color') ? '4-Color Deck Enabled' : 'Standard 2-Color Deck');
+    }
+
+    function selectThemeSegment(el, theme) {
+      document.querySelectorAll('#themeSegment .segment-opt').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      if (theme === 'light') {
+        document.body.classList.add('light-theme');
+      } else {
+        document.body.classList.remove('light-theme');
+      }
+    }
+
+    function selectSegment(containerId, el, val) {
+      document.querySelectorAll(`#${containerId} .segment-opt`).forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      if (containerId === 'orientSegment') {
+        if (val === 'landscape' && !isLandscape) toggleOrientation();
+        if (val === 'portrait' && isLandscape) toggleOrientation();
+      }
+    }
+
+    // 5. Trick Sweeper Collector Animation Demo
+    function triggerSweepAnimation() {
+      showToast('Zainab won the trick! Sweeping cards…');
+      const c1 = document.getElementById('tc1');
+      const c2 = document.getElementById('tc2');
+      const c3 = document.getElementById('tc3');
+
+      // Phase 1: Stack cards in center
+      c1.classList.add('sweep-stack');
+      c2.classList.add('sweep-stack');
+      c3.classList.add('sweep-stack');
+
+      // Phase 2: Slide with 3D arc into Zainab's seat plate
+      setTimeout(() => {
+        c1.classList.add('sweep-to-seat');
+        c2.classList.add('sweep-to-seat');
+        c3.classList.add('sweep-to-seat');
+      }, 350);
+
+      // Phase 3: Reset
+      setTimeout(() => {
+        c1.className = 'trick-card spades';
+        c2.className = 'trick-card hearts';
+        c3.className = 'trick-card spades';
+      }, 1600);
+    }
+
+    // 6. Ruby Kat Flash Demo
+    function triggerKatFlash() {
+      const rail = document.getElementById('walnutRail');
+      rail.classList.add('ruby-flash');
+      showToast('Trump Broken! (Kat)');
+      setTimeout(() => rail.classList.remove('ruby-flash'), 900);
+    }
+
+    // 7. Smart Suit Dimming Toggle
+    let isDimmed = false;
+    function toggleSmartDimming() {
+      isDimmed = !isDimmed;
+      const btn = document.getElementById('dimBtn');
+      btn.classList.toggle('active');
+      showToast(isDimmed ? 'Suit Dimming: Follow Spades' : 'All Cards Active');
+
+      document.querySelectorAll('.playing-card').forEach(p => {
+        if (isDimmed) {
+          if (p.classList.contains('spades')) {
+            p.classList.add('highlighted');
+            p.classList.remove('dimmed');
+          } else {
+            p.classList.add('dimmed');
+            p.classList.remove('highlighted');
+          }
+        } else {
+          p.classList.remove('dimmed', 'highlighted');
+        }
+      });
+    }
+
+    // 8. Haptic Selector
+    function selectHaptic(el) {
+      document.querySelectorAll('.haptic-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+      showToast(`Haptics: ${el.textContent}`);
+    }
+
+    // 9. Floating Tray
+    function toggleFloatingTray() {
+      const tray = document.getElementById('callTray');
+      tray.classList.toggle('hidden');
+    }
+    function pickBid(n) {
+      showToast(`Called ${n} tricks!`);
+      toggleFloatingTray();
+    }
+
+    // 10. Quick Pill Toggles
+    function togglePill(el) {
+      el.classList.toggle('active');
+      const label = el.querySelector('.quick-label');
+      if (el.textContent.includes('Sound')) {
+        label.textContent = el.classList.contains('active') ? 'Sound ON' : 'Muted';
+      }
+      if (el.textContent.includes('Vibrate')) {
+        label.textContent = el.classList.contains('active') ? 'Vibrate' : 'Silent';
+      }
+      if (el.textContent.includes('Clock')) {
+        label.textContent = el.classList.contains('active') ? 'Clock ON' : 'No Clock';
+      }
+      if (el.textContent.includes('Hints')) {
+        label.textContent = el.classList.contains('active') ? 'Hints ON' : 'No Hints';
+      }
+    }
+
+    // 11. Toast helper
+    function showToast(msg) {
+      const t = document.getElementById('simToast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 1600);
+    }
+
+    // 12. About Modal
+    function openAboutModal() {
+      document.getElementById('aboutModal').classList.add('open');
+    }
+    function closeAboutModal() {
+      document.getElementById('aboutModal').classList.remove('open');
+    }
+  </script>
+</body>
+</html>

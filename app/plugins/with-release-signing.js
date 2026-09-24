@@ -1,4 +1,4 @@
-const { withAppBuildGradle, withGradleProperties } = require('@expo/config-plugins');
+const { withAppBuildGradle, withGradleProperties, withProjectBuildGradle } = require('@expo/config-plugins');
 
 /**
  * Signs release builds with the project's own keystore instead of the Android debug key.
@@ -71,6 +71,33 @@ function addReleaseSigning(gradle) {
     return gradle;
 }
 
+
+/**
+ * Gradle 9 deprecates the Groovy DSL's "space" assignment (`compileSdk 36`) in favour of `compileSdk = 36`, and the
+ * warning becomes an error in Gradle 10. Expo's generated android/ template still uses the old form, and android/ is
+ * regenerated (and gitignored), so editing it by hand does not last. This rewrites the template's property lines here,
+ * where every prebuild re-applies it. Only names that are plain assignable properties are touched; method calls such
+ * as proguardFiles(...) and buildConfigField(...) are left alone. Idempotent: `name = value` lines do not match.
+ */
+const ASSIGNABLE = [
+  'ndkVersion', 'buildToolsVersion', 'compileSdk', 'namespace', 'applicationId', 'versionCode', 'versionName',
+  'shrinkResources', 'minifyEnabled', 'crunchPngs', 'useLegacyPackaging', 'ignoreAssetsPattern', 'signingConfig',
+  'storeFile', 'storePassword', 'keyAlias', 'keyPassword',
+];
+const RENAMED = { minSdkVersion: 'minSdk', targetSdkVersion: 'targetSdk' };
+
+function useAssignmentSyntax(gradle) {
+  const names = [...ASSIGNABLE, ...Object.keys(RENAMED)].join('|');
+  const line = new RegExp('^([ \\t]*)(' + names + ')[ \\t]+(?![=(])(\\S.*)$', 'gm');
+  return gradle.replace(line, (whole, indent, name, value) => `${indent}${RENAMED[name] ?? name} = ${value}`);
+}
+
+/** `maven { url 'x' }` is the same deprecated form; the assignment needs uri(). */
+function useUriAssignment(gradle) {
+  return gradle.replace(/^(\s*)url[ \t]+(?![=(])(['"][^'"]+['"])[ \t]*$/gm, (whole, indent, value) => `${indent}url = uri(${value})`)
+    .replace(/(\{\s*)url[ \t]+(?![=(])(['"][^'"]+['"])(\s*\})/g, (whole, open, value, close) => `${open}url = uri(${value})${close}`);
+}
+
 const PHONE_ABIS = ['armeabi-v7a', 'arm64-v8a'];
 
 const ABI_BLOCK = `
@@ -89,11 +116,15 @@ ${ABI_BLOCK}`);
 
 module.exports = function withReleaseSigning(config) {
   const withGradle = withAppBuildGradle(config, (cfg) => {
-    cfg.modResults.contents = addPhoneAbis(addReleaseSigning(cfg.modResults.contents));
+    cfg.modResults.contents = useAssignmentSyntax(addPhoneAbis(addReleaseSigning(cfg.modResults.contents)));
+    return cfg;
+  });
+  const withRoot = withProjectBuildGradle(withGradle, (cfg) => {
+    cfg.modResults.contents = useUriAssignment(cfg.modResults.contents);
     return cfg;
   });
 
-  return withGradleProperties(withGradle, (cfg) => {
+  return withGradleProperties(withRoot, (cfg) => {
     const key = 'reactNativeArchitectures';
     const existing = cfg.modResults.find((item) => item.type === 'property' && item.key === key);
     if (existing) existing.value = PHONE_ABIS.join(',');
@@ -104,4 +135,6 @@ module.exports = function withReleaseSigning(config) {
 
 module.exports.addReleaseSigning = addReleaseSigning;
 module.exports.addPhoneAbis = addPhoneAbis;
+module.exports.useAssignmentSyntax = useAssignmentSyntax;
+module.exports.useUriAssignment = useUriAssignment;
 module.exports.PHONE_ABIS = PHONE_ABIS;

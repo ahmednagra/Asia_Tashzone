@@ -1,24 +1,47 @@
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useRef } from "react";
+import { Animated, StyleSheet, Text, View } from "react-native";
 import { fonts, material, onTable } from "../../../theme/tokens";
 import { AvatarView, avatarBg } from "../../onboarding/AvatarView";
 
-/**
- * A player's avatar on the rim (mockup `.ring` + `.mono`): the human wears the avatar chosen in the profile,
- * bots a dashed monogram (never a person). A gold ring marks whose turn it is.
- */
 export function PlayerAvatar({ name, size, turn, bot, avatar }: { name: string; size: number; turn: boolean; bot: boolean; avatar?: number }) {
   const human = !bot && avatar !== undefined;
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    if (!turn) {
+      pulseAnim.setValue(1);
+      return;
+    }
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, { toValue: 1.14, duration: 700, useNativeDriver: true }),
+        Animated.timing(pulseAnim, { toValue: 1.0, duration: 700, useNativeDriver: true }),
+      ])
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [turn, pulseAnim]);
+
   return (
-    <View style={[s.ring, turn && s.ringTurn, { borderRadius: (size + 8) / 2 }]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+    <Animated.View
+      style={[
+        s.ring,
+        turn && s.ringTurn,
+        {
+          borderRadius: (size + 8) / 2,
+          transform: [{ scale: turn ? pulseAnim : 1 }],
+        },
+      ]}
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+    >
       <View style={[s.disc, { width: size, height: size, borderRadius: size / 2, backgroundColor: human ? avatarBg(avatar!) : material.walnut }, bot && s.bot]}>
         {human ? <AvatarView index={avatar!} size={Math.round(size * 0.68)} /> : <Text style={[s.initial, { fontSize: size * 0.46 }]}>{name.slice(0, 1).toUpperCase()}</Text>}
       </View>
-    </View>
+    </Animated.View>
   );
 }
 
-/** One seat around the rim: avatar, name plate with a game-specific badge ("3/4", "Team A · 5", "9 cards"), shown voids. */
 export function Seat({ name, isTurn, badge, spoken = "", control, dealer, online = true, out = false, compact = false, voids = [] }: {
   name: string; isTurn: boolean; badge: string; spoken?: string; control: "human" | "handover" | "bot"; dealer: boolean;
   online?: boolean; out?: boolean; compact?: boolean; voids?: readonly string[];
@@ -32,7 +55,7 @@ export function Seat({ name, isTurn, badge, spoken = "", control, dealer, online
       accessibilityLiveRegion={isTurn ? "polite" : "none"}
     >
       <View>
-        <PlayerAvatar name={name} size={compact ? 32 : 40} turn={isTurn} bot={control !== "human"} />
+        <PlayerAvatar name={name} size={compact ? 30 : 38} turn={isTurn} bot={control !== "human"} />
         {dealer && <View style={s.dealer}><Text style={s.dealerText}>D</Text></View>}
       </View>
       <View style={[s.plate, isTurn && s.plateTurn]}>
@@ -46,23 +69,23 @@ export function Seat({ name, isTurn, badge, spoken = "", control, dealer, online
 }
 
 const s = StyleSheet.create({
-  wrap: { alignItems: "center", minWidth: 76, gap: 3 },
-  compact: { minWidth: 62 },
+  wrap: { alignItems: "center", minWidth: 70, gap: 2 },
+  compact: { minWidth: 58 },
   out: { opacity: 0.6 },
   ring: { padding: 3, borderWidth: 1.6, borderColor: "transparent" },
-  ringTurn: { borderColor: onTable.gold, shadowColor: onTable.gold, shadowOpacity: 0.7, shadowRadius: 10, elevation: 6 },
+  ringTurn: { borderColor: onTable.gold, shadowColor: onTable.gold, shadowOpacity: 0.8, shadowRadius: 10, elevation: 6 },
   disc: { alignItems: "center", justifyContent: "center", borderWidth: 2, borderColor: material.goldLeafDim },
   bot: { borderStyle: "dashed", borderColor: material.goldLeafHot },
   initial: { color: material.goldLeafHot, fontFamily: fonts.display.family, fontWeight: "700" },
-  dealer: { position: "absolute", right: -4, bottom: -2, backgroundColor: onTable.gold, borderRadius: 999, width: 18, height: 18, alignItems: "center", justifyContent: "center" },
-  dealerText: { color: material.btnInk, fontSize: 10, fontWeight: "700" },
-  plate: { flexDirection: "row", alignItems: "center", gap: 6, borderWidth: 1, borderColor: material.line, borderRadius: 999, paddingLeft: 9, paddingRight: 3, paddingVertical: 2, backgroundColor: material.feltRim },
+  dealer: { position: "absolute", right: -4, bottom: -2, backgroundColor: onTable.gold, borderRadius: 999, width: 17, height: 17, alignItems: "center", justifyContent: "center" },
+  dealerText: { color: material.btnInk, fontSize: 9.5, fontWeight: "700" },
+  plate: { flexDirection: "row", alignItems: "center", gap: 5, borderWidth: 1, borderColor: material.line, borderRadius: 999, paddingLeft: 8, paddingRight: 3, paddingVertical: 1.5, backgroundColor: material.feltRim },
   plateTurn: { borderColor: onTable.gold },
-  name: { color: onTable.text, fontFamily: fonts.ui.family, fontSize: 12.5, maxWidth: 70 },
-  count: { minWidth: 21, height: 21, borderRadius: 11, paddingHorizontal: 5, backgroundColor: material.glass, borderWidth: 1, borderColor: material.line, alignItems: "center", justifyContent: "center" },
-  countText: { color: onTable.gold, fontSize: 12, fontWeight: "600", fontVariant: ["tabular-nums"] },
+  name: { color: onTable.text, fontFamily: fonts.ui.family, fontSize: 11.5, maxWidth: 64 },
+  count: { minWidth: 19, height: 19, borderRadius: 10, paddingHorizontal: 4, backgroundColor: material.glass, borderWidth: 1, borderColor: material.line, alignItems: "center", justifyContent: "center" },
+  countText: { color: onTable.gold, fontSize: 11, fontWeight: "600", fontVariant: ["tabular-nums"] },
   countSafe: { backgroundColor: onTable.success, borderColor: onTable.success },
   countSafeText: { color: material.btnInk },
-  voids: { color: onTable.error, fontSize: 10, letterSpacing: 0.6 },
-  status: { color: onTable.gold, fontSize: 9, letterSpacing: 1 },
+  voids: { color: onTable.error, fontSize: 9.5, letterSpacing: 0.5 },
+  status: { color: onTable.gold, fontSize: 8.5, letterSpacing: 0.8 },
 });
