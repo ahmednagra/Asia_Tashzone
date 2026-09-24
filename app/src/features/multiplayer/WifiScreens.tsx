@@ -27,7 +27,7 @@ import { useBackAction } from "../../hooks/useBackAction";
 import { useNearbyTables, useWifiSession } from "../../hooks/useWifiSession";
 import { useProfile } from "../../store/profile";
 import { TableSetupChips, useTableSetup } from "../lobby/TableSetup";
-import { copy, errorMessage } from "./copy";
+import { copy, errorMessage, ltr } from "./copy";
 import { KeepAwake } from "./KeepAwake";
 import { isDialable, parseHostAddress } from "./lanLogic";
 import { SeatChips, type SeatEntry } from "./SeatList";
@@ -35,6 +35,7 @@ import { clearError, getSession, leaveSession, startTable } from "./session";
 import { hostTable, joinTable, kickSeat } from "./wifiSession";
 
 const QR_SIZE = 116;
+const ADDRESS_EXAMPLE = "192.168.1.20:41234";
 
 /* ───────────── host ───────────── */
 
@@ -68,7 +69,7 @@ export function WifiHostScreen() {
     const open = async () => {
       if (busy || !ts.entry?.profile) return;
       setBusy(true);
-      await hostTable({ name: profile.name || "Player", profileId: ts.entry.profile, gameName: ts.entry.name, preset: ts.preset, settings: ts.settings, protectedMode: profile.protectedMode });
+      await hostTable({ name: profile.name || copy.defaultName, profileId: ts.entry.profile, gameName: ts.entry.name, preset: ts.preset, settings: ts.settings, protectedMode: profile.protectedMode });
       setBusy(false);
     };
     return (
@@ -104,7 +105,7 @@ export function WifiHostScreen() {
         <View style={s.pinCard}><CodeCard label={t.pin} code={wifi.pin ?? "····"} hint={t.pinHint} /></View>
         {wifi.qr ? <QrCode value={wifi.qr} size={QR_SIZE} label={t.qrLabel} /> : null}
       </View>
-      {wifi.address ? <Caption>{`${t.address}: ${wifi.address}. ${t.addressHint}`}</Caption> : null}
+      {wifi.address ? <Caption>{t.addressLine(ltr(wifi.address))}</Caption> : null}
       <SectionLabel>{t.seats}</SectionLabel>
       <SeatChips seats={seats} openName={t.openSeat} />
       <Caption>{t.seatsNote}</Caption>
@@ -130,7 +131,7 @@ function useJoin() {
   const join = useCallback(async (host: string, port: number, pin: string) => {
     if (busyRef.current) return;
     busyRef.current = true; setBusy(true); setError(null); clearError();
-    const r = await joinTable({ name: profile.name || "Player", host, port, pin });
+    const r = await joinTable({ name: profile.name || copy.defaultName, host, port, pin });
     if (r.ok) { busyRef.current = false; setBusy(false); router.replace("/wait"); return; }
     busyRef.current = false; setBusy(false);
     if (r.code === "CANCELLED") return;
@@ -187,7 +188,7 @@ export function WifiJoinScreen() {
           <SectionLabel>{t.nearby}</SectionLabel>
           {tables.length === 0 && !discoveryError ? <Caption>{`${t.looking} ${t.none}`}</Caption> : null}
           {tables.map((tb) => (
-            <NavRow key={tb.name} icon="⌁" title={tb.hostNickname ? `${tb.hostNickname}'s table` : tb.name} caption={tb.game || undefined}
+            <NavRow key={tb.name} icon="⌁" title={tb.hostNickname ? t.hostTable(tb.hostNickname) : tb.name} caption={tb.game || undefined}
               onPress={() => {
                 if (!isDialable(tb.host, tb.port)) return;
                 clearError();
@@ -234,7 +235,7 @@ export function WifiPinScreen() {
           <>
             <SectionLabel>{t.addressLabel}</SectionLabel>
             <View style={[s.field, { borderRadius: room.shape.radius, borderColor: addressError ? c.error : c.borderControl, backgroundColor: c.surface }]}>
-              <TextInput value={address} placeholder={t.addressPlaceholder} placeholderTextColor={c.textMuted} accessibilityLabel={t.addressLabel}
+              <TextInput value={address} placeholder={ADDRESS_EXAMPLE} placeholderTextColor={c.textMuted} accessibilityLabel={t.addressLabel}
                 onChangeText={(v) => { setAddress(v.replace(/[^0-9.:]/g, "")); setAddressError(false); }}
                 onBlur={checkAddress} onSubmitEditing={checkAddress}
                 keyboardType={Platform.OS === "ios" ? "numbers-and-punctuation" : "visible-password"}
@@ -276,5 +277,5 @@ const s = StyleSheet.create({
   pinRow: { flexDirection: "row", alignItems: "center", gap: 10 },
   pinCard: { flex: 1 },
   field: { borderWidth: 1, minHeight: minTouchTarget, justifyContent: "center", paddingHorizontal: 14 },
-  input: { fontFamily: fonts.ui.family, fontSize: 18, minHeight: minTouchTarget, letterSpacing: 1 },
+  input: { fontFamily: fonts.ui.family, fontSize: 18, minHeight: minTouchTarget, letterSpacing: 1, writingDirection: "ltr", textAlign: "left" },
 });

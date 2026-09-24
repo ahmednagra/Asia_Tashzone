@@ -37,7 +37,7 @@ export function TableSetupChips({ ts }: { ts: TableSetup }) {
       <ChipGroup label={t.game} value={ts.gameId} onChange={ts.setGameId} options={TABLE_GAMES.map((g) => ({ value: g.id, label: g.name }))} />
       <ChipGroup label={t.preset} value={ts.preset} onChange={ts.setPreset} hint={hint} options={setup.presets.map((p) => ({ value: p.id, label: p.label }))} />
       <ChipGroup label={setup.lengthLabel} value={ts.length} onChange={ts.setLength} options={setup.lengths.map((l, i) => ({ value: i, label: l.label }))} />
-      {setup.players ? <ChipGroup label="Players" value={ts.players} onChange={ts.setPlayers} options={setup.players.map((p) => ({ value: p, label: String(p) }))} /> : null}
+      {setup.players ? <ChipGroup label={t.players} value={ts.players} onChange={ts.setPlayers} options={setup.players.map((p) => ({ value: p, label: String(p) }))} /> : null}
     </>
   );
 }

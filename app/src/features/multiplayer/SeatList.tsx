@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SeatRow } from "../../components/ui/SeatRow";
 import { fonts, minTouchTarget } from "../../theme/tokens";
 import { useTheme } from "../../context/ThemeContext";
+import { copy } from "./copy";
 
 export interface SeatEntry { name: string | null; status: string; ok?: boolean; onRemove?: () => void; removeLabel?: string }
 
@@ -20,7 +21,7 @@ export function SeatChips({ seats, openName }: { seats: readonly SeatEntry[]; op
         const name = seat.name ?? openName;
         return (
           <View key={i} style={[s.chip, { borderRadius: t.shape.chip, borderColor: filled ? t.accent.line : c.borderControl, borderStyle: filled ? "solid" : "dashed", backgroundColor: filled ? c.surfaceRaised : "transparent" }]}>
-            <View style={s.text} accessible accessibilityLabel={`${name}, ${seat.status}`}>
+            <View style={s.text} accessible accessibilityLabel={copy.seat(name, seat.status)}>
               <Text numberOfLines={1} style={[s.name, { color: filled ? c.text : c.textMuted }]}>{name}</Text>
               <Text numberOfLines={1} style={[s.status, { color: seat.ok ? c.success : c.textMuted }]}>{seat.status}</Text>
             </View>

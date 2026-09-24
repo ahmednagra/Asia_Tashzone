@@ -12,6 +12,7 @@ import { StatusBanner } from "../../components/ui/StatusBanner";
 import { ConfirmSheet } from "../../components/ui/ConfirmSheet";
 import { GAMES } from "../../constants/games";
 import { fonts } from "../../theme/tokens";
+import { displayFace } from "../../i18n";
 import { useTheme } from "../../context/ThemeContext";
 import { useProfile } from "../../store/profile";
 import { useOnlineSession } from "../../hooks/useOnlineSession";
@@ -21,7 +22,7 @@ import { standings } from "../multiplayer/standings";
 import { copy } from "../multiplayer/copy";
 
 export function MatchSummary() {
-  const { c, t: room } = useTheme();
+  const { c, t: room, lang } = useTheme();
   const router = useRouter();
   const { recordResult } = useProfile();
   const session = useOnlineSession();
@@ -55,8 +56,8 @@ export function MatchSummary() {
         <StatusBanner tone="warn" title={wifi ? t.interruptedWifiTitle : t.interruptedTitle} body={wifi ? t.interruptedWifiBody : t.interruptedBody} />
       ) : winner ? (
         <GlassCard style={s.winner}>
-          <Caption>{t.winner.toUpperCase()}</Caption>
-          <Text style={[s.name, { color: room.accent.color, fontFamily: room.type.display }]}>{winner.you ? t.you : winner.name}</Text>
+          <Caption>{lang === "en" ? t.winner.toUpperCase() : t.winner}</Caption>
+          <Text style={[s.name, { color: room.accent.color }, displayFace(room.type.display, 32, lang)]}>{winner.you ? t.you : winner.name}</Text>
           {me?.place ? <Caption>{t.placed(me.place, rows.length)}</Caption> : null}
         </GlassCard>
       ) : null}
@@ -65,7 +66,7 @@ export function MatchSummary() {
           <SectionLabel>{t.standings}</SectionLabel>
           <GlassCard style={s.table}>
             {rows.map((r) => (
-              <View key={r.seat} style={s.row} accessible accessibilityLabel={`${r.place ? `Place ${r.place}, ` : ""}${r.you ? t.you : r.name}, ${r.score}`}>
+              <View key={r.seat} style={s.row} accessible accessibilityLabel={copy.seat(r.place ? copy.seat(t.place(r.place), r.you ? t.you : r.name) : r.you ? t.you : r.name, r.score)}>
                 <Text style={[s.place, { color: c.textMuted }]}>{r.place ?? "–"}</Text>
                 <Text style={[s.who, { color: c.text }]} numberOfLines={1}>{r.you ? t.you : r.name}</Text>
                 <Text style={[s.score, { color: c.textSecondary }]}>{r.score}</Text>

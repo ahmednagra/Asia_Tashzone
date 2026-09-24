@@ -11,6 +11,7 @@ import { Sheet } from "../../components/ui/Sheet";
 import { StatusBanner } from "../../components/ui/StatusBanner";
 import { fonts, minTouchTarget } from "../../theme/tokens";
 import { useTheme } from "../../context/ThemeContext";
+import { scriptText } from "../../i18n";
 import { useProfile } from "../../store/profile";
 import { useOnlineSession } from "../../hooks/useOnlineSession";
 import { createRoom, joinRoom, leaveSession, quickMatch } from "../multiplayer/session";
@@ -20,9 +21,10 @@ import { TableSetupChips, useTableSetup } from "./TableSetup";
 
 type Mode = "join" | "create" | "quick";
 const MODES: readonly Mode[] = ["join", "create", "quick"];
+const CODE_EXAMPLE = "BK7Q2M";
 
 export function RoomEntry({ game }: { game?: string }) {
-  const { c, t: room } = useTheme();
+  const { c, t: room, lang } = useTheme();
   const router = useRouter();
   const { profile } = useProfile();
   const session = useOnlineSession();
@@ -36,7 +38,7 @@ export function RoomEntry({ game }: { game?: string }) {
   const [editing, setEditing] = useState(false);
   const mounted = useRef(true);
   const busyRef = useRef(false);
-  const displayName = profile.name || "Player";
+  const displayName = profile.name || copy.defaultName;
   const error = session.phase === "idle" ? session.error : null;
 
   useEffect(() => {
@@ -61,7 +63,7 @@ export function RoomEntry({ game }: { game?: string }) {
   const join = () => { if (isCompleteCode(code)) void run(() => joinRoom({ name: displayName, code })); };
   const profileId = entry?.profile;
   const summary = setup && entry
-    ? t.summary(entry.name, setup.presets.find((p) => p.id === preset)?.label ?? "", `${setup.lengths[ts.length]?.label ?? ""} ${setup.lengthLabel.toLowerCase()}`, setup.players ? players : undefined)
+    ? t.summary(entry.name, setup.presets.find((p) => p.id === preset)?.label ?? "", t.lengthValue(setup.lengths[ts.length]?.label ?? "", setup.lengthLabel), setup.players ? players : undefined)
     : "";
 
   return (
@@ -75,7 +77,7 @@ export function RoomEntry({ game }: { game?: string }) {
             return (
               <Pressable key={m} accessibilityRole="radio" accessibilityState={{ selected: on }} onPress={() => setMode(m)}
                 style={[s.segment, { borderRadius: Math.max(0, room.shape.radius - 3), backgroundColor: on ? room.accent.color : "transparent" }]}>
-                <Text style={[s.segmentText, { color: on ? room.accent.on : c.text }]}>{t.modes[m]}</Text>
+                <Text numberOfLines={1} style={[s.segmentText, { color: on ? room.accent.on : c.text }, scriptText(lang)]}>{t.modes[m]}</Text>
               </Pressable>
             );
           })}
@@ -86,9 +88,9 @@ export function RoomEntry({ game }: { game?: string }) {
           <>
             <View style={[s.field, { borderColor: c.borderControl, backgroundColor: c.surface, borderRadius: room.shape.radius }]}>
               <TextInput
-                value={code} onChangeText={(v) => setCode(normalizeCode(v))} placeholder={t.codePlaceholder} placeholderTextColor={c.textMuted}
+                value={code} onChangeText={(v) => setCode(normalizeCode(v))} placeholder={CODE_EXAMPLE} placeholderTextColor={c.textMuted}
                 autoCapitalize="characters" autoCorrect={false} autoComplete="off" maxLength={CODE_LENGTH} returnKeyType="go"
-                accessibilityLabel={code ? `${t.codeLabel}: ${spellCode(code)}` : t.codeLabel}
+                accessibilityLabel={code ? t.codeSpoken(spellCode(code)) : t.codeLabel}
                 style={[s.input, { color: room.accent.color, fontFamily: room.type.numerals }]}
                 onSubmitEditing={join}
               />
@@ -101,9 +103,9 @@ export function RoomEntry({ game }: { game?: string }) {
         ) : (
           <>
             <Caption>{mode === "create" ? t.lead : t.quickHint}</Caption>
-            <GlassCard onPress={() => setEditing(true)} label={`${t.setupTitle}: ${summary}. ${t.change}`} style={s.summary}>
-              <Text numberOfLines={1} style={[s.summaryText, { color: c.text }]}>{summary}</Text>
-              <Text style={[s.change, { color: room.accent.color }]}>{t.change}</Text>
+            <GlassCard onPress={() => setEditing(true)} label={t.setupLabel(summary)} style={s.summary}>
+              <Text numberOfLines={1} style={[s.summaryText, { color: c.text }, scriptText(lang)]}>{summary}</Text>
+              <Text style={[s.change, { color: room.accent.color }, scriptText(lang)]}>{t.change}</Text>
             </GlassCard>
             {mode === "create" ? (
               <GoldButton label={busy ? t.working : t.create} disabled={busy} onPress={() => void run(() => createRoom({ name: displayName, profileId, preset, settings }))} />
@@ -127,7 +129,7 @@ const s = StyleSheet.create({
   segment: { flex: 1, minHeight: minTouchTarget, alignItems: "center", justifyContent: "center" },
   segmentText: { fontFamily: fonts.ui.semibold, fontSize: 15 },
   field: { borderWidth: 1, minHeight: 56, justifyContent: "center" },
-  input: { textAlign: "center", letterSpacing: 8, fontSize: 22, minHeight: 56, paddingHorizontal: 12 },
+  input: { textAlign: "center", writingDirection: "ltr", letterSpacing: 8, fontSize: 22, minHeight: 56, paddingHorizontal: 12 },
   summary: { flexDirection: "row", alignItems: "center", gap: 12, minHeight: minTouchTarget, paddingVertical: 10 },
   summaryText: { flex: 1, fontFamily: fonts.ui.medium, fontSize: 15 },
   change: { fontFamily: fonts.ui.semibold, fontSize: 14 },

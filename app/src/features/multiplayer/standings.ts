@@ -1,4 +1,5 @@
 import { formatScore } from "../play/table/logic";
+import { copy } from "./copy";
 
 /** `result` of the server's MatchEnded frame: engine `summary` plus the game id. */
 export interface MatchResult { game?: string; totals?: readonly number[]; placements?: readonly number[] | null }
@@ -7,8 +8,8 @@ export interface StandingRow { seat: number; name: string; place: number | null;
 
 /** Player-facing score for one seat's total (Callbreak / Call Bridge in tenths, Court Piece team points, Bhabhi count). */
 export function scoreLabel(game: string | undefined, total: number): string {
-  if (game === "bhabhi") return `${total}× Bhabhi`;
-  if (game === "courtpiece") return `${total} pts`;
+  if (game === "bhabhi") return copy.score.bhabhi(total);
+  if (game === "courtpiece") return copy.score.points(total);
   return formatScore(total);
 }
 
@@ -16,6 +17,6 @@ export function scoreLabel(game: string | undefined, total: number): string {
 export function standings(result: MatchResult | null, names: readonly string[], mySeat: number | null): StandingRow[] {
   const totals = result?.totals ?? [];
   return totals
-    .map((t, seat) => ({ seat, name: names[seat] || `Seat ${seat + 1}`, place: result?.placements?.[seat] ?? null, score: scoreLabel(result?.game, t), you: seat === mySeat }))
+    .map((t, seat) => ({ seat, name: names[seat] || copy.seatName(seat + 1), place: result?.placements?.[seat] ?? null, score: scoreLabel(result?.game, t), you: seat === mySeat }))
     .sort((a, b) => (a.place ?? 99) - (b.place ?? 99) || a.seat - b.seat);
 }

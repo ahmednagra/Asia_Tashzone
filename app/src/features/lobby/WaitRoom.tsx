@@ -63,7 +63,7 @@ export function WaitRoom() {
       <GoldButton kind="glass" label={wifi ? t.wifiLeave : t.leave} onPress={() => setConfirm(true)} />
     </>}>
       <KeepAwake />
-      <Header title={wifi ? t.wifiTitle : `${t.titlePrefix}${code}`} back={false} />
+      <Header title={wifi ? t.wifiTitle : t.title(code)} back={false} />
       {session.updateRequired ? (
         <StatusBanner tone="warn" title={copy.update.title} body={copy.update.body}>
           {Platform.OS === "android" ? <GoldButton label={copy.table.openStore} onPress={() => { Linking.openURL(STORE_URL).catch(() => {}); }} /> : null}
@@ -79,7 +79,7 @@ export function WaitRoom() {
       ) : connecting ? <StatusBanner busy title={t.connecting.title} body={t.connecting.body} /> : null}
       {session.error ? <StatusBanner tone="error" title={errorMessage(session.error)} /> : null}
       {wifi ? null : <CodeCard label={t.shareLabel} code={code} actionLabel={t.share}
-        onAction={() => { Share.share({ message: t.shareMessage(code, game?.name ?? "card") }).catch(() => {}); }} />}
+        onAction={() => { Share.share({ message: t.shareMessage(code, game?.name ?? "") }).catch(() => {}); }} />}
       <SeatList seats={seats} openName={t.openName} />
       <Caption>{wifi ? t.wifiGuestChat : profile.protectedMode || !profile.parent.text ? t.chatOff : t.chat}</Caption>
       <ConfirmSheet visible={confirm} title={t.leaveTitle} facts={t.leaveFacts(wifi)} confirmLabel={wifi ? t.wifiLeave : t.leave} cancelLabel={t.stay}
