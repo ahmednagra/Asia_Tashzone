@@ -15,7 +15,6 @@ export interface ThemePrefs {
   orientation: OrientationOption;
   hapticStrength: HapticStrength;
   sfxVolume: number;
-  ambienceVolume: number;
 }
 
 export interface Theme extends ThemePrefs {
@@ -35,7 +34,6 @@ export const DEFAULT_PREFS: ThemePrefs = {
   orientation: "auto",
   hapticStrength: "crisp",
   sfxVolume: 80,
-  ambienceVolume: 40,
 };
 const KEY = "tashzone.theme.v1";
 
@@ -60,7 +58,6 @@ export function parsePrefs(raw: unknown): ThemePrefs {
     orientation: orient(r.orientation),
     hapticStrength: haptic(r.hapticStrength),
     sfxVolume: num(r.sfxVolume, 80),
-    ambienceVolume: num(r.ambienceVolume, 40),
   };
 }
 

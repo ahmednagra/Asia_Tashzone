@@ -142,8 +142,6 @@ const arcade: ThemeSpec = {
 
 export const themes: Record<ThemeId, ThemeSpec> = { emerald: mehfil, gold: darbar, arcade };
 
-export const colors: Record<ThemeId, SemanticColors> = { emerald: mehfil.c, gold: darbar.c, arcade: arcade.c };
-
 export function toThemeId(v: unknown): ThemeId {
   return v === "gold" || v === "arcade" || v === "emerald" ? v : "emerald";
 }
@@ -168,17 +166,7 @@ export const cards = {
 
 /** Decorative material from the mehfil mockup (gradients, rims, leaf). Not for text or state. */
 export const material = {
-  feltLit: "#1a7458", felt: "#0f4a3c", feltDeep: "#062019", feltRim: "#03110d",
-  walnut: "#2e1c11", walnutLit: "#6a4626",
-  goldLeaf: "#e3bd6e", goldLeafHot: "#f6e0b0", goldLeafDim: "#9d7a32",
-  paper1: "#fffdf6", paper2: "#eee6d5",
-  obsidian: "#070f0d",
-  /** red suit on dark surfaces (mockup --rouge-lit) */
-  rougeLit: "#ff6b5b",
-  /** hairlines and glass panels drawn over dark surfaces (mockup --line, --line-hard, --glass) */
-  line: "rgba(227,189,110,0.22)", lineHard: "rgba(227,189,110,0.4)", glass: "rgba(255,255,255,0.055)",
-  /** gold button gradient (mockup --btn-1, --btn-2, --btn-ink) */
-  btn1: "#f4d9a4", btn2: "#c79f56", btnInk: "#16181d",
+  feltRim: "#03110d", walnutLit: "#6a4626", rougeLit: "#ff6b5b",
 } as const;
 
 export const fonts = {
@@ -195,30 +183,8 @@ export function scaleFor(role: keyof typeof typeScale, script: "latin" | "devana
   return { fontSize: size, lineHeight: Math.round(size * (script === "nastaliq" ? 1.8 : 1.35)) };
 }
 
-export const space = [4, 8, 12, 16, 24, 32, 48] as const;
 export const radius = { control: 12, sheet: 20, chip: 999, card: 8 } as const;
 export const minTouchTarget = 44;
-
-/** 2.5D elevation (§13.3): each level adds shadow depth and slight scale. */
-export const elevation = [
-  { level: 0, name: "felt", shadowRadius: 0, shadowOpacity: 0, offsetY: 0, scale: 1 },
-  { level: 1, name: "table-card", shadowRadius: 2, shadowOpacity: 0.25, offsetY: 1, scale: 1 },
-  { level: 2, name: "own-hand", shadowRadius: 6, shadowOpacity: 0.3, offsetY: 3, scale: 1.02 },
-  { level: 3, name: "lifted", shadowRadius: 12, shadowOpacity: 0.35, offsetY: 8, scale: 1.06 },
-  { level: 4, name: "hud-sheet", shadowRadius: 18, shadowOpacity: 0.35, offsetY: 10, scale: 1 },
-  { level: 5, name: "modal", shadowRadius: 28, shadowOpacity: 0.45, offsetY: 16, scale: 1 },
-] as const;
-
-/** Motion (§13.5), ms. Reduced motion: deals/plays 120 ms fades, no shakes, flips cross-fade. */
-export const motion = {
-  dealPerCard: 90, dealStagger: 40, play: 220, trickHold: 600, trickSlide: 350, interrupt: 450,
-  capture: 300, reveal: 300, score: 400, turn: 200, toast: 180, sheet: 240, reducedFade: 120,
-  /** if more than this many batches are queued, animations jump to their end state */
-  compressAfterBatches: 2,
-} as const;
-
-/** Responsive breakpoints (§15), dp of the shorter side unless noted. */
-export const breakpoints = { compactPhone: 360, phone: 400, largePhone: 480, tablet: 600, largeTablet: 840 } as const;
 
 /* ── WCAG 2.1 contrast ── */
 function channel(c: number): number { const s = c / 255; return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4; }
