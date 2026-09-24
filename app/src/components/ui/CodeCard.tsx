@@ -4,11 +4,12 @@ import { fonts } from "../../theme/tokens";
 import { useTheme } from "../../context/ThemeContext";
 import { GlassCard } from "./GlassCard";
 import { GoldButton } from "./GoldButton";
+import { U } from "./copy";
 
 /** Big spaced code to read aloud (mockup `.panel.lift` + `.lab` + `.code`): room code or PIN, with an optional action. `code` may be a placeholder like "····". */
 export function CodeCard({ label, code, hint, actionLabel, onAction, placeholder }: { label: string; code: string; hint?: string; actionLabel?: string; onAction?: () => void; placeholder?: boolean }) {
   const { c, t, lang } = useTheme();
-  const spoken = placeholder ? "not available" : code.split("").join(" ");
+  const spoken = placeholder ? U.unavailable : code.split("").join(" ");
   return (
     <GlassCard style={s.card}>
       <View style={s.main}>
