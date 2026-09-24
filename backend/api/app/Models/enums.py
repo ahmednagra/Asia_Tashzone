@@ -31,6 +31,7 @@ APPEAL_STATES = ("granted", "open", "rejected")
 AUDIT_ACTIONS = ("appeal_decided", "moderator_granted", "moderator_revoked", "report_actioned", "report_dismissed", "sanction_created", "sanction_revoked")
 MODERATOR_ROLES = ("admin", "moderator")
 IDENTITY_PROVIDERS = ("apple", "google", "play_games")
+AUTH_CODE_PURPOSES = ("login", "reset", "signup")
 SEAT_KINDS = ("bot", "human")
 
 TS = DateTime(timezone=True)

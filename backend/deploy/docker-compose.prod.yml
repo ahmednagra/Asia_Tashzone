@@ -58,6 +58,13 @@ services:
       APPLE_CLIENT_IDS: ${APPLE_CLIENT_IDS:-}
       PLAY_GAMES_CLIENT_ID: ${PLAY_GAMES_CLIENT_ID:-}
       PLAY_GAMES_CLIENT_SECRET: ${PLAY_GAMES_CLIENT_SECRET:-}
+      MAIL_BACKEND: ${MAIL_BACKEND:-disabled}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USERNAME: ${SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_USE_SSL: ${SMTP_USE_SSL:-false}
+      MAIL_FROM: ${MAIL_FROM:-}
       # Kill switch and remote control (app-config). Change in .env, then `docker compose ... up -d api`.
       ONLINE_ENABLED: ${ONLINE_ENABLED:-true}
       DISABLED_PROFILES: ${DISABLED_PROFILES:-}

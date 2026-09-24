@@ -7,7 +7,7 @@ from app.Middleware.rate_limit import limit
 from app.Schemas.identities import IdentityIn, Provider
 from app.Schemas.players import AppealIn, BlockIn, ParentalIn, ProfileIn, RegisterIn
 from app.Schemas.progress import ProgressIn
-from app.Services import IdentityService, ModerationService, PlayerService, ProgressService, SanctionService
+from app.Services import AccountService, IdentityService, ModerationService, PlayerService, ProgressService, SanctionService
 from app.Services.AppConfigService import require_feature
 from app.Services.IdentityVerifier import configured_providers
 
@@ -15,7 +15,7 @@ from app.Services.IdentityVerifier import configured_providers
 def _me(db, p) -> dict:
     ps = PlayerService.parental(db, p)
     return {"player_id": p.id, "display_name": p.display_name, "avatar_id": p.avatar_id, "protected": p.protected,
-            "parental": PlayerService.parental_view(ps), "linked_providers": IdentityService.linked_providers(db, p),
+            "parental": PlayerService.parental_view(ps), "linked_providers": IdentityService.linked_providers(db, p), "email": AccountService.email_of(db, p),
             "available_providers": list(configured_providers()), "stats": PlayerService.stats(db, p)}
 
 

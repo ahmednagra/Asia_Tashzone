@@ -13,6 +13,7 @@ from app.Core.enforcement import aware
 from app.Core.errors import ApiError, unprocessable
 from app.Core.security import sign_player_token
 from app.Models import (
+    AuthCode,
     Block,
     Feedback,
     Match,
@@ -20,6 +21,7 @@ from app.Models import (
     MatchPlayer,
     ParentalSettings,
     Player,
+    PlayerAccount,
     PlayerIdentity,
     PlayerProgress,
     PlayerStat,
@@ -152,7 +154,11 @@ def delete_player(db: Session, p: Player) -> None:
     """Soft-delete, anonymise, revoke every token, and remove everything that is theirs alone: feedback, their block
     list, reports they filed (and any evidence), progress, identities, tickets, open seats, stats and Parent Settings.
     Sealed hands and match results keep only anonymous seat data."""
+    account = db.get(PlayerAccount, p.id)
+    if account is not None:
+        db.execute(delete(AuthCode).where(AuthCode.email == account.email).execution_options(synchronize_session=False))
     for stmt in (
+        delete(PlayerAccount).where(PlayerAccount.player_id == p.id),
         delete(Feedback).where(Feedback.player_id == p.id),
         delete(MatchmakingTicket).where(MatchmakingTicket.player_id == p.id),
         delete(Block).where(Block.player_id == p.id),
