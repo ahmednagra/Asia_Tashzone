@@ -9,13 +9,14 @@ import { TagPill } from "../../components/ui/TagPill";
 import { fonts } from "../../theme/tokens";
 import { useTheme } from "../../context/ThemeContext";
 import { useGameNav } from "../../hooks/useGameNav";
+import { scriptText } from "../../i18n";
 import { GameArt } from "./GameArt";
 import { GameNotFound } from "./NotFound";
-import { T, findGame, playable, playersText } from "./copy";
+import { T, difficultyText, findGame, playable, playersText } from "./copy";
 
 /** Game page (mockup "detail"): art header, description, rules summary, tags, Play → ways. */
 export function DetailScreen({ id }: { id: string }) {
-  const { c } = useTheme();
+  const { c, lang } = useTheme();
   const nav = useGameNav();
   const g = findGame(id);
   if (!g) return <GameNotFound />;
@@ -28,7 +29,7 @@ export function DetailScreen({ id }: { id: string }) {
         <Text style={[s.meta, { color: c.textSecondary }]}>
           {g.alias ? `${g.alias} · ` : ""}{g.region} · {T.detail.players(playersText(g))} · {g.teams ?? T.tile.solo}
         </Text>
-        {g.difficulty ? <TagPill gold text={g.difficulty} /> : null}
+        {g.difficulty ? <TagPill gold text={difficultyText(g)!} /> : null}
         {(g.tags ?? []).map((tag) => <TagPill key={tag} text={tag} />)}
       </View>
       {g.description ? <Text style={[s.desc, { color: c.text }]}>{g.description}</Text> : null}
@@ -37,7 +38,7 @@ export function DetailScreen({ id }: { id: string }) {
       <GlassCard style={s.rules}>
         {g.rules?.length ? g.rules.map((r) => (
           <View key={r.label} style={s.rule}>
-            <Text style={[s.label, { color: c.textMuted }]}>{r.label}</Text>
+            <Text style={[s.label, { color: c.textMuted }, scriptText(lang)]}>{r.label}</Text>
             <Text style={[s.text, { color: c.text }]}>{r.text}</Text>
           </View>
         )) : <Text style={[s.text, { color: c.textMuted }]}>{T.detail.pick}</Text>}

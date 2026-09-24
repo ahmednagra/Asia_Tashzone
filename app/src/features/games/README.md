@@ -2,7 +2,7 @@
 
 Catalogue, game page, ways to play and bot setup (mockup screens `games`, `detail`, `ways`, `setup`; `home` lives in `features/home`).
 
-- `copy.ts` - all English strings (`T`) plus pure helpers (`playable`, `defaultSetup`, `playParams`).
+- `copy.ts` - all strings in every language (`T`, a `localized("games")` table) plus pure helpers (`playable`, `defaultSetup`, `playParams`).
 - `GameTile.tsx` - the one game tile, used by Home and the catalogue.
 - `GamesScreen`, `DetailScreen`, `WaysScreen`, `SetupScreen` - screens; route files in `src/app` only pass the `id` param.
 - `MiniCard`, `CardFan`, `GameArt` - decorative card art.

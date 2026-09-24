@@ -7,7 +7,7 @@ import { TagPill } from "../../components/ui/TagPill";
 import { SuitBadge } from "../../components/ui/SuitBadge";
 import { ButtonFace } from "../../components/ui/GoldButton";
 import type { GameEntry } from "../../types/game";
-import { T, playable, playersText } from "./copy";
+import { T, difficultyText, playable, playersText } from "./copy";
 
 type TileProps = { game: GameEntry; lastPlayed?: boolean; compact?: boolean; onOpen: (g: GameEntry) => void; onPlay: (g: GameEntry) => void };
 
@@ -32,7 +32,7 @@ function PlayButton({ game, onPlay }: { game: GameEntry; onPlay: (g: GameEntry) 
 function GameTileView({ game, lastPlayed, compact, onOpen, onPlay }: TileProps) {
   const { c, t } = useTheme();
   const ready = playable(game);
-  const meta = `${playersText(game)} ${T.tile.players} · ${game.teams ?? T.tile.solo} · ${game.alias ?? game.region}`;
+  const meta = `${T.tile.players(playersText(game))} · ${game.teams ?? T.tile.solo} · ${game.alias ?? game.region}`;
   if (compact) {
     return (
       <GlassCard style={s.compact}>
@@ -68,7 +68,7 @@ function GameTileView({ game, lastPlayed, compact, onOpen, onPlay }: TileProps) 
       {game.description ? <Text style={[s.desc, { color: c.textSecondary }]}>{game.description}</Text> : null}
       <View style={s.tags}>
         {(game.tags ?? []).slice(0, 3).map((tag) => <TagPill key={tag} text={tag} />)}
-        {game.difficulty ? <Text style={[s.diff, { color: c.textSecondary }]}>{game.difficulty}</Text> : null}
+        {game.difficulty ? <Text style={[s.diff, { color: c.textSecondary }]}>{difficultyText(game)}</Text> : null}
       </View>
     </GlassCard>
   );
@@ -91,5 +91,5 @@ const s = StyleSheet.create({
   soon: { fontFamily: fonts.ui.family, fontSize: 13 },
   desc: { fontFamily: fonts.ui.family, fontSize: 14, lineHeight: 19 },
   tags: { flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: 6 },
-  diff: { marginLeft: "auto", fontFamily: fonts.ui.semibold, fontSize: 13 },
+  diff: { marginStart: "auto", fontFamily: fonts.ui.semibold, fontSize: 13 },
 });

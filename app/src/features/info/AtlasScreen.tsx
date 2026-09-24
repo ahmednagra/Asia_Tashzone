@@ -4,22 +4,23 @@ import { Screen } from "../../components/ui/Screen";
 import { Header } from "../../components/ui/Header";
 import { GlassCard } from "../../components/ui/GlassCard";
 import { Chip } from "../../components/ui/Chip";
-import { ATLAS_GROUPS, atlasFor, type AtlasGroup } from "../../constants/atlas";
+import { ATLAS_GROUPS, atlasFor, atlasGroupLabel, type AtlasGroup } from "../../constants/atlas";
 import { fonts } from "../../theme/tokens";
 import { useTheme } from "../../context/ThemeContext";
 import { Caption } from "../../components/ui/Caption";
 import { useGo } from "../../hooks/useGo";
+import { I } from "./copy";
 
 /** Atlas (mockup "All screens"): every screen grouped; routes open for real, dialogs are shown as reference cards. */
 export function AtlasScreen() {
-  const { c } = useTheme();
+  const { c, rtl } = useTheme();
   const go = useGo();
   const [group, setGroup] = useState<AtlasGroup>("All");
   const shown = atlasFor(group);
   return (
     <Screen>
-      <Header title="All screens" right={<Text style={[s.count, { color: c.textMuted }]}>{`${shown.length} of ${atlasFor("All").length}`}</Text>} />
-      <View style={s.chips}>{ATLAS_GROUPS.map((gr) => <Chip key={gr} label={gr} on={gr === group} onPress={() => setGroup(gr)} />)}</View>
+      <Header title={I.atlas.title} right={<Text style={[s.count, { color: c.textMuted }]}>{I.atlas.count(shown.length, atlasFor("All").length)}</Text>} />
+      <View style={s.chips}>{ATLAS_GROUPS.map((gr) => <Chip key={gr} label={atlasGroupLabel(gr)} on={gr === group} onPress={() => setGroup(gr)} />)}</View>
       {shown.map((x) => {
         const body = (
           <View style={s.row}>
@@ -27,14 +28,14 @@ export function AtlasScreen() {
               <Text style={[s.label, { color: c.text }]}>{x.label}</Text>
               {x.sub ? <Text style={[s.sub, { color: c.textSecondary }]}>{x.sub}</Text> : null}
             </View>
-            <Text style={[s.tag, { color: c.textMuted }]}>{x.href ? `${x.group} ›` : "Dialog"}</Text>
+            <Text style={[s.tag, { color: c.textMuted }]}>{x.href ? `${atlasGroupLabel(x.group)} ${rtl ? "‹" : "›"}` : I.atlas.dialog}</Text>
           </View>
         );
         return x.href
-          ? <GlassCard key={x.label} label={`Open ${x.label}`} onPress={() => go(x.href!)}>{body}</GlassCard>
-          : <GlassCard key={x.label}>{body}</GlassCard>;
+          ? <GlassCard key={x.id} label={I.atlas.open(x.label)} onPress={() => go(x.href!)}>{body}</GlassCard>
+          : <GlassCard key={x.id}>{body}</GlassCard>;
       })}
-      <Caption size={15}>Tap a screen to open it for real. Dialogs appear over other screens, so they are listed with their wording.</Caption>
+      <Caption size={15}>{I.atlas.note}</Caption>
     </Screen>
   );
 }

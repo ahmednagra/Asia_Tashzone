@@ -9,18 +9,18 @@ import { SuitBadge } from "../../components/ui/SuitBadge";
 import { Collapsible } from "../../components/ui/Collapsible";
 import { CardRow } from "../../components/ui/CardRow";
 import { GAMES } from "../../constants/games";
-import { HOWTO_INTRO, HOWTO_SECTIONS } from "../../constants/howto";
+import { HOWTO } from "../../constants/howto";
 import { rulesFor } from "../../constants/rules";
 import { fonts } from "../../theme/tokens";
 import { useTheme } from "../../context/ThemeContext";
 import { Caption } from "../../components/ui/Caption";
 import { useGo } from "../../hooks/useGo";
 import { Bullets } from "./parts";
+import { I } from "./copy";
 import { playable } from "../games/copy";
 
 const SUIT_OF: Record<string, "S" | "H" | "D" | "C"> = { callbreak: "S", callbridge: "S", courtpiece: "H", bhabhi: "H" };
 
-const PLAYABLE = GAMES.filter(playable);
 
 /** How to play: the shared basics with small card examples, then one card per playable game (mockup `howto`). */
 export function HowToScreen() {
@@ -28,16 +28,16 @@ export function HowToScreen() {
   const go = useGo();
   return (
     <Screen>
-      <Header title="How to play" />
-      <Caption size={15}>{HOWTO_INTRO}</Caption>
-      {HOWTO_SECTIONS.map((sec, i) => (
+      <Header title={I.howto.title} />
+      <Caption size={15}>{HOWTO.intro}</Caption>
+      {HOWTO.sections.map((sec, i) => (
         <Collapsible key={sec.id} title={sec.title} defaultOpen={i === 0}>
           <Bullets items={sec.body} />
           {sec.examples?.map((ex) => <CardRow key={ex.caption} cards={ex.cards} caption={ex.caption} winner={ex.winner} />)}
         </Collapsible>
       ))}
-      <SectionLabel>Each game in brief</SectionLabel>
-      {PLAYABLE.map((g) => {
+      <SectionLabel>{I.howto.brief}</SectionLabel>
+      {GAMES.filter(playable).map((g) => {
         const goal = rulesFor(g.id)?.goal;
         return (
         <GlassCard key={g.id}>
@@ -50,8 +50,8 @@ export function HowToScreen() {
           </View>
           {goal ? <Text style={[s.goal, { color: c.textSecondary }]}>{goal}</Text> : <View style={s.gap} />}
           <View style={s.row}>
-            <GoldButton kind="glass" label="Rules" style={s.flex} onPress={() => go(`/rules?game=${g.id}`)} />
-            <GoldButton label="Play" style={s.flex} onPress={() => go(`/game/${g.id}`)} />
+            <GoldButton kind="glass" label={I.howto.rules} style={s.flex} onPress={() => go(`/rules?game=${g.id}`)} />
+            <GoldButton label={I.howto.play} style={s.flex} onPress={() => go(`/game/${g.id}`)} />
           </View>
         </GlassCard>
         );
