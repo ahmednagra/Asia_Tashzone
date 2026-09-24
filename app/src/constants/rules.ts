@@ -38,7 +38,6 @@ type TeaserId = "marriage" | "twentynine" | "seep" | "teenpatti";
 const TEASER_IDS: TeaserId[] = ["marriage", "twentynine", "seep", "teenpatti"];
 
 interface SectionText { title: string; body: string[] }
-/** Everything a language has to supply for the rules pages. Styles are generated from the setup presets. */
 export interface RulesText {
   stylesTitle: string;
   styleLine: (label: string, hint: string) => string;

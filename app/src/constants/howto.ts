@@ -25,7 +25,6 @@ const LAYOUT: { id: "ranks" | "tricks" | "follow" | "trump" | "teams"; examples?
 ];
 type SectionId = (typeof LAYOUT)[number]["id"];
 
-/** Everything a language supplies for the how-to page; captions line up with the examples above. */
 export interface HowToText {
   intro: string;
   sections: Record<SectionId, { title: string; body: string[]; captions: string[] }>;

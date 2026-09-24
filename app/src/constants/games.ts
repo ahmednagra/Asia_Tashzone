@@ -171,7 +171,6 @@ export const SETUP: Record<string, SetupInfo> = {
   }),
 };
 
-/** Preset label and hint in a given language, for text that is built once per language (the rules pages). */
 export function presetLines(profile: string, lang: Lang): { label: string; hint: string }[] {
   const en = GAMES_DATA_EN.setup.presets[profile as ProfileId] as Record<string, { label: string; hint: string }> | undefined;
   if (!en) return [];
@@ -180,7 +179,6 @@ export function presetLines(profile: string, lang: Lang): { label: string; hint:
 }
 
 const SEARCH = new Map<string, string>();
-/** Everything a player might type to find a game, in every language (names, local names, regions, tags). */
 export function searchText(g: GameEntry): string {
   const hit = SEARCH.get(g.id);
   if (hit !== undefined) return hit;
