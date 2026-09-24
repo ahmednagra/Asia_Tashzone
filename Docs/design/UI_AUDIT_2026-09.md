@@ -300,7 +300,7 @@ Each screen lists its **Theme**, **Fit** (no-scroll budget on a 360×740 dp phon
 | 5. Crash-proofing, table performance, no-scroll layouts, landscape, polish | Done except items below | all of the above |
 
 **Still open**
-- Full translation: only onboarding Language renders Urdu correctly; other screens are English (strings are now in `copy.ts` files, ready for translation).
+- Translations: the whole app is in English, Urdu (RTL), Hindi, Nepali and Bangla, and a test enforces completeness. The wording is machine-written: have a native speaker of each language review it before release, rules text first.
 - Pass-and-play is shown as "Coming soon": the engine table seats one human against bots.
 - Wi-Fi guest removal rotates the PIN; a per-device ban needs a `HostTable` change.
 - Parent PIN lockout only counts down while the app is running.
