@@ -3,6 +3,7 @@
  * instruction, what has gone, the last trick, shown voids, the hint explanation, the active house rules,
  * hand sorting and the turn clock. Nothing here can reveal a card the viewer may not know.
  */
+import type { Lang } from "../../../i18n";
 import type { CardId, SeatMove } from "@tashzone/engine";
 import { SUIT_GLYPH, cardLabel, handOrder, seatName, suitName } from "./logic";
 import { T } from "./copy";
@@ -13,7 +14,6 @@ export const SUITS_ORDER: readonly string[] = ["S", "H", "D", "C"];
 const rankIdx = (c: string) => RANK_ORDER.indexOf(c[0]!);
 const nameOf = (names: readonly string[], seat: number) => seatName(names, seat);
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 export function mySeat(view: any): number {
   return view.viewer.kind === "seat" || view.viewer.kind === "handover_bot" ? view.viewer.seat : 0;
@@ -111,7 +111,7 @@ export function breakWarning(view: any, names: readonly string[]): string | null
 }
 
 /** Suits a seat has shown it no longer holds (Bhabhi publishes these). */
-export function voidTags(view: any, seat: number): string[] {
+export function voidTags(view: any, seat: number, _lang?: Lang): string[] {
   const v = view.hand?.voids?.[seat] as readonly string[] | undefined;
   return v ? v.map((s) => T.say.voidTag(SUIT_GLYPH[s]!)) : [];
 }

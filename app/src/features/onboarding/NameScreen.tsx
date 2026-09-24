@@ -19,7 +19,7 @@ export function NameScreen() {
   const { c, t, lang } = useTheme();
   const { profile, update } = useProfile();
   useEffect(() => { if (!profile.name) update({ name: nick() }); }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  const finish = () => { update({ onboarded: true, name: profile.name.trim() || nick() }); router.replace("/"); };
+  const finish = () => { update({ onboarded: true, name: profile.name.trim() || nick() }); router.replace(profile.tutorialDone ? "/" : "/tutorial"); };
   return (
     <KeyboardAvoidingView style={s.fill} behavior={Platform.OS === "ios" ? "padding" : undefined}>
     <Screen footer={<GoldButton label={T.start} disabled={!profile.name.trim()} onPress={finish} />}>

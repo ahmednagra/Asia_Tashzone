@@ -1,4 +1,5 @@
 /** Pure presentation helpers (tested in Node). Seat mapping keeps the human at the bottom; the table never mirrors in RTL. */
+import type { Lang } from "../../../i18n";
 import type { CardId } from "@tashzone/engine";
 import { CARD, T } from "./copy";
 
@@ -128,8 +129,7 @@ export interface TableModel {
 }
 
 /** Presentation model from a SeatView of any game (the view is the only input: nothing hidden can appear). */
- 
-export function tableModel(view: any, human: number, names?: readonly string[]): TableModel {
+export function tableModel(view: any, human: number, names?: readonly string[], _lang?: Lang): TableModel {
   const h = view.hand;
   const game: string = view.game ?? "callbreak";
   const n: number = game === "bhabhi" ? view.rules.players : 4;

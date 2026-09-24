@@ -5,6 +5,7 @@ import { SectionLabel } from "../../components/ui/SectionLabel";
 import { Chip } from "../../components/ui/Chip";
 import { TagPill } from "../../components/ui/TagPill";
 import { StatBox } from "../../components/ui/StatBox";
+import { NavRow } from "../../components/ui/NavRow";
 import { useTheme } from "../../context/ThemeContext";
 import { displayFace } from "../../i18n";
 import { useProfile } from "../../store/profile";
@@ -13,6 +14,7 @@ import { GAMES } from "../../constants/games";
 import type { GameEntry } from "../../types/game";
 import { GameTile } from "../games/GameTile";
 import { T, findGame, playable } from "../games/copy";
+import { T as LEARN } from "../tutorial/copy";
 
 const PLAYABLE_IDS = GAMES.filter(playable).map((g) => g.id);
 
@@ -39,6 +41,9 @@ export function Home() {
         { value: stats.matches, label: T.home.stats[0] }, { value: stats.wins, label: T.home.stats[1] },
         { value: stats.streak, label: T.home.stats[2] }, { value: stats.bhabhi, label: T.home.stats[3] },
       ]} />
+      {profile.tutorialDone ? null : (
+        <NavRow icon="♠" title={LEARN.home.title} caption={LEARN.home.body} badge={LEARN.home.time} onPress={() => router.push("/tutorial")} />
+      )}
       <View style={s.row}>
         <View style={s.flex}><SectionLabel>{T.home.pick}</SectionLabel></View>
         <Chip label={T.home.all(GAMES.length)} onPress={() => router.push("/games")} />

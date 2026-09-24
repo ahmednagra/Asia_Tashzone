@@ -35,6 +35,25 @@ describe("mergeProfile", () => {
   });
 });
 
+describe("tutorialDone", () => {
+  it("is false for a new player", () => {
+    expect(DEFAULT_PROFILE.tutorialDone).toBe(false);
+    expect(mergeProfile({}).tutorialDone).toBe(false);
+    expect(mergeProfile({ onboarded: false }).tutorialDone).toBe(false);
+  });
+
+  it("is true for a returning player saved before the flag existed", () => {
+    expect(mergeProfile({ onboarded: true, name: "Sana" }).tutorialDone).toBe(true);
+  });
+
+  it("keeps a saved value and ignores wrong types", () => {
+    expect(mergeProfile({ onboarded: true, tutorialDone: false }).tutorialDone).toBe(false);
+    expect(mergeProfile({ onboarded: false, tutorialDone: true }).tutorialDone).toBe(true);
+    expect(mergeProfile({ onboarded: true, tutorialDone: "no" }).tutorialDone).toBe(true);
+    expect(mergeProfile({ onboarded: "yes", tutorialDone: 1 }).tutorialDone).toBe(false);
+  });
+});
+
 describe("export / import", () => {
   const me = mergeProfile({ onboarded: true, name: "Ali", stats: { matches: 3, wins: 1 }, parent: { pinHash: "h", salt: "s", text: false } });
 

@@ -10,7 +10,6 @@ import { SUITS_ORDER, trackerRow } from "../insights";
 import { T } from "../copy";
 
 /** What has gone (mockup `sheet==='tracker'`): struck-through cards were played this hand, gold ones are in your hand. Read from the view. */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function TrackerSheet({ visible, onClose, view }: { visible: boolean; onClose: () => void; view: any }) {
   const { c, t, fourColor } = useTheme();
   const suits = fourColor ? cards.fourColor : cards.twoColor;

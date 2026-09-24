@@ -30,7 +30,6 @@ import { TrackerSheet } from "./sheets/TrackerSheet";
 import { TrickCard } from "./TrickCard";
 
 export interface TableScreenProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   view: any;
   names: readonly string[];
   controls?: readonly ("human" | "handover" | "bot")[];
@@ -45,6 +44,8 @@ export interface TableScreenProps {
   deadline?: number | null;
   clock?: { onExpire: () => void };
   betweenHands?: { title: string; primaryLabel: string; onPrimary: () => void; secondaryLabel: string; onSecondary: () => void } | null;
+  coach?: React.ReactNode;
+  focusTray?: boolean;
 }
 
 function suggestTrump(hand: readonly string[]): string {
@@ -72,6 +73,8 @@ export function TableScreen({
   clock,
   deadline,
   betweenHands,
+  coach,
+  focusTray,
 }: TableScreenProps) {
   const { width, height } = useWindowDimensions();
   const landscape = width > height;
@@ -87,11 +90,13 @@ export function TableScreen({
   const [feltH, setFeltH] = useState(999);
   const [roomH, setRoomH] = useState(0);
   const [handTop, setHandTop] = useState<number | null>(null);
+  const [bridgeTop, setBridgeTop] = useState<number | null>(null);
+  const [trayTop, setTrayTop] = useState<number | null>(null);
 
   const me = mySeat(view);
   const h = view.hand;
-  const model = useMemo(() => tableModel(view, me, names), [view, me, names, lang]);
-  const voids = useMemo(() => model.seats.map((x) => voidTags(view, x.seat)), [view, model, lang]);
+  const model = useMemo(() => tableModel(view, me, names, lang), [view, me, names, lang]);
+  const voids = useMemo(() => model.seats.map((x) => voidTags(view, x.seat, lang)), [view, model, lang]);
   const many = model.seats.length > 5;
   const isCompact = landscape || height < 700;
   const sideW = landscape ? Math.round(Math.min(width * 0.46, 420)) : 0;
@@ -270,7 +275,7 @@ export function TableScreen({
   );
 
   const bridge = (
-    <View style={s.bridgeBar}>
+    <View style={s.bridgeBar} onLayout={coach && !landscape ? (e) => setBridgeTop(e.nativeEvent.layout.y) : undefined}>
       <MePlate
         name={nameOf(me)}
         avatar={profile.avatar}
@@ -352,11 +357,11 @@ export function TableScreen({
         <>
           <View style={s.leftPane}>
             {felt}
-            {tray ? <View style={s.trayLandscape}>{tray}</View> : null}
+            {tray ? <View style={[s.trayLandscape, focusTray && [s.trayFocus, { borderColor: t.accent.color, borderRadius: t.shape.sheet }]]}>{tray}</View> : null}
           </View>
           <View style={[s.side, { width: sideW }]}>
             {topBar}
-            <View style={s.grow} />
+            <View style={s.grow}>{coach ? <View style={s.coachSide}>{coach}</View> : null}</View>
             {bridge}
             {hand}
           </View>
@@ -368,7 +373,17 @@ export function TableScreen({
           {bridge}
           <View onLayout={(e) => setHandTop(e.nativeEvent.layout.y)}>{hand}</View>
           {tray ? (
-            <View style={[s.trayPortrait, { bottom: handTop !== null && roomH > 0 ? Math.max(8, roomH - handTop + 4) : 110 }]}>{tray}</View>
+            <View
+              style={[s.trayPortrait, { bottom: handTop !== null && roomH > 0 ? Math.max(8, roomH - handTop + 4) : 110 }, focusTray && [s.trayFocus, { borderColor: t.accent.color, borderRadius: t.shape.sheet }]]}
+              onLayout={coach ? (e) => setTrayTop(e.nativeEvent.layout.y) : undefined}
+            >
+              {tray}
+            </View>
+          ) : null}
+          {coach ? (
+            <View pointerEvents="box-none" style={[s.coachPortrait, { bottom: coachBottom(roomH, tray ? trayTop : bridgeTop) }]}>
+              {coach}
+            </View>
           ) : null}
         </>
       )}
@@ -423,6 +438,10 @@ export function TableScreen({
       />
     </View>
   );
+}
+
+function coachBottom(roomH: number, top: number | null): number {
+  return roomH > 0 && top !== null ? Math.max(8, roomH - top + 6) : 200;
 }
 
 const s = StyleSheet.create({
@@ -579,5 +598,20 @@ const s = StyleSheet.create({
     right: 8,
     bottom: 8,
     zIndex: 150,
+  },
+  trayFocus: {
+    borderWidth: 2,
+    padding: 3,
+  },
+  coachPortrait: {
+    position: "absolute",
+    left: 10,
+    right: 10,
+    zIndex: 160,
+  },
+  coachSide: {
+    flex: 1,
+    justifyContent: "flex-end",
+    paddingBottom: 4,
   },
 });

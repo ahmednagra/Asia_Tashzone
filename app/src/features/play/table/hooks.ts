@@ -31,7 +31,6 @@ interface Played { readonly seat: number; readonly card: CardId }
  * The engine clears a trick the moment it is complete; a table needs a beat to show it (§13.5 trick hold).
  * Returns the trick to draw and, while held, who took it. A new lead cancels the hold at once.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useTrickHold(view: any, names: readonly string[], holdMs: number): { trick: readonly Played[]; taken: string | null } {
   const current: readonly Played[] = view.hand?.trick ?? [];
   const last = lastTrick(view, names);

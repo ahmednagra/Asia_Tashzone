@@ -12,7 +12,6 @@ import { T } from "../copy";
 import { PlayingCard } from "../PlayingCard";
 
 /** A suggestion (mockup `sheet==='hint'`): the move the engine's Medium bot would make from the viewer's own view, with a plain reason. */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function HintSheet({ visible, onClose, view, move }: { visible: boolean; onClose: () => void; view: any; move: SeatMove | null }) {
   const { c, lang } = useTheme();
   const h = hintText(view, move);

@@ -4,7 +4,6 @@ import { mySeat } from "../table/insights";
 import { CARD, T } from "../table/copy";
 import { R } from "./copy";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 export type Tone = "plus" | "minus" | "gold" | "plain";
 export interface ResultRow { key: string; label: string; detail?: string; value: string; tone: Tone; mine: boolean }

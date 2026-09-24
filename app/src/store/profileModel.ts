@@ -9,6 +9,7 @@ export interface PinLock { fails: number; level: number; left: number; mark?: nu
 
 export interface Profile {
   onboarded: boolean;
+  tutorialDone: boolean;
   lang: Lang;
   /** birth year from the age screen; undefined when skipped */
   born?: number;
@@ -29,7 +30,7 @@ export interface Profile {
 }
 
 export const DEFAULT_PROFILE: Profile = {
-  onboarded: false, lang: "en", protectedMode: true, name: "", avatar: 0, easy: false, hints: false, timer: true,
+  onboarded: false, tutorialDone: false, lang: "en", protectedMode: true, name: "", avatar: 0, easy: false, hints: false, timer: true,
   sound: { master: true, effects: true, haptics: true },
   parent: { text: false, online: true, wifi: true },
   stats: { matches: 0, wins: 0, streak: 0, bhabhi: 0 },
@@ -48,6 +49,7 @@ export function mergeProfile(raw: unknown): Profile {
   const hasLock = typeof lock.fails === "number";
   return {
     onboarded: bool(r.onboarded, d.onboarded),
+    tutorialDone: bool(r.tutorialDone, r.onboarded === true),
     lang: LANGS.includes(r.lang as Lang) ? (r.lang as Lang) : d.lang,
     born: typeof r.born === "number" && Number.isFinite(r.born) ? r.born : undefined,
     protectedMode: bool(r.protectedMode, d.protectedMode),

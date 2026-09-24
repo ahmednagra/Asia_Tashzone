@@ -111,7 +111,7 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
     }
   }, [flush]);
 
-  const update = useCallback((patch: Partial<Profile>) => commit({ ...latest.current, ...patch }, "parent" in patch || "onboarded" in patch), [commit]);
+  const update = useCallback((patch: Partial<Profile>) => commit({ ...latest.current, ...patch }, "parent" in patch || "onboarded" in patch || "tutorialDone" in patch), [commit]);
   const recordResult = useCallback((gameId: string, won: boolean, lostBhabhi = false) => {
     const p = latest.current;
     commit({

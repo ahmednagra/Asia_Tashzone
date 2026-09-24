@@ -6,7 +6,6 @@ import { breakWarning, goneCards, hintText, houseRules, instructionLine, lastTri
 const NAMES = ["You", "Anaar", "Kulfi", "Chai"];
 const seat0 = { kind: "seat", seat: 0 };
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 const view = (game: string, hand: any, extra: any = {}): any => ({ game, viewer: seat0, match: { over: false }, legal: [], hand, rules: {}, ...extra });
 
 describe("instruction and status", () => {

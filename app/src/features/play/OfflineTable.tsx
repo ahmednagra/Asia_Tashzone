@@ -94,7 +94,6 @@ function Table({ gameId, info, rules, choice, onExit, onNew }: { gameId: string;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rules, choice, run]);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [view, setView] = useState<any>(table.view());
   const viewRef = useRef(view);
   viewRef.current = view;
@@ -113,7 +112,7 @@ function Table({ gameId, info, rules, choice, onExit, onNew }: { gameId: string;
   };
   const autoplay = () => {
     const legal: readonly SeatMove[] = viewRef.current.legal ?? [];
-    let m: SeatMove | null = null;
+    let m: SeatMove | null;
     try { m = table.hint(); } catch { m = null; }
     m = m ?? legal.find((x) => x.t === "Play") ?? legal[0] ?? null;
     if (m && table.play(m)) setToast(PLAY.autoPlayed);
@@ -146,7 +145,6 @@ function Table({ gameId, info, rules, choice, onExit, onNew }: { gameId: string;
   const showGame = useCallback(() => {
     const g = gameResult(viewRef.current, names);
     if (g) publish({ kind: "game", data: g, onAgain: () => setRun((r) => r + 1), onLeave: onExit });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [names, onExit]);
   const showResult = useCallback(() => {
     const v = viewRef.current;
@@ -154,7 +152,6 @@ function Table({ gameId, info, rules, choice, onExit, onNew }: { gameId: string;
     if (!data) { showGame(); router.push("/result/game"); return; }
     publish({ kind: "hand", data, onNext: () => (v.match.over ? showGame() : release()), onLeave: onExit });
     router.push("/result/hand");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [names, onExit, release, showGame, router]);
 
   const doneId = h?.phase === "DONE" && !h.annulled ? h.hand_id : null;

@@ -11,7 +11,6 @@ import { lastTrick } from "../insights";
 import { PlayingCard } from "../PlayingCard";
 
 /** The last trick (mockup `sheet==='last'`): every card with the name of whoever played it, straight from the view. */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function LastTrickSheet({ visible, onClose, view, names }: { visible: boolean; onClose: () => void; view: any; names: readonly string[] }) {
   const { c } = useTheme();
   const last = visible ? lastTrick(view, names) : null;
