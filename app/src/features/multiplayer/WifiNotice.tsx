@@ -8,7 +8,7 @@ import { useProfile } from "../../store/profile";
 import { getSession, leaveSession } from "./session";
 import { copy } from "./copy";
 
-/** The mockup's locked state for a mode Parent Settings turned off, with a way to the parent controls. */
+/** The mockup's locked state for a mode Parent controls turned off, with a way to the parent controls. */
 export function ParentLocked({ kind }: { kind: "online" | "wifi" }) {
   const router = useRouter();
   const t = copy.locked[kind];
