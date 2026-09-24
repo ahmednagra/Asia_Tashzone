@@ -286,3 +286,23 @@ Each screen lists its **Theme**, **Fit** (no-scroll budget on a 360×740 dp phon
 | 5 | **Table performance.** Isolate the clock; memo Hand, Seat and Card; stable callbacks; reset the armed card; restore two-row/Spread. | Frame rate, input |
 | 6 | **No-scroll pass.** Home, Settings home, Room, Wi-Fi host, Rules; landscape table (or lock portrait). | Compactness |
 | 7 | **Polish.** Haptics via expo-haptics; 44 dp targets; i18n and Nastaliq; FlatLists; accessibility labels. | P2s |
+
+---
+
+## 5. Implementation status (branch `feats/themes-setup`, 2026-09-24)
+
+| Step | Status | Commit |
+|---|---|---|
+| 1. Theme foundation: three rooms (Mehfil, Darbar, Arcade), single picker, fonts, splash, nav background, contrast tests | Done | `758b431` |
+| 2. Broken flows (Welcome loop, Ways, trump suits, podium text, Wi-Fi drop reason, duplicate socket) | Done | `fed81ff`, `630db9a`, `d2bc19b` |
+| 3. Honesty (fake Export/Clear removed, parent toggles wired, About copy, dead settings wired) | Done | `758b431`, `d2bc19b` |
+| 4. Motion, haptics, sound per room; re-dye switch transition | Done | `630db9a`, `afc94a6` |
+| 5. Crash-proofing, table performance, no-scroll layouts, landscape, polish | Done except items below | all of the above |
+
+**Still open**
+- Full translation: only onboarding Language renders Urdu correctly; other screens are English (strings are now in `copy.ts` files, ready for translation).
+- Pass-and-play is shown as "Coming soon": the engine table seats one human against bots.
+- Wi-Fi guest removal rotates the PIN; a per-device ban needs a `HostTable` change.
+- Parent PIN lockout only counts down while the app is running.
+- Needs device verification: landscape fit, sheet side panel, haptic/sound timing, two-phone Wi-Fi flows, keep-awake, iOS swipe-back block.
+- Native rebuild required: `expo-haptics`, `expo-audio`, `expo-screen-orientation`, `expo-keep-awake` were added.
