@@ -1,16 +1,18 @@
 import React, { useCallback, useRef, useState } from "react";
 import { Linking, StyleSheet, Text, View } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
-import { fonts, radius, typeScale } from "../../theme/tokens";
+import { fonts, typeScale } from "../../theme/tokens";
 import { useTheme } from "../../context/ThemeContext";
 import { GoldButton } from "./GoldButton";
+import { copy } from "../../features/multiplayer/copy";
 
 /**
  * Scans a table QR code. The camera permission is asked only when the player taps "Scan QR code", never on mount.
  * `onScanned` fires once per opening with the raw QR text; the caller validates it. `onCancel` closes the scanner.
  */
 export function QrScanner({ onScanned, onCancel }: { onScanned: (data: string) => void; onCancel: () => void }) {
-  const { c } = useTheme();
+  const { c, t: room } = useTheme();
+  const t = copy.scanner;
   const [permission, requestPermission] = useCameraPermissions();
   const [open, setOpen] = useState(false);
   const done = useRef(false);
@@ -38,11 +40,11 @@ export function QrScanner({ onScanned, onCancel }: { onScanned: (data: string) =
   if (open && permission?.granted) {
     return (
       <View style={s.wrap}>
-        <View style={s.frame} accessible accessibilityLabel="Camera view. Point it at the table QR code.">
+        <View style={[s.frame, { borderRadius: room.shape.sheet }]} accessible accessibilityLabel={t.camera}>
           <CameraView style={StyleSheet.absoluteFill} facing="back" barcodeScannerSettings={{ barcodeTypes: ["qr"] }} onBarcodeScanned={handle} />
         </View>
-        <Text style={[s.text, { color: c.textSecondary }]}>Point the camera at the QR code on the host's screen.</Text>
-        <GoldButton kind="glass" label="Cancel" onPress={onCancel} />
+        <Text style={[s.text, { color: c.textSecondary }]}>{t.point}</Text>
+        <GoldButton kind="glass" label={t.cancel} onPress={onCancel} />
       </View>
     );
   }
@@ -52,20 +54,20 @@ export function QrScanner({ onScanned, onCancel }: { onScanned: (data: string) =
       {askedAndRefused ? (
         <Text accessibilityLiveRegion="polite" style={[s.text, { color: c.warning }]}>
           {denied
-            ? "Camera access is turned off for TashZone. Turn it on in your phone's settings to scan, or type the table code instead."
-            : "TashZone needs the camera only to scan the table QR code. You can allow it, or type the table code instead."}
+            ? t.off
+            : t.why}
         </Text>
       ) : (
-        <Text style={[s.text, { color: c.textSecondary }]}>The camera is used only to scan the QR code. Nothing is recorded or saved.</Text>
+        <Text style={[s.text, { color: c.textSecondary }]}>{t.privacy}</Text>
       )}
-      {denied ? <GoldButton label="Open settings" onPress={() => void Linking.openSettings()} /> : <GoldButton label="Scan QR code" onPress={() => void start()} />}
-      <GoldButton kind="glass" label="Cancel" onPress={onCancel} />
+      {denied ? <GoldButton label={t.settings} onPress={() => void Linking.openSettings()} /> : <GoldButton label={t.scan} onPress={() => void start()} />}
+      <GoldButton kind="glass" label={t.cancel} onPress={onCancel} />
     </View>
   );
 }
 
 const s = StyleSheet.create({
   wrap: { gap: 12 },
-  frame: { height: 320, borderRadius: radius.sheet, overflow: "hidden" },
+  frame: { height: 320, overflow: "hidden" },
   text: { fontFamily: fonts.ui.family, fontSize: typeScale.secondary, lineHeight: 21 },
 });

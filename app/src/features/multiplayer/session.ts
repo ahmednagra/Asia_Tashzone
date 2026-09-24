@@ -3,6 +3,7 @@
  * table and match routes all see the same MatchClient. React reads it with `useOnlineSession`.
  * Bounded work: one socket, one 3 s lobby poll or one 2 s queue poll at a time, 10 s HTTP timeout.
  */
+import { AppState, type AppStateStatus, type NativeEventSubscription } from "react-native";
 import { MatchClient, type ClientState, type MatchClientOptions, type SocketLike } from "@tashzone/match";
 import type { SeatMove } from "@tashzone/engine";
 import { VERSION_CODE } from "../../lib/env";
@@ -50,15 +51,20 @@ const IDLE: SessionState = {
 
 const LOBBY_POLL_MS = 3000;
 const QUEUE_POLL_MS = 2000;
+const CONFIG_TTL_MS = 10 * 60_000;
 const FATAL = new Set(["UNAUTHORIZED", "KICKED", "OWNERSHIP_LOST"]);
+const ROOM_GONE = new Set(["ROOM_NOT_FOUND", "ROOM_CLOSED", "ROOM_EXPIRED", "KICKED", "BLOCKED"]);
 
 let state: SessionState = IDLE;
 const listeners = new Set<() => void>();
 let client: MatchClient | null = null;
 let timer: ReturnType<typeof setInterval> | null = null;
+let poll: { tick: () => void; ms: number } | null = null;
+let appState: NativeEventSubscription | null = null;
 let run = 0;
+let recordedRun = -1;
 let who = "Player";
-let config: AppConfig | null = null;
+let config: { value: AppConfig; at: number } | null = null;
 /** Set by wifiSession: closes the table server, advertising, scanning and sockets of a same-Wi-Fi run. */
 let extraTeardown: (() => void) | null = null;
 
@@ -69,7 +75,29 @@ function set(patch: Partial<SessionState>): void {
 export const getSession = (): SessionState => state;
 export function subscribeSession(l: () => void): () => void { listeners.add(l); return () => { listeners.delete(l); }; }
 
-function stopTimer(): void { if (timer) clearInterval(timer); timer = null; }
+function clearTick(): void { if (timer) clearInterval(timer); timer = null; }
+function stopTimer(): void { clearTick(); poll = null; }
+
+function startPoll(tick: () => void, ms: number): void {
+  stopTimer();
+  poll = { tick, ms };
+  appState ??= AppState.addEventListener("change", onAppState);
+  if (AppState.currentState !== "background") timer = setInterval(tick, ms);
+}
+
+function onAppState(next: AppStateStatus): void {
+  if (!poll) return;
+  if (next === "active") {
+    if (!timer) { timer = setInterval(poll.tick, poll.ms); poll.tick(); }
+  } else if (next === "background") clearTick();
+}
+
+async function appConfig(): Promise<AppConfig> {
+  if (config && Date.now() - config.at < CONFIG_TTL_MS) return config.value;
+  const value = await online.appConfig();
+  config = { value, at: Date.now() };
+  return value;
+}
 const rnSocket = (url: string): SocketLike => new WebSocket(url) as unknown as SocketLike;
 const codeOf = (e: unknown): string => (e instanceof ApiFailure ? e.code : "ERROR");
 
@@ -110,11 +138,19 @@ function fail(current: () => boolean, e: unknown): void {
   set({ ...IDLE, error: codeOf(e) });
 }
 
+function end(current: () => boolean, code: string): void {
+  if (!current()) return;
+  teardown();
+  set({ ...IDLE, error: code });
+}
+
 export async function createRoom(o: { name: string; profileId: string; preset: string; settings: Record<string, unknown> }): Promise<boolean> {
   const current = begin(o.name);
   try {
-    const ticket = await online.createRoom(o.name, o.profileId, o.preset, o.settings);
+    await appConfig();
     if (!current()) return false;
+    const ticket = await online.createRoom(o.name, o.profileId, o.preset, o.settings);
+    if (!current()) { online.leaveRoom(o.name, ticket.room_code).catch(() => {}); return false; }
     await attach(ticket, o.profileId, current);
     return true;
   } catch (e) { fail(current, e); return false; }
@@ -123,8 +159,10 @@ export async function createRoom(o: { name: string; profileId: string; preset: s
 export async function joinRoom(o: { name: string; code: string }): Promise<boolean> {
   const current = begin(o.name);
   try {
-    const ticket = await online.joinRoom(o.name, o.code);
+    await appConfig();
     if (!current()) return false;
+    const ticket = await online.joinRoom(o.name, o.code);
+    if (!current()) { online.leaveRoom(o.name, ticket.room_code).catch(() => {}); return false; }
     await attach(ticket, ticket.room.profile_id, current);
     return true;
   } catch (e) { fail(current, e); return false; }
@@ -134,7 +172,7 @@ export async function quickMatch(o: { name: string; profileId: string; seats: nu
   const current = begin(o.name);
   try {
     const first = await online.queue(o.name, o.profileId, o.seats);
-    if (!current()) return false;
+    if (!current()) { online.leaveQueue(o.name).catch(() => {}); return false; }
     set({ phase: "queued", profileId: o.profileId, seatCount: o.seats });
     const handle = async (t: typeof first): Promise<void> => {
       if (!current()) return;
@@ -145,8 +183,8 @@ export async function quickMatch(o: { name: string; profileId: string; seats: nu
     await handle(first);
     if (current() && state.phase === "queued") {
       let busy = false;
-      timer = setInterval(() => {
-        if (busy) return;
+      startPoll(() => {
+        if (busy || !current()) return;
         busy = true;
         online.ticket(o.name).then(handle).catch((e) => { if (e instanceof ApiFailure && e.status !== 0) fail(current, e); }).finally(() => { busy = false; });
       }, QUEUE_POLL_MS);
@@ -156,9 +194,14 @@ export async function quickMatch(o: { name: string; profileId: string; seats: nu
 }
 
 async function attach(t: JoinTicket, profileId: string, current: () => boolean): Promise<void> {
-  config ??= await online.appConfig();
-  if (!current()) return;
-  const cfg = config;
+  let cfg: AppConfig;
+  try {
+    cfg = await appConfig();
+  } catch (e) {
+    await online.leaveRoom(who, t.room_code).catch(() => {});
+    throw e;
+  }
+  if (!current()) { online.leaveRoom(who, t.room_code).catch(() => {}); return; }
   const members = Array.from({ length: t.room.seats }, (_, seat) => t.room.members.find((m) => m.seat === seat)?.display_name ?? null);
   set({ phase: "lobby", profileId, roomCode: t.room_code, seat: t.seat, isHost: t.room.host_seat === t.seat, seatCount: t.room.seats, members, queue: null });
   startClient(current, {
@@ -168,7 +211,7 @@ async function attach(t: JoinTicket, profileId: string, current: () => boolean):
   pollLobby(t.room_code, current);
 }
 
-type ClientBase = Pick<MatchClientOptions, "url" | "joinToken" | "engineBuildHash" | "behaviourDigest" | "socket">;
+type ClientBase = Pick<MatchClientOptions, "url" | "joinToken" | "engineBuildHash" | "behaviourDigest" | "socket"> & Partial<Pick<MatchClientOptions, "maxRetries">>;
 
 /**
  * Creates the run's MatchClient, feeds the store from it and connects. Shared by online rooms and same-Wi-Fi tables
@@ -188,17 +231,25 @@ export function startClient(current: () => boolean, base: ClientBase, extra?: { 
     onMessage: (msg) => {
       if (!current() || client !== m) return;
       switch (msg.type) {
-        case "TableSnapshot":
-          set({ names: msg.table_meta.seats.map((x: { name: string }) => x.name), controls: msg.seat_controls });
+        case "TableSnapshot": {
+          const meta = tableMeta(msg.table_meta);
+          if (!meta) break;
+          set({ names: meta.seats.map((x) => x.name), controls: Array.isArray(msg.seat_controls) ? msg.seat_controls : state.controls });
           // A same-Wi-Fi guest learns the table from its first snapshot: game, own seat and who is seated.
           if (state.transport === "wifi") {
-            set({ profileId: msg.table_meta.profile_id, seat: msg.table_meta.you, seatCount: msg.table_meta.seats.length,
-              members: msg.table_meta.seats.map((x: { name: string; kind: string }) => (x.kind === "human" ? x.name : null)) });
+            set({ profileId: meta.profileId ?? state.profileId, seat: meta.you ?? state.seat, seatCount: meta.seats.length,
+              members: meta.seats.map((x) => (x.kind === "human" ? x.name : null)) });
           }
           break;
-        case "SeatControlChanged": set({ controls: (state.controls ?? []).map((c, i) => (i === msg.seat ? msg.control : c)) }); break;
+        }
+        case "SeatControlChanged":
+          if (Number.isInteger(msg.seat) && typeof msg.control === "string") set({ controls: (state.controls ?? []).map((c, i) => (i === msg.seat ? msg.control : c)) });
+          break;
         case "HostChanged": set({ isHost: msg.seat === state.seat }); break;
-        case "MatchEnded": stopTimer(); set({ phase: "ended", ended: { outcome: msg.outcome, result: msg.result as MatchResult } }); break;
+        case "MatchEnded":
+          stopTimer();
+          set({ phase: "ended", ended: { outcome: msg.outcome === "interrupted" ? "interrupted" : "completed", result: (msg.result && typeof msg.result === "object" ? msg.result : {}) as MatchResult } });
+          break;
         case "Error":
           if (state.transport === "online" && FATAL.has(msg.code)) { stopTimer(); set({ phase: "idle", error: msg.code }); }
           else if (msg.code === "MATCH_INTERRUPTED") set({ phase: "ended", ended: { outcome: "interrupted", result: {} } });
@@ -215,20 +266,46 @@ export function startClient(current: () => boolean, base: ClientBase, extra?: { 
 /** Lobby roster: the match server only sends snapshots on connect, so names of late joiners come from the room endpoint. */
 function pollLobby(code: string, current: () => boolean): void {
   let busy = false;
-  stopTimer();
-  timer = setInterval(() => {
-    if (busy || !current() || state.phase !== "lobby") { if (state.phase !== "lobby") stopTimer(); return; }
+  startPoll(() => {
+    if (busy || !current() || state.phase !== "lobby") { if (current() && state.phase !== "lobby") stopTimer(); return; }
     busy = true;
     online.getRoom(who, code).then((r) => {
       if (!current()) return;
+      if (r.status === "expired" || r.status === "finished") { end(current, r.status === "expired" ? "ROOM_EXPIRED" : "ROOM_CLOSED"); return; }
       set({ seatCount: r.seats, isHost: r.host_seat === state.seat, members: Array.from({ length: r.seats }, (_, seat) => r.members.find((x) => x.seat === seat)?.display_name ?? null) });
-    }).catch(() => { /* transient: the next tick retries; reconnect state shows on the client */ }).finally(() => { busy = false; });
+    }).catch((e) => {
+      if (e instanceof ApiFailure && (ROOM_GONE.has(e.code) || e.status === 404)) end(current, ROOM_GONE.has(e.code) ? e.code : "ROOM_CLOSED");
+    }).finally(() => { busy = false; });
   }, LOBBY_POLL_MS);
+}
+
+interface TableMeta { seats: { name: string; kind: string }[]; profileId?: string; you?: number }
+
+function tableMeta(m: unknown): TableMeta | null {
+  if (!m || typeof m !== "object") return null;
+  const o = m as Record<string, unknown>;
+  if (!Array.isArray(o.seats)) return null;
+  const seats: TableMeta["seats"] = [];
+  for (const x of o.seats as unknown[]) {
+    if (!x || typeof x !== "object" || typeof (x as { name?: unknown }).name !== "string") return null;
+    const kind = (x as { kind?: unknown }).kind;
+    seats.push({ name: (x as { name: string }).name, kind: typeof kind === "string" ? kind : "human" });
+  }
+  return {
+    seats,
+    profileId: typeof o.profile_id === "string" ? o.profile_id : undefined,
+    you: typeof o.you === "number" && Number.isInteger(o.you) ? o.you : undefined,
+  };
 }
 
 export function startTable(): void { client?.start(); }
 export function sendMove(move: SeatMove): void { client?.intent(move); }
 export function retryConnection(): void { client?.connect(); }
+export function claimResultRecord(): boolean {
+  if (recordedRun === run) return false;
+  recordedRun = run;
+  return true;
+}
 export function clearError(): void { if (state.error) set({ error: null }); }
 
 /** Leave whatever is running. In a lobby the seat is released on the server; at a live table a bot takes over (MatchClient.leave). */
