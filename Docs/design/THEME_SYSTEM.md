@@ -1,6 +1,6 @@
 # TashZone Theme System
 
-**Status:** proposal, 2026-09-24. Not yet implemented.
+**Status:** implemented on branch `feats/themes-setup` (2026-09-24). Visual spec: `Docs/design/theme-system.html`.
 **Interactive spec with live contrast checks:** https://claude.ai/artifact/NZh1HDJUUicMF1o2txwRes
 **Related:** `UI_AUDIT_2026-09.md` (why the current theme code is broken and what to fix first).
 

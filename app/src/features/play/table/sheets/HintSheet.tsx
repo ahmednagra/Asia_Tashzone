@@ -30,5 +30,5 @@ export function HintSheet({ visible, onClose, view, move }: { visible: boolean; 
 const s = StyleSheet.create({
   row: { flexDirection: "row", alignItems: "center", gap: 14, paddingVertical: 10 },
   text: { flex: 1, gap: 4 },
-  title: { fontFamily: fonts.display.family, fontSize: 20, fontWeight: "600" },
+  title: { fontFamily: fonts.display.family, fontSize: 20 },
 });

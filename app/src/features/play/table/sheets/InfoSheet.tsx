@@ -25,5 +25,5 @@ export function InfoSheet({ visible, onClose, title, rows }: { visible: boolean;
 const s = StyleSheet.create({
   row: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", minHeight: 40, gap: 12 },
   k: { fontFamily: fonts.ui.family, fontSize: 14 },
-  v: { fontFamily: fonts.ui.family, fontSize: 15, fontWeight: "600", flexShrink: 1, textAlign: "right" },
+  v: { fontFamily: fonts.ui.semibold, fontSize: 15, flexShrink: 1, textAlign: "right" },
 });

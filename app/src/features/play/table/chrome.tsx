@@ -51,7 +51,7 @@ const s = StyleSheet.create({
   roundGlyph: { color: onTable.text, fontSize: 19 },
   pill: { minHeight: minTouchTarget, paddingHorizontal: 14, borderRadius: 999, borderWidth: 1, borderColor: material.lineHard, backgroundColor: material.glass, alignItems: "center", justifyContent: "center" },
   pillPrimary: { backgroundColor: material.goldLeaf, borderColor: material.goldLeaf },
-  pillText: { color: onTable.text, fontFamily: fonts.ui.family, fontWeight: "600", fontSize: 14 },
+  pillText: { color: onTable.text, fontFamily: fonts.ui.semibold, fontSize: 14 },
   track: { height: 4, borderRadius: 3, backgroundColor: material.glass, overflow: "hidden" },
   fill: { height: "100%", borderRadius: 3 },
 });

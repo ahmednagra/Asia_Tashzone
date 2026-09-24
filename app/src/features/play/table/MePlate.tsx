@@ -27,7 +27,7 @@ const s = StyleSheet.create({
   row: { flexDirection: "row", alignItems: "center", gap: 10, flex: 1 },
   text: { flex: 1, gap: 3 },
   line: { flexDirection: "row", alignItems: "center", gap: 6 },
-  name: { color: onTable.text, fontFamily: fonts.ui.family, fontSize: 14, fontWeight: "600", flexShrink: 1 },
+  name: { color: onTable.text, fontFamily: fonts.ui.semibold, fontSize: 14, flexShrink: 1 },
   count: { minWidth: 21, height: 21, borderRadius: 11, paddingHorizontal: 5, borderWidth: 1, borderColor: material.line, backgroundColor: material.glass, alignItems: "center", justifyContent: "center" },
   countText: { color: onTable.gold, fontSize: 12, fontWeight: "600", fontVariant: ["tabular-nums"] },
   tag: { borderWidth: 1, borderColor: onTable.gold, borderRadius: 999, paddingHorizontal: 6, paddingVertical: 1 },

@@ -19,7 +19,7 @@ import { standings } from "../multiplayer/standings";
 import { copy } from "../multiplayer/copy";
 
 export function MatchSummary() {
-  const { c, name: theme } = useTheme();
+  const { c, t: room } = useTheme();
   const router = useRouter();
   const { recordResult } = useProfile();
   const session = useOnlineSession();
@@ -50,7 +50,7 @@ export function MatchSummary() {
       ) : winner ? (
         <GlassCard style={s.winner}>
           <Caption>{t.winner.toUpperCase()}</Caption>
-          <Text style={[s.name, { color: theme === "dark" ? material.goldLeafHot : c.primary }]}>{winner.you ? t.you : winner.name}</Text>
+          <Text style={[s.name, { color: room.accent.color, fontFamily: room.type.display }]}>{winner.you ? t.you : winner.name}</Text>
           {me?.place ? <Caption>{t.placed(me.place, rows.length)}</Caption> : null}
         </GlassCard>
       ) : null}
@@ -74,7 +74,7 @@ export function MatchSummary() {
 
 const s = StyleSheet.create({
   winner: { alignItems: "center", gap: 4 },
-  name: { fontFamily: fonts.display.family, fontSize: 32, fontWeight: "600" },
+  name: { fontFamily: fonts.display.family, fontSize: 32 },
   table: { gap: 4 },
   row: { flexDirection: "row", alignItems: "center", gap: 12, minHeight: 44 },
   place: { width: 22, fontFamily: fonts.ui.family, fontSize: 15 },

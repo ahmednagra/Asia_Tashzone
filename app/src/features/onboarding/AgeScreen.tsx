@@ -56,7 +56,7 @@ export function AgeScreen() {
 }
 const s = StyleSheet.create({
   drum: { height: 136, borderRadius: 16, borderWidth: 1, borderColor: material.line, backgroundColor: material.glass, overflow: "hidden" },
-  r: { position: "absolute", left: 0, right: 0, height: 28, textAlign: "center", fontFamily: fonts.display.family, fontWeight: "600", fontSize: 21, lineHeight: 28 },
+  r: { position: "absolute", left: 0, right: 0, height: 28, textAlign: "center", fontFamily: fonts.display.family, fontSize: 21, lineHeight: 28 },
   line: { position: "absolute", left: 8, right: 8, height: 1, backgroundColor: material.goldLeaf },
   btns: { flexDirection: "row", justifyContent: "center", gap: 14 },
 });

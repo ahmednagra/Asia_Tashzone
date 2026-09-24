@@ -34,5 +34,5 @@ const s = StyleSheet.create({
   list: { gap: 8, marginTop: 10 },
   row: { flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 10 },
   text: { flex: 1, gap: 2 },
-  title: { fontFamily: fonts.ui.family, fontSize: 15, fontWeight: "600" },
+  title: { fontFamily: fonts.ui.semibold, fontSize: 15 },
 });

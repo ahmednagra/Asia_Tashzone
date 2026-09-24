@@ -1,0 +1,377 @@
+<title>TashZone Theme System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Bodoni+Moda:wght@600;700&family=Jost:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ground:#F3EFE6; --panel:#FFFFFF; --ink:#1B1D21; --ink-2:#4A4F57; --ink-3:#676C74;
+  --rule:#DDD6C8; --accent:#8A6512; --ok:#1F7A4D; --bad:#B3261E; --warn:#A8520F;
+  --display:"Cormorant Garamond",Georgia,serif; --ui:"Jost",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ color-scheme:dark;
+    --ground:#0B0D0C; --panel:#141816; --ink:#F2EEE4; --ink-2:#B9B3A6; --ink-3:#8F897D;
+    --rule:#2A302D; --accent:#E3BD6E; --ok:#6BD49C; --bad:#FFA59E; --warn:#FFB072; }
+}
+:root[data-theme="dark"]{ color-scheme:dark;
+  --ground:#0B0D0C; --panel:#141816; --ink:#F2EEE4; --ink-2:#B9B3A6; --ink-3:#8F897D;
+  --rule:#2A302D; --accent:#E3BD6E; --ok:#6BD49C; --bad:#FFA59E; --warn:#FFB072; }
+
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font:15px/1.55 var(--ui);margin:0}
+.wrap{max-width:1200px;margin:0 auto;padding-inline:20px;padding-block:40px 64px}
+header.top{display:grid;gap:12px;max-width:800px;margin-bottom:28px}
+.eyebrow{font:500 12px/1 var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+h1{font:600 clamp(34px,5vw,54px)/1.05 var(--display);margin:0;text-wrap:balance}
+h2{font:600 30px/1.15 var(--display);margin:0;text-wrap:balance}
+h3{font:600 12px/1 var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin:0}
+h4{font:600 16px/1.3 var(--ui);margin:0}
+p{margin:0;max-width:72ch;color:var(--ink-2)}
+code,.hex{font-family:var(--mono);font-size:12px}
+a{color:var(--accent)}
+.note{border-left:3px solid var(--accent);padding:10px 14px;background:var(--panel);border-radius:0 8px 8px 0;font-size:14px;color:var(--ink-2)}
+.note b{color:var(--ink)}
+nav.toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+nav.toc a{font-size:12.5px;padding:5px 10px;border:1px solid var(--rule);border-radius:999px;text-decoration:none;color:var(--ink-2);background:var(--panel)}
+section{margin-top:52px;display:grid;gap:16px;scroll-margin-top:16px}
+.sec-head{display:grid;gap:6px;max-width:800px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--rule);border-radius:14px;padding:16px;display:grid;gap:8px;align-content:start}
+.card .src{font-size:12px;color:var(--ink-3)}
+.card p{font-size:14px}
+.rule-list{display:grid;gap:10px;counter-reset:r}
+.rule{display:grid;grid-template-columns:34px 1fr;gap:12px;background:var(--panel);border:1px solid var(--rule);border-radius:12px;padding:12px 14px;align-items:start}
+.rule::before{counter-increment:r;content:counter(r,decimal-leading-zero);font:600 13px var(--mono);color:var(--accent);padding-top:3px}
+.rule b{color:var(--ink)}
+.rule p{font-size:14px}
+
+.trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+@media (max-width:1000px){.trio{grid-template-columns:1fr;max-width:470px}}
+.theme{background:var(--panel);border:1px solid var(--rule);border-radius:14px;padding:18px;display:grid;gap:14px;align-content:start}
+.theme-head{display:grid;gap:4px}
+.theme-head .kicker{font:500 11px/1 var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.lede{font-size:13.5px}
+
+.phone{background:var(--t-bg);border-radius:28px;padding:10px 12px 0;border:1px solid rgba(0,0,0,.4);box-shadow:0 12px 30px rgba(0,0,0,.28);overflow:hidden;color:var(--t-text);font-family:var(--ui);position:relative;min-height:560px}
+.phone::before{content:"";position:absolute;inset:0 0 auto 0;height:180px;background:var(--t-vig);pointer-events:none}
+.phone>*{position:relative}
+.sb{display:flex;justify-content:space-between;font:600 11px/1 var(--ui);color:#F7F4EC;padding:2px 6px 12px}
+.p-title{font:var(--t-titleFont);letter-spacing:var(--t-titleTrack);text-transform:var(--t-titleCase);color:var(--t-accent);padding:0 4px;line-height:1}
+.p-sub{font-size:11.5px;color:var(--t-text2);padding:4px 4px 10px}
+.orn{height:10px;margin:0 4px 10px;background:var(--t-orn);display:var(--t-ornShow)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.surf{background:var(--t-surfBg);border:var(--t-surfBorder);border-radius:var(--t-r);box-shadow:var(--t-surfShadow);outline:var(--t-surfOutline);outline-offset:-4px}
+.stat{padding:9px 6px;text-align:center}
+.stat b{display:block;font:var(--t-numFont);color:var(--t-accent)}
+.stat span{font-size:9.5px;color:var(--t-muted);letter-spacing:.06em}
+.row{display:flex;align-items:center;gap:10px;padding:9px 10px;margin-top:8px}
+.suit{width:30px;height:30px;border-radius:var(--t-suitR);display:grid;place-items:center;border:1px solid var(--t-accent);color:var(--t-accent);font-size:15px;flex:none;background:var(--t-suitBg)}
+.row .t{font-size:13px;font-weight:600}
+.row .c{font-size:11px;color:var(--t-muted)}
+.row .chev{margin-left:auto;color:var(--t-accent)}
+.chips{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.chip{font-size:11px;padding:5px 10px;border-radius:var(--t-chipR);border:1px solid var(--t-borderC);color:var(--t-text2)}
+.chip.on{background:var(--t-accent);border-color:var(--t-accent);color:var(--t-onAccent);font-weight:600}
+.felt{margin-top:10px;border-radius:var(--t-feltR);height:96px;background:var(--t-felt);border:var(--t-rim);display:flex;justify-content:center;align-items:center;gap:6px;position:relative}
+.felt .hud{position:absolute;top:5px;left:8px;right:8px;display:flex;justify-content:space-between;font:600 9px var(--ui);letter-spacing:.06em}
+.cardback{width:30px;height:42px;border-radius:4px;background:var(--t-back);border:2px solid #FBF8F1;box-shadow:0 2px 4px rgba(0,0,0,.4);margin-right:6px}
+.pcard{width:30px;height:42px;background:#FBF8F1;border-radius:4px;font:700 12px/1 "Bodoni Moda",Georgia,serif;display:grid;place-items:center;box-shadow:0 2px 4px rgba(0,0,0,.35)}
+.pcard.legal{outline:2px solid #E8C36A;outline-offset:2px}
+.btn{margin-top:10px;border-radius:var(--t-btnR);background:var(--t-btn);color:var(--t-btnInk,var(--t-onAccent));text-align:center;font:var(--t-btnFont);letter-spacing:var(--t-btnTrack);text-transform:var(--t-btnCase);padding:11px;box-shadow:var(--t-btnShadow)}
+.tabbar{display:grid;grid-template-columns:repeat(4,1fr);margin:12px -12px 0;background:var(--t-tabBg);border-top:var(--t-tabBorder);padding:8px 0 12px;text-align:center;font-size:10px;color:var(--t-muted)}
+.tabbar i{display:block;font-style:normal;font-size:15px}
+.tabbar .on{color:var(--t-accent)}
+.tabbar .on i{display:inline-grid;place-items:center;width:34px;height:22px;border-radius:999px;background:var(--t-tabPill)}
+
+.traits{display:grid;gap:6px;font-size:13px}
+.trait{display:grid;grid-template-columns:96px 1fr;gap:8px;padding:5px 0;border-bottom:1px dashed var(--rule)}
+.trait:last-child{border-bottom:0}
+.trait span:first-child{color:var(--ink-3);font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;padding-top:2px}
+.tokens{display:grid;gap:3px}
+.tok{display:grid;grid-template-columns:20px 1fr auto auto;align-items:center;gap:8px;font-size:12px;padding:3px 0;border-bottom:1px dashed var(--rule)}
+.tok:last-child{border-bottom:0}
+.sw{width:20px;height:20px;border-radius:5px;border:1px solid rgba(128,128,128,.35)}
+.tok .n{color:var(--ink-2)}
+.ratio{font:500 11px/1 var(--mono);min-width:56px;text-align:right;font-variant-numeric:tabular-nums}
+.pass{color:var(--ok)} .fail{color:var(--bad)} .na{color:var(--ink-3)}
+
+.tblwrap{overflow-x:auto;border:1px solid var(--rule);border-radius:12px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;min-width:780px;font-size:13.5px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font:600 11.5px/1.2 var(--ui);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);background:var(--ground)}
+td:first-child{color:var(--ink-2);font-weight:500;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+.tag{display:inline-block;font:500 10.5px/1 var(--ui);letter-spacing:.08em;text-transform:uppercase;padding:4px 7px;border-radius:999px;border:1px solid var(--rule);color:var(--ink-3);margin-left:6px;vertical-align:middle}
+ul.list{margin:0;padding-left:18px;color:var(--ink-2);display:grid;gap:7px;font-size:14px}
+ul.list b{color:var(--ink)}
+pre{background:var(--panel);border:1px solid var(--rule);border-radius:12px;padding:14px;overflow-x:auto;font:12.5px/1.55 var(--mono);color:var(--ink-2);margin:0}
+footer{margin-top:44px;font-size:12.5px;color:var(--ink-3);display:grid;gap:6px}
+footer a{display:block}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <span class="eyebrow">TashZone · theme system v4 · research-backed</span>
+    <h1>Three rooms to play in</h1>
+    <p>A TashZone theme is not a colour list. It is a complete <b>room</b>: the table, the light, the materials, the typography, the way things move and the way they feel under your thumb. Switching theme should feel like walking into a different place, while the cards, the layout and the rules never move.</p>
+    <div class="note"><b>Status:</b> proposal for approval. No code has been changed. Every colour on this page is checked live against WCAG 2.1 with the same formula as <code>theme/tokens.ts</code>, and against a <b>comfort ceiling</b> for long sessions (see rule 01).</div>
+    <nav class="toc" aria-label="Sections">
+      <a href="#research">Research</a><a href="#rules">Ten rules</a><a href="#themes">The three themes</a><a href="#matrix">Spec matrix</a><a href="#motion">Motion, haptics, sound</a><a href="#switch">The switch moment</a><a href="#build">How to build it</a>
+    </nav>
+  </header>
+
+  <section id="research">
+    <div class="sec-head"><h2>What the research says</h2><p>Six findings shaped this system. Each one turns into a rule below.</p></div>
+    <div class="grid2">
+      <div class="card"><h4>Pure black + pure white hurts on long sessions</h4><p>White on black is a 21:1 contrast, the harshest a screen can produce. At reading length it causes <i>halation</i>: text seems to bleed into the background. The guidance is a deep <b>tinted</b> ground (not #000) and <b>off-white</b> text (not #FFF), keeping contrast high but not maximal.</p><span class="src">Sources: KTC "Why dark mode still causes eye strain"; UXPin "Dark mode benefits 2026"; LifeTips OLED eye-strain</span></div>
+      <div class="card"><h4>Dark-first is now the default, not the variant</h4><p>Over 80% of Android users run dark mode. Card games are played in the evening, in bed, on the bus. All three TashZone themes are dark; light mode is deliberately retired.</p><span class="src">Sources: UXPin; Envato "Colour scheme trends 2026"</span></div>
+      <div class="card"><h4>Green felt exists to reduce visual tension</h4><p>Card tables have been green since 18th-century British gaming rooms because green calms and lets the eye rest between cards. Casinos keep it for exactly that reason. Blue and red felts are used to mark variety and "high-stakes" rooms.</p><span class="src">Sources: Casino.org; Borgata; LatestCasinoOffers</span></div>
+      <div class="card"><h4>Cards outrank chrome</h4><p>Marvel Snap's rule: the cards always win the visual hierarchy, and the UI exists to point at them. Its chrome is dark "piano glass" so the art pops. Hearthstone, Slay the Spire and Balatro all win on <b>clarity</b>: consistent icons, keywords and instant tooltips.</p><span class="src">Sources: Tiffany Smart (Snap UI); Sunstrike "Best card games 2026"</span></div>
+      <div class="card"><h4>Colour as the label (the Balatro pattern)</h4><p>The most-copied card look right now: dark felt with drifting colour bands, chunky outlined slabs, and a strict colour code where <b>blue = chips</b> (#009DFF), <b>red = mult</b> (#FE5F55), gold = money. Players read value without reading text. Every colour cue and pulse exists to show a number changing.</p><span class="src">Sources: Blake Crosley "Juicy feedback in Balatro"; Balatro wiki; halabaojia art breakdown</span></div>
+      <div class="card"><h4>The home audience expects maroon, gold and festival</h4><p>Teen Patti and Callbreak apps dominate South Asia and have converged on maroon-and-gold luxury; the newest ones now ship dark mode and colour themes. For authenticity, Sindhi <b>Ajrak</b> gives a real regional palette: deep indigo, madder crimson, white and black.</p><span class="src">Sources: ENV Media on Teen Patti; Coherent Lab guide 2026; Kalantir &amp; Wikipedia on Ajrak</span></div>
+    </div>
+  </section>
+
+  <section id="rules">
+    <div class="sec-head"><h2>Ten rules every theme obeys</h2><p>These are enforced by tests, not taste. A theme that breaks one cannot ship.</p></div>
+    <div class="rule-list">
+      <div class="rule"><div><b>Comfort ceiling.</b><p>Body text sits between <b>7:1 and 18:1</b> on its surface. Below 7 is hard to read; above 18 causes halation on long sessions. No theme uses #000000 ground or #FFFFFF text.</p></div></div>
+      <div class="rule"><div><b>Tinted grounds.</b><p>Every background carries the theme's hue (green, madder, navy). A neutral grey ground is what made the old Dark theme feel like nothing.</p></div></div>
+      <div class="rule"><div><b>The table is a calm zone.</b><p>Felt colour is chosen for rest, not excitement. All "on table" text stays ≥ 4.5:1 on every felt. Ornament never crosses the play area.</p></div></div>
+      <div class="rule"><div><b>Cards never change.</b><p>Card faces (#FBF8F1), suit colours, the four-colour deck and legal-move halo are identical in all themes. Only the <i>card back</i> is themed. This keeps muscle memory and accessibility stable.</p></div></div>
+      <div class="rule"><div><b>Colour is a label.</b><p>Three value tokens exist in every theme: <code>points</code>, <code>bid</code>, <code>coins</code>. A theme may tune their hue, never their meaning.</p></div></div>
+      <div class="rule"><div><b>One accent, one job.</b><p>The accent marks "current" and "selected" only: active tab, chosen chip, your turn. It is never used for body text.</p></div></div>
+      <div class="rule"><div><b>Type is part of the theme.</b><p>Each theme owns a display face, a casing rule and a numeral style. The body face stays Jost for legibility; Nastaliq stays for Urdu.</p></div></div>
+      <div class="rule"><div><b>Shape and material are part of the theme.</b><p>Corner radius, surface treatment (glass / framed / slab) and button construction change per theme. This is where most of the "different room" feeling comes from.</p></div></div>
+      <div class="rule"><div><b>Motion has a budget.</b><p>Each theme declares a motion profile. <code>reducedMotion</code> collapses every profile to 120 ms fades. Nothing loops forever on the table in any theme.</p></div></div>
+      <div class="rule"><div><b>Touch and text floors.</b><p>44 dp targets, 13 pt minimum text, 4.5:1 minimum contrast, 3:1 for borders and icons, in every theme, on every screen.</p></div></div>
+    </div>
+  </section>
+
+  <section id="themes">
+    <div class="sec-head"><h2>The three themes</h2><p>Same home screen, three rooms. The token table under each phone is computed live.</p></div>
+    <div class="trio" id="trio"></div>
+  </section>
+
+  <section id="matrix">
+    <div class="sec-head"><h2>Spec matrix</h2><p>Every row is one field in the theme spec. Components read these fields; screens never hard-code them.</p></div>
+    <div class="tblwrap"><table id="matrix-t"></table></div>
+  </section>
+
+  <section id="motion">
+    <div class="sec-head"><h2>Motion, haptics and sound profiles</h2><p>Feel is half of a theme. These profiles map straight onto the existing <code>motion</code> tokens, <code>hapticStrength</code> and the sound helper.</p></div>
+    <div class="tblwrap"><table id="motion-t"></table></div>
+    <div class="note"><b>Reduced motion</b> (user setting or OS setting) forces every theme to: deals and plays as 120 ms fades, no shake, no breathing, no confetti, count-ups become instant. Haptics stay, sound stays.</div>
+  </section>
+
+  <section id="switch">
+    <div class="sec-head"><h2>The switch moment</h2><p>Changing theme should be an event, not a re-render. It is also the best "wow" in the settings screen.</p></div>
+    <div class="grid2">
+      <div class="card"><h4>1 · Live preview, real components</h4><p>The picker shows a miniature of the <b>actual table</b> (felt, rim, card back, HUD) and the actual primary button, rendered by the same components. No hand-painted preview that drifts from reality.</p></div>
+      <div class="card"><h4>2 · Re-dye transition (≈ 480 ms)</h4><p>The new felt colour sweeps across the screen from the tapped option, like dye spreading through cloth, followed by the surfaces snapping to the new material. One haptic tick at the end. Under reduced motion: a 120 ms cross-fade.</p></div>
+      <div class="card"><h4>3 · Signature sound</h4><p>Mehfil: a soft tabla tap. Darbar: a short brass chime. Arcade: an arcade "blip". Played once on switch, and reused as the theme's turn-start cue so the sound world matches the room.</p></div>
+      <div class="card"><h4>4 · Remembered per device, previewable per game</h4><p>The choice persists (existing <code>tashzone.theme.v1</code> key). The table menu gets a "Try another room" shortcut so players discover themes where it matters most.</p></div>
+    </div>
+  </section>
+
+  <section id="build">
+    <div class="sec-head"><h2>How to build it</h2></div>
+    <ul class="list">
+      <li><b>Replace <code>SemanticColors</code>-only themes with a <code>ThemeSpec</code></b> (below). <code>useTheme()</code> returns the whole spec; <code>c</code> stays for backward compatibility.</li>
+      <li><b>Storage IDs:</b> <code>emerald</code> (Mehfil), <code>gold</code> (Darbar), <code>arcade</code>. Saved <code>dark</code> or <code>light</code> map to <code>emerald</code>. One picker only; delete the System/Light/Dark picker.</li>
+      <li><b>Delete every <code>name === "dark"</code> branch</b> (13 places) and read <code>spec.surface</code>, <code>spec.button</code>, <code>spec.ornament</code> instead. StatusBar is always light.</li>
+      <li><b>Six components carry 90% of the change:</b> <code>Screen</code> (ground + vignette), <code>GlassCard</code> (surface style), <code>GoldButton</code> (button style), <code>TabBar</code>, <code>Felt</code> (felt, rim, bands, card back) and <code>Header</code> (display type). Screens should need no edits.</li>
+      <li><b>Two decided details.</b> Darbar's card back is a true Ajrak (indigo field, madder medallions, white resist lines, brass border): authentic four-colour Ajrak, symmetric as card backs must be, and it repeats the felt's madder so it belongs on the table. Arcade's button is <b>deep red #C8372A with white text</b> (WCAG 5.2:1, APCA Lc 80); the bright coral #FF5E4D stays the <i>bid</i> value colour and the button's top highlight. White on bright coral passes APCA (Lc 61) but fails WCAG (3.0:1); dark ink on it passes WCAG (6.5:1) but reads weaker in APCA (Lc 48). Darkening the fill is the only option that passes both.</li>
+      <li><b>Fonts:</b> register Jost 700 and Bodoni Moda 700 under their own family names; stop faking weights with <code>fontWeight</code>.</li>
+      <li><b>Tests:</b> loop <code>contrast.test.ts</code> over all three specs, add the 18:1 comfort ceiling, and check <code>points/bid/coins</code> on bg, surface and felt.</li>
+      <li><b>Wire the dead settings</b> this unlocks: <code>reducedMotion</code>, <code>hapticStrength</code>, <code>sfxVolume</code> now have consumers via the profiles.</li>
+      <li><b>Splash and navigation:</b> splash background becomes Mehfil ground; Stack/Tabs get <code>contentStyle</code> from <code>spec.c.bg</code>; first render waits for theme + profile + fonts.</li>
+    </ul>
+<pre>// theme/tokens.ts — the theme pattern
+export type ThemeId = "emerald" | "gold" | "arcade";
+
+export interface ThemeSpec {
+  id: ThemeId;
+  name: { en: string; ur: string };                      // "Mehfil" / "محفل"
+  c: SemanticColors;                                      // bg, surface, surfaceRaised, text…, borders
+  accent: { color: string; on: string };                  // selected / current only
+  value: { points: string; bid: string; coins: string };  // colour = label
+  felt: { base: string; lit: string; deep: string; rim: RimStyle; bands?: string[] };
+  cardBack: "weave" | "ajrak" | "stripe";
+  type: { display: string; titleCase: "none" | "uppercase"; tracking: number; numerals: string };
+  shape: { radius: number; chip: number; felt: number; button: number };
+  surface: "glass" | "framed" | "slab";
+  button: "gradient" | "embossed" | "slab";
+  ornament: "vignette" | "rule" | "bands";
+  motion: "lush" | "standard" | "juicy";                  // collapses to "fade" under reducedMotion
+  haptic: { play: HapticStrength; win: HapticStrength };
+  sound: { switch: string; turn: string; win: string };
+}</pre>
+  </section>
+
+  <footer>
+    <span>Balatro, Marvel Snap and the Teen Patti apps are used as style references only. TashZone must not use their names, fonts or artwork. Theme names Mehfil, Darbar and Arcade are proposals.</span>
+    <span>Sources</span>
+    <a href="https://us.ktcplay.com/blogs/support-tips/why-dark-mode-causes-eye-strain-and-how-to-fix">KTC: Why dark mode still causes eye strain and how to fix it</a>
+    <a href="https://www.uxpin.com/studio/blog/dark-mode-benefits/">UXPin: Dark mode benefits (2026)</a>
+    <a href="https://lifetips.alibaba.com/tech-efficiency/dark-mode-on-oled-eye-strain-truth">LifeTips: Dark mode on OLED, eye strain truth</a>
+    <a href="https://www.casino.org/blog/why-are-casino-card-tables-green/">Casino.org: Why are casino card tables green?</a>
+    <a href="https://www.borgataonline.com/en/blog/why-are-casino-card-tables-green/">Borgata: Why are casino card tables green?</a>
+    <a href="https://www.latestcasinooffers.com/2022/12/why-do-casino-tables-have-green-blue-or-red-felt/">LatestCasinoOffers: Green, blue or red felt</a>
+    <a href="https://www.tiffanysmart.com/work/marvel-snap">Tiffany Smart: Marvel Snap UI</a>
+    <a href="https://sunstrikestudios.com/en/blog/the_best_card_games_to_play_in_2025/">Sunstrike: Best card games to play in 2026</a>
+    <a href="https://blakecrosley.com/guides/design/balatro">Blake Crosley: Balatro, juicy feedback in a poker roguelike</a>
+    <a href="https://halabaojia.com/collection/20260212-balatro-visual-design-analysis/">Balatro art direction breakdown</a>
+    <a href="https://balatrogame.fandom.com/wiki/Module:Localization/loadL10n">Balatro wiki: colour constants</a>
+    <a href="https://env.media/whats-the-history-behind-teen-pattis-top-popularity-in-indian-gaming/">ENV Media: History behind Teen Patti's popularity</a>
+    <a href="https://www.coherentlab.com/blog/create-teen-patti-game-app">Coherent Lab: Teen Patti app guide 2026</a>
+    <a href="https://www.kalantir.com/blogs/art-is-us/ajrakh-block-print">Kalantir: Ajrakh block print</a>
+    <a href="https://en.wikipedia.org/wiki/Ajrak">Wikipedia: Ajrak</a>
+    <a href="https://elements.envato.com/learn/color-scheme-trends-in-mobile-app-design">Envato: Mobile app colour scheme trends 2026</a>
+  </footer>
+</div>
+
+<script>
+const ONTABLE={Text:"#F7F4EC",Secondary:"#D5E3DA",Muted:"#B3C7BB",Gold:"#E8C36A",Success:"#6BD49C",Warning:"#FFB072",Error:"#FFA59E","Team A":"#8CC8F2","Team B":"#FFA886"};
+const chn=v=>{const s=v/255;return s<=0.03928?s/12.92:((s+0.055)/1.055)**2.4};
+const lum=h=>{h=h.replace("#","");const[r,g,b]=[0,2,4].map(i=>parseInt(h.slice(i,i+2),16));return .2126*chn(r)+.7152*chn(g)+.0722*chn(b)};
+const ratio=(a,b)=>{const[x,y]=[lum(a),lum(b)].sort((p,q)=>q-p);return (x+.05)/(y+.05)};
+
+const THEMES=[
+{ id:"emerald", name:"Mehfil", ur:"محفل", was:"emerald · the brand room",
+  lede:"A lamp-lit courtyard gathering. Green baize because green rests the eye; gold leaf because it is TashZone. Frosted glass panels over a felt glow. The everyday default.",
+  c:{bg:"#070F0D",surface:"#0D1915",raised:"#12231D",text:"#F4ECD8",text2:"#A0BDB1",muted:"#8AA69B",borderC:"#666E7C",borderS:"#2C313A"},
+  accent:"#E3BD6E", onAccent:"#16181d", value:{points:"#8CC8F2",bid:"#FFA886",coins:"#E8C36A"},
+  feltBase:"#0F4A3C",
+  vars:{
+    "--t-vig":"radial-gradient(120% 80% at 50% 0%, #0f3a2e 0%, transparent 70%)",
+    "--t-titleFont":"600 30px 'Cormorant Garamond',Georgia,serif","--t-titleTrack":"0","--t-titleCase":"none",
+    "--t-numFont":"600 19px/1.1 'Cormorant Garamond',Georgia,serif",
+    "--t-surfBg":"rgba(255,255,255,.055)","--t-surfBorder":"1px solid rgba(227,189,110,.22)","--t-surfShadow":"none","--t-surfOutline":"0 solid transparent",
+    "--t-r":"14px","--t-suitR":"50%","--t-suitBg":"transparent","--t-chipR":"999px","--t-feltR":"18px","--t-btnR":"999px",
+    "--t-felt":"radial-gradient(ellipse at 50% 35%,#1a7458,#0f4a3c 60%,#062019)","--t-rim":"4px solid #2e1c11",
+    "--t-back":"repeating-linear-gradient(45deg,#0f4a3c 0 4px,#1a7458 4px 8px)",
+    "--t-btn":"linear-gradient(135deg,#f4d9a4,#c79f56)","--t-btnFont":"600 13px 'Jost',sans-serif","--t-btnTrack":"0","--t-btnCase":"none","--t-btnShadow":"0 4px 12px rgba(199,159,86,.25)",
+    "--t-orn":"none","--t-ornShow":"none",
+    "--t-tabBg":"rgba(7,15,13,.96)","--t-tabBorder":"1px solid rgba(227,189,110,.22)","--t-tabPill":"transparent"},
+  traits:{Mood:"Warm, social, familiar",Felt:"Emerald baize, walnut rim, soft glow",Type:"Cormorant Garamond headings, sentence case",Material:"Frosted glass + gold hairlines, radius 14",Button:"Gold gradient pill",Motion:"Lush: slow felt breath, card glow",Best:"Everyday play, first-run default"},
+  pal:["#070F0D","#12231D","#0F4A3C","#E3BD6E","#F4ECD8"]},
+
+{ id:"gold", name:"Darbar", ur:"دربار", was:"gold · the festival room",
+  lede:"A royal court on a wedding night. Madder crimson from Ajrak, brass instead of gold, indigo as the second colour. Framed panels, serif capitals, a double brass rim on a velvet table.",
+  c:{bg:"#140806",surface:"#1F0F0B",raised:"#2B1510",text:"#F7EBD3",text2:"#D9BFA0",muted:"#B0957A",borderC:"#8A6A4E",borderS:"#3A2118"},
+  accent:"#F0C45A", onAccent:"#1A0E04", value:{points:"#8CC8F2",bid:"#FFA886",coins:"#F0C45A"},
+  feltBase:"#4A1712",
+  vars:{
+    "--t-vig":"radial-gradient(120% 80% at 50% 0%, #3a140e 0%, transparent 70%)",
+    "--t-titleFont":"700 22px 'Bodoni Moda',Didot,Georgia,serif","--t-titleTrack":".16em","--t-titleCase":"uppercase",
+    "--t-numFont":"700 17px/1.1 'Bodoni Moda',Didot,Georgia,serif",
+    "--t-surfBg":"linear-gradient(180deg,#2B1510,#1F0F0B)","--t-surfBorder":"1px solid #8A6A4E","--t-surfShadow":"inset 0 1px 0 rgba(240,196,90,.18)","--t-surfOutline":"1px solid rgba(240,196,90,.28)",
+    "--t-r":"4px","--t-suitR":"3px","--t-suitBg":"rgba(240,196,90,.08)","--t-chipR":"3px","--t-feltR":"6px","--t-btnR":"4px",
+    "--t-felt":"radial-gradient(ellipse at 50% 35%,#7a2a20,#4A1712 60%,#240a07)","--t-rim":"5px double #B8923E",
+    "--t-back":"radial-gradient(circle at 50% 50%,#7A2A20 0 4px,transparent 4.5px) 0 0/12px 12px, linear-gradient(45deg,transparent 46%,#FBF8F1 46% 54%,transparent 54%) 0 0/12px 12px, linear-gradient(-45deg,transparent 46%,#FBF8F1 46% 54%,transparent 54%) 0 0/12px 12px, #1B2A55",
+    "--t-btn":"linear-gradient(180deg,#F7D98A,#D9A33E 55%,#B8842A)","--t-btnFont":"700 12px 'Jost',sans-serif","--t-btnTrack":".14em","--t-btnCase":"uppercase","--t-btnShadow":"inset 0 1px 0 rgba(255,255,255,.45), 0 2px 0 #6e4a14",
+    "--t-orn":"linear-gradient(90deg,transparent,#F0C45A 20%,transparent 21%,transparent 79%,#F0C45A 80%,transparent), radial-gradient(circle,#F0C45A 3px,transparent 3.5px) center/10px 10px no-repeat","--t-ornShow":"block",
+    "--t-tabBg":"#1F0F0B","--t-tabBorder":"2px solid #8A6A4E","--t-tabPill":"transparent"},
+  traits:{Mood:"Ornate, regal, celebratory",Felt:"Madder velvet, double brass rim",Type:"Bodoni Moda capitals, tracked labels",Material:"Framed panels, inset brass rule, radius 4",Button:"Embossed brass bar, capitals",Motion:"Standard: brass shimmer on wins",Best:"Eid, weddings, family tables"},
+  pal:["#140806","#2B1510","#4A1712","#1B2A55","#F0C45A","#F7EBD3"]},
+
+{ id:"arcade", name:"Arcade", ur:"آرکیڈ", was:"arcade · the trending room",
+  lede:"The modern deck-builder look. Ink-navy ground, deep blue felt with drifting colour bands, chunky outlined slabs, and a strict colour code: blue points, red bid, gold coins. Everything pops when it changes.",
+  c:{bg:"#0B1220",surface:"#131C2E",raised:"#1B2640",text:"#F5F1E8",text2:"#B8C2D6",muted:"#8D98AE",borderC:"#5E6B85",borderS:"#26314A"},
+  accent:"#FFC940", onAccent:"#120A06", value:{points:"#35A7FF",bid:"#FF5E4D",coins:"#FFC940"},
+  feltBase:"#10233F", btnSolid:"#C8372A", btnInk:"#FFFFFF",
+  stats:[["1,240","POINTS","#35A7FF"],["×4","BID","#FF5E4D"],["850","COINS","#FFC940"]],
+  vars:{
+    "--t-vig":"radial-gradient(120% 70% at 50% 0%, rgba(53,167,255,.14) 0%, transparent 70%)",
+    "--t-titleFont":"700 27px 'Jost',system-ui,sans-serif","--t-titleTrack":".02em","--t-titleCase":"uppercase",
+    "--t-numFont":"700 19px/1.1 'Jost',system-ui,sans-serif",
+    "--t-surfBg":"#1B2640","--t-surfBorder":"2px solid #05080F","--t-surfShadow":"0 4px 0 #05080F","--t-surfOutline":"0 solid transparent",
+    "--t-r":"10px","--t-suitR":"8px","--t-suitBg":"rgba(255,201,64,.10)","--t-chipR":"8px","--t-feltR":"14px","--t-btnR":"10px",
+    "--t-felt":"linear-gradient(115deg,transparent 0 30%,rgba(53,167,255,.16) 30% 42%,transparent 42% 62%,rgba(255,94,77,.14) 62% 72%,transparent 72%), radial-gradient(ellipse at 50% 40%,#1A3D6B,#10233F 55%,#08142A)","--t-rim":"3px solid #05080F",
+    "--t-back":"repeating-linear-gradient(45deg,#FF5E4D 0 3px,#C8372A 3px 6px)",
+    "--t-btn":"#C8372A","--t-btnFont":"700 14px 'Jost',sans-serif","--t-btnTrack":".08em","--t-btnCase":"uppercase","--t-btnShadow":"inset 0 2px 0 #FF5E4D, 0 4px 0 #7A1E14, 0 0 0 2px #05080F",
+    "--t-orn":"none","--t-ornShow":"none",
+    "--t-tabBg":"#131C2E","--t-tabBorder":"2px solid #05080F","--t-tabPill":"rgba(255,201,64,.16)"},
+  traits:{Mood:"Bold, playful, modern",Felt:"Deep blue with drifting blue/red bands, black outline",Type:"Jost Bold capitals, chunky numerals",Material:"Outlined slabs with hard shadow, radius 10",Button:"Deep-red slab, white capitals, coral top edge, presses down",Motion:"Juicy: pop, count-up, tiny win shake",Best:"Younger players, fans of modern card games"},
+  pal:["#0B1220","#1B2640","#10233F","#35A7FF","#FF5E4D","#FFC940"]},
+];
+
+const trio=document.getElementById("trio");
+for(const t of THEMES){
+  const el=document.createElement("article"); el.className="theme";
+  const v=Object.entries(t.vars).map(([k,x])=>`${k}:${x}`).join(";");
+  el.style.cssText=`${v};--t-bg:${t.c.bg};--t-text:${t.c.text};--t-text2:${t.c.text2};--t-muted:${t.c.muted};--t-borderC:${t.c.borderC};--t-accent:${t.accent};--t-onAccent:${t.onAccent}${t.btnInk?";--t-btnInk:"+t.btnInk:""}`;
+  const stats=t.stats||[["42","WINS"],["61%","WIN RATE"],["5","STREAK"]];
+  // token rows: [label, hex, ratio-vs, min, max]
+  const rows=[
+    ["Ground",t.c.bg,null],["Surface",t.c.surface,null],["Raised",t.c.raised,null],
+    ["Text",t.c.text,t.c.bg,7,18],["Secondary",t.c.text2,t.c.bg,4.5,18],["Muted",t.c.muted,t.c.raised,4.5,18],
+    ["Accent",t.accent,t.c.bg,4.5,99],["Ink on accent",t.onAccent,t.accent,4.5,99],
+    ["Points",t.value.points,t.c.bg,4.5,99],["Bid",t.value.bid,t.c.bg,4.5,99],["Coins",t.value.coins,t.c.bg,4.5,99],
+    ["Control border",t.c.borderC,t.c.bg,3,99],["Felt",t.feltBase,null],
+  ];
+  if(t.btnSolid) rows.push(["White on red button",t.btnInk,t.btnSolid,4.5,99]);
+  let worst=["",99]; for(const [n,h] of Object.entries(ONTABLE)){const r=ratio(h,t.feltBase); if(r<worst[1]) worst=[n,r];}
+  const tok=rows.map(([n,h,vs,min,max])=>{let r="—",cls="na";if(vs){const x=ratio(h,vs);r=x.toFixed(1)+":1";cls=(x>=min&&x<=max)?"pass":"fail";}return `<div class="tok"><span class="sw" style="background:${h}"></span><span class="n">${n}</span><span class="hex">${h}</span><span class="ratio ${cls}">${r}</span></div>`}).join("")
+    +`<div class="tok"><span class="sw" style="background:${ONTABLE[worst[0]]}"></span><span class="n">Weakest on felt (${worst[0]})</span><span class="hex">${ONTABLE[worst[0]]}</span><span class="ratio ${worst[1]>=4.5?"pass":"fail"}">${worst[1].toFixed(1)}:1</span></div>`;
+  el.innerHTML=`
+    <div class="theme-head"><span class="kicker">${t.was}</span><h2>${t.name} <span style="font-family:'Noto Nastaliq Urdu',serif;font-size:18px;color:var(--ink-3)">${t.ur}</span></h2></div>
+    <p class="lede">${t.lede}</p>
+    <div class="phone" role="img" aria-label="${t.name} theme home screen preview">
+      <div class="sb"><span>9:41</span><span>◖ ▮▮▮</span></div>
+      <div class="p-title">TashZone</div>
+      <div class="p-sub">Good evening, Sana · Level 7</div>
+      <div class="orn"></div>
+      <div class="stats">${stats.map(([n,l,col])=>`<div class="stat surf"><b${col?` style="color:${col}"`:""}>${n}</b><span>${l}</span></div>`).join("")}</div>
+      <div class="row surf"><span class="suit">♠</span><div><div class="t">Callbreak</div><div class="c">4 players · 13 tricks</div></div><span class="chev">›</span></div>
+      <div class="chips"><span class="chip on">All</span><span class="chip">Trick-taking</span><span class="chip">Teams</span></div>
+      <div class="felt"><div class="hud"><span style="color:${t.value.points}">PTS 27</span><span style="color:${t.value.bid}">BID 4</span><span style="color:${t.value.coins}">◎ 850</span></div><span class="cardback"></span><span class="pcard" style="color:#1A1A1A">A♠</span><span class="pcard legal" style="color:#C62828">K♥</span><span class="pcard" style="color:#C62828">Q♦</span><span class="pcard" style="color:#1A1A1A">J♣</span></div>
+      <div class="btn">Quick play</div>
+      <div class="tabbar"><span class="on"><i>▶</i><br>Play</span><span><i>♠</i><br>Games</span><span><i>☺</i><br>You</span><span><i>⚙</i><br>Settings</span></div>
+    </div>
+    <div class="traits">${Object.entries(t.traits).map(([k,x])=>`<div class="trait"><span>${k}</span><span>${x}</span></div>`).join("")}</div>
+    <div class="tokens"><h3 style="margin:4px 0 6px">Tokens · live contrast</h3>${tok}</div>`;
+  trio.appendChild(el);
+}
+
+const M=[
+ ["Spec field","Mehfil (emerald)","Darbar (gold)","Arcade"],
+ ["Story","Courtyard mehfil at night","Royal darbar, wedding night","Modern arcade deck-builder"],
+ ["Ground · surface · raised","#070F0D · #0D1915 · #12231D","#140806 · #1F0F0B · #2B1510","#0B1220 · #131C2E · #1B2640"],
+ ["Text · secondary · muted","#F4ECD8 · #A0BDB1 · #8AA69B","#F7EBD3 · #D9BFA0 · #B0957A","#F5F1E8 · #B8C2D6 · #8D98AE"],
+ ["Accent (selected / current)","Gold leaf #E3BD6E","Brass #F0C45A","Gold #FFC940"],
+ ["Value colours (points / bid / coins)","Sky #8CC8F2 / Peach #FFA886 / Gold #E8C36A","Sky #8CC8F2 / Peach #FFA886 / Brass #F0C45A","Blue #35A7FF / Red #FF5E4D / Gold #FFC940"],
+ ["Table felt","Emerald #0F4A3C, lit #1A7458, deep #062019","Madder #4A1712, lit #7A2A20, deep #240A07","Deep blue #10233F, lit #1A3D6B, deep #08142A"],
+ ["Table rim","4 px walnut #2E1C11","5 px double brass #B8923E","3 px ink outline #05080F"],
+ ["Felt ornament","Radial glow (breathes slowly)","None: velvet stays still","Two drifting colour bands (blue, red)"],
+ ["Card back","Green diagonal weave","True Ajrak: indigo #1B2A55 field, madder #7A2A20 medallions, white resist lines, brass border","Red candy stripe"],
+ ["Card faces","Shared: #FBF8F1, standard suits, 4-colour option, gold legal halo","Shared","Shared"],
+ ["Display type","Cormorant Garamond 600, sentence case","Bodoni Moda 700, CAPITALS, +0.16 em","Jost 700, CAPITALS, +0.02 em"],
+ ["Numerals","Cormorant 600 (elegant)","Bodoni 700 (tall)","Jost 700 tabular (chunky)"],
+ ["Body type","Jost 400/600 · Noto Nastaliq Urdu","Same","Same"],
+ ["Radius (control / chip / felt / button)","14 / 999 / 18 / 999","4 / 3 / 6 / 4","10 / 8 / 14 / 10"],
+ ["Surface material","Frosted glass, 1 px gold hairline","Framed panel, brass inset rule","Solid slab, 2 px ink outline, 4 px hard shadow"],
+ ["Primary button","Gold gradient pill, ink text","Embossed brass bar, capitals","Deep-red slab #C8372A, white capitals, coral #FF5E4D top edge, 4 px press shadow"],
+ ["Tab bar","Translucent ground, gold hairline","Solid, 2 px brass rule","Solid, 2 px ink rule, gold pill on active"],
+ ["Page ornament","Felt vignette at top","Brass rule + medallion under titles","Subtle blue glow at top"],
+ ["Motion profile","Lush","Standard","Juicy"],
+ ["Haptic (play / win)","gentle / crisp","crisp / firm","crisp / firm"],
+ ["Sound world","Tabla tap, wooden card slide","Brass chime, silk slide","Arcade blip, digital riffle"],
+ ["Comfort ceiling check","Text 16.5:1 ✓","Text 16.7:1 ✓","Text 16.6:1 ✓"],
+];
+document.getElementById("matrix-t").innerHTML=M.map((r,i)=>`<tr>${r.map(x=>i?`<td>${x}</td>`:`<th>${x}</th>`).join("")}</tr>`).join("");
+
+const MO=[
+ ["Event","Lush (Mehfil)","Standard (Darbar)","Juicy (Arcade)","Reduced motion"],
+ ["Deal","90 ms per card, 40 ms stagger, slight arc","90 ms per card, straight","70 ms per card, overshoot + settle","120 ms fade"],
+ ["Play a card","220 ms ease-out, soft glow on landing","220 ms ease-out","180 ms with 1.04× pop on landing","120 ms fade"],
+ ["Trick won","Cards slide to winner 350 ms","Cards slide 350 ms, brass glint","Cards snap 250 ms, score number pops","Instant collect"],
+ ["Score change","Fade in new value","Fade in new value","Count-up 400 ms in value colour","Instant"],
+ ["Your turn","Seat ring pulses twice, then stops","Seat ring glints once","Seat ring pops + HUD flashes once","Static ring"],
+ ["Felt idle","Glow breathes, 6 s cycle, stops after 3 cycles","Still","Bands drift, 12 s cycle, stops after 2 cycles","Still"],
+ ["Game won","Podium rise 400 ms, confetti (gold)","Podium rise, brass shimmer sweep","Podium bounce, 2-frame shake, confetti (blue/red/gold)","Podium fade in"],
+ ["Theme switch","Re-dye sweep 480 ms","Re-dye sweep 480 ms","Re-dye sweep 480 ms","120 ms cross-fade"],
+];
+document.getElementById("motion-t").innerHTML=MO.map((r,i)=>`<tr>${r.map(x=>i?`<td>${x}</td>`:`<th>${x}</th>`).join("")}</tr>`).join("");
+</script>

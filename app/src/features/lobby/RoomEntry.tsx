@@ -20,7 +20,7 @@ import { ParentLocked } from "../multiplayer/WifiNotice";
 import { TableSetupChips, useTableSetup } from "./TableSetup";
 
 export function RoomEntry({ game }: { game?: string }) {
-  const { c, name: theme } = useTheme();
+  const { c, t: room } = useTheme();
   const router = useRouter();
   const { profile } = useProfile();
   const { allowed } = useParentGate("online");
@@ -61,12 +61,12 @@ export function RoomEntry({ game }: { game?: string }) {
       <Caption>{t.quickHint}</Caption>
 
       <SectionLabel>{t.or}</SectionLabel>
-      <View style={[s.field, { borderColor: theme === "dark" ? material.line : c.borderControl, backgroundColor: theme === "dark" ? material.glass : c.surface }]}>
+      <View style={[s.field, { borderColor: c.borderControl, backgroundColor: c.surface, borderRadius: room.shape.radius }]}>
         <TextInput
           value={code} onChangeText={(v) => setCode(normalizeCode(v))} placeholder={t.codePlaceholder} placeholderTextColor={c.textMuted}
           autoCapitalize="characters" autoCorrect={false} maxLength={12} returnKeyType="go"
           accessibilityLabel={code ? `${t.codeLabel}: ${spellCode(code)}` : t.codeLabel}
-          style={[s.input, { color: theme === "dark" ? material.goldLeafHot : c.primary }]}
+          style={[s.input, { color: room.accent.color }]}
           onSubmitEditing={() => isCompleteCode(code) && run(() => joinRoom({ name: displayName, code }))}
         />
       </View>
@@ -79,5 +79,5 @@ export function RoomEntry({ game }: { game?: string }) {
 
 const s = StyleSheet.create({
   field: { borderWidth: 1, borderRadius: 14, minHeight: 56, justifyContent: "center" },
-  input: { textAlign: "center", letterSpacing: 8, fontSize: 22, fontFamily: fonts.display.family, fontWeight: "600", minHeight: 56, paddingHorizontal: 12 },
+  input: { textAlign: "center", letterSpacing: 8, fontSize: 22, fontFamily: fonts.display.family, minHeight: 56, paddingHorizontal: 12 },
 });

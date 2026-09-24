@@ -29,7 +29,7 @@ export function PassCurtain({ name, onReady }: { name: string; onReady: () => vo
 const s = StyleSheet.create({
   root: { flex: 1, paddingHorizontal: 24 },
   center: { flex: 1, alignItems: "center", justifyContent: "center", gap: 12 },
-  lab: { fontFamily: fonts.ui.family, fontSize: 12, letterSpacing: 1.6, fontWeight: "600", color: material.goldLeafDim },
+  lab: { fontFamily: fonts.ui.semibold, fontSize: 12, letterSpacing: 1.6, color: material.goldLeafDim },
   body: { fontFamily: fonts.ui.family, fontSize: 15, lineHeight: 21, textAlign: "center", color: material.paper2, maxWidth: 300 },
-  name: { fontFamily: fonts.display.family, fontSize: 48, fontWeight: "700", color: material.goldLeafHot, textAlign: "center" },
+  name: { fontFamily: fonts.display.family, fontSize: 48, color: material.goldLeafHot, textAlign: "center" },
 });

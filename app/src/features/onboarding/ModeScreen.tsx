@@ -25,7 +25,7 @@ export function ModeScreen() {
   const card = (title: string, body: string, on: boolean, easy: boolean) => (
     <SelectableCard on={on} label={`${title}. ${body}`} onPress={() => choose(easy)}>
       <View style={s.top}>
-        <Text style={{ flex: 1, color: c.text, fontFamily: fonts.display.family, fontSize: 17, fontWeight: "700" }}>{title}</Text>
+        <Text style={{ flex: 1, color: c.text, fontFamily: fonts.display.family, fontSize: 17 }}>{title}</Text>
         {on ? <Text style={s.chosen}>{T.chosen}</Text> : null}
       </View>
       <View style={{ marginTop: 6 }}><Caption>{body}</Caption></View>

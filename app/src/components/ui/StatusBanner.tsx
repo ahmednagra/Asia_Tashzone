@@ -22,6 +22,6 @@ export function StatusBanner({ tone = "info", title, body, busy, children }: { t
 const s = StyleSheet.create({
   card: { gap: 6 },
   head: { flexDirection: "row", alignItems: "center", gap: 10 },
-  title: { fontFamily: fonts.ui.family, fontWeight: "700", fontSize: 15, flexShrink: 1 },
+  title: { fontFamily: fonts.ui.bold, fontSize: 15, flexShrink: 1 },
   body: { fontFamily: fonts.ui.family, fontSize: 13, lineHeight: 18 },
 });

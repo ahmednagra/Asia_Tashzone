@@ -1,7 +1,7 @@
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { fonts, material } from "../../theme/tokens";
+import { fonts } from "../../theme/tokens";
 import { useTheme } from "../../context/ThemeContext";
 
 interface Route { key: string; name: string }
@@ -15,22 +15,24 @@ const GLYPH: Record<string, string> = { index: "▶", games: "♠", me: "☺", s
 
 /** Bottom tab bar (mockup `.tabbar`): Play, Games, You, Settings. */
 export function TabBar({ state, descriptors, navigation }: TabBarProps) {
-  const { c, name } = useTheme();
+  const { c, t } = useTheme();
   const inset = useSafeAreaInsets();
-  const dark = name === "dark";
   return (
-    <View style={[s.bar, { paddingBottom: inset.bottom + 6, backgroundColor: dark ? "rgba(7,15,13,0.96)" : c.surface, borderColor: dark ? material.line : c.borderSubtle }]}>
+    <View style={[s.bar, { paddingBottom: inset.bottom + 6, backgroundColor: t.tab.bg, borderColor: t.tab.border, borderTopWidth: t.tab.borderWidth }]}>
       {state.routes.map((route, i) => {
         const on = state.index === i;
         const label = descriptors[route.key]?.options.title ?? route.name;
+        const color = on ? t.accent.color : c.textMuted;
         return (
           <Pressable key={route.key} accessibilityRole="tab" accessibilityState={{ selected: on }} accessibilityLabel={label} style={s.tab}
             onPress={() => {
               const e = navigation.emit({ type: "tabPress", target: route.key, canPreventDefault: true });
               if (!on && !e.defaultPrevented) navigation.navigate(route.name);
             }}>
-            <Text style={{ fontSize: 20, color: on ? material.goldLeaf : c.textMuted }}>{GLYPH[route.name] ?? "•"}</Text>
-            <Text style={[s.label, { color: on ? material.goldLeaf : c.textMuted }]}>{label}</Text>
+            <View style={[s.glyph, on && t.tab.pill ? { backgroundColor: t.tab.pill } : null]}>
+              <Text style={{ fontSize: 20, color }}>{GLYPH[route.name] ?? "•"}</Text>
+            </View>
+            <Text style={[s.label, { color, textTransform: t.button.caps ? "uppercase" : "none", letterSpacing: t.button.caps ? 0.8 : 0 }]}>{label}</Text>
           </Pressable>
         );
       })}
@@ -38,7 +40,8 @@ export function TabBar({ state, descriptors, navigation }: TabBarProps) {
   );
 }
 const s = StyleSheet.create({
-  bar: { flexDirection: "row", borderTopWidth: 1, paddingTop: 6 },
+  bar: { flexDirection: "row", paddingTop: 6 },
   tab: { flex: 1, minHeight: 52, alignItems: "center", justifyContent: "center", gap: 2 },
-  label: { fontFamily: fonts.ui.family, fontSize: 12, fontWeight: "600" },
+  glyph: { minWidth: 44, height: 28, borderRadius: 14, alignItems: "center", justifyContent: "center" },
+  label: { fontFamily: fonts.ui.semibold, fontSize: 12 },
 });

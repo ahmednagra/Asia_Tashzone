@@ -68,6 +68,6 @@ export function RulesScreen() {
 }
 const s = StyleSheet.create({
   chips: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
-  title: { fontFamily: fonts.display.family, fontSize: 28, fontWeight: "600" },
+  title: { fontFamily: fonts.display.family, fontSize: 28 },
   goal: { fontFamily: fonts.ui.family, fontSize: 17, lineHeight: 24, marginBottom: 8 },
 });

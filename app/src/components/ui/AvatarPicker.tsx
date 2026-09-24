@@ -1,11 +1,12 @@
 import React from "react";
 import { Pressable, StyleSheet, View } from "react-native";
-import { material } from "../../theme/tokens";
+import { useTheme } from "../../context/ThemeContext";
 import { AVATARS, AvatarView, avatarBg, avatarName } from "../../features/onboarding/AvatarView";
 
 /** A drawn avatar on its coloured disc. Pressable when `onPress` is set (selected = gold ring). */
 export function AvatarBadge({ index, size = 50, selected, onPress, label }: { index: number; size?: number; selected?: boolean; onPress?: () => void; label?: string }) {
-  const disc = [s.disc, { width: size, height: size, borderRadius: size / 2, backgroundColor: avatarBg(index), borderColor: selected ? material.goldLeaf : "transparent" }];
+  const { t } = useTheme();
+  const disc = [s.disc, { width: size, height: size, borderRadius: size / 2, backgroundColor: avatarBg(index), borderColor: selected ? t.accent.color : "transparent" }];
   const glyph = <AvatarView index={index} size={Math.round(size * 0.56)} />;
   if (!onPress) return <View style={disc}>{glyph}</View>;
   return (

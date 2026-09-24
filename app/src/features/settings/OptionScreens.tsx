@@ -1,37 +1,48 @@
 import React from "react";
+import { StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
-import { Caption } from "../../components/ui/Caption";
 import { ChipGroup } from "../../components/ui/ChipGroup";
 import { NavRow } from "../../components/ui/NavRow";
 import { SettingsGroup, SettingsScreen } from "../../components/ui/Settings";
+import { SectionLabel } from "../../components/ui/SectionLabel";
 import { ToggleRow } from "../../components/ui/ToggleRow";
-import { type ThemePrefs, usePrefs } from "../../context/ThemeContext";
+import { type HapticStrength, type OrientationOption, type ThemePrefs, usePrefs } from "../../context/ThemeContext";
 import { useProfile } from "../../store/profile";
+import { THEME_IDS, themes, type ThemeId } from "../../theme/tokens";
+import { useFeel } from "../../utils/feel";
+import { RoomPreview } from "./RoomPreview";
 import { T } from "./copy";
 
-type ThemeChoice = "system" | "light" | "dark";
-const THEME_OPTIONS: { value: ThemeChoice; label: string }[] = [
-  { value: "system", label: T.settings.themes.system }, { value: "light", label: T.settings.themes.light }, { value: "dark", label: T.settings.themes.dark },
+const ORIENTATIONS: { value: OrientationOption; label: string }[] = [
+  { value: "auto", label: T.looks.orientAuto }, { value: "portrait", label: T.looks.orientPortrait }, { value: "landscape", label: T.looks.orientLandscape },
 ];
+const HAPTICS: { value: HapticStrength; label: string }[] = [
+  { value: "off", label: T.sound.hapticOff }, { value: "gentle", label: T.sound.hapticGentle }, { value: "crisp", label: T.sound.hapticCrisp }, { value: "firm", label: T.sound.hapticFirm },
+];
+const VOLUMES: { value: number; label: string }[] = [25, 50, 75, 100].map((v) => ({ value: v, label: `${v}%` }));
 
-/** Settings > How it looks: theme, deck and motion options, all applied live through ThemeContext. */
+/** Settings > How it looks: the room picker, deck, motion and orientation, all applied live through ThemeContext. */
 export function AppearanceScreen() {
   const router = useRouter();
   const [prefs, setPrefs] = usePrefs();
+  const feel = useFeel();
   const t = T.looks;
-  const choice: ThemeChoice = prefs.system !== false ? "system" : prefs.name;
-  const patch = (p: Partial<ThemePrefs>) => setPrefs({ ...prefs, ...p });
+  const patch = (p: Partial<ThemePrefs>) => setPrefs((prev) => ({ ...prev, ...p }));
+  const choose = (id: ThemeId) => { if (id !== prefs.name) { patch({ name: id }); feel("switch"); } };
   return (
     <SettingsScreen title={t.title}>
-      <SettingsGroup title={t.theme}>
-        <ChipGroup label={t.theme} hint={t.themeHint} options={THEME_OPTIONS} value={choice}
-          onChange={(v) => patch(v === "system" ? { system: true } : { system: false, name: v })} />
-      </SettingsGroup>
+      <View>
+        <SectionLabel>{t.room}</SectionLabel>
+        <View accessibilityRole="radiogroup" accessibilityLabel={t.room} style={s.rooms}>
+          {THEME_IDS.map((id) => <RoomPreview key={id} t={themes[id]} on={prefs.name === id} fourColor={prefs.fourColor} onPress={() => choose(id)} />)}
+        </View>
+      </View>
       <SettingsGroup title={t.cards}>
         <ToggleRow label={t.four} hint={t.fourHint} value={prefs.fourColor} onChange={(v) => patch({ fourColor: v })} />
         <ToggleRow label={t.large} hint={t.largeHint} value={prefs.largeCards} onChange={(v) => patch({ largeCards: v })} />
         <ToggleRow label={t.motion} hint={t.motionHint} value={prefs.reducedMotion} onChange={(v) => patch({ reducedMotion: v })} />
       </SettingsGroup>
+      <ChipGroup label={t.orientation} options={ORIENTATIONS} value={prefs.orientation} onChange={(v) => patch({ orientation: v })} />
       <NavRow icon="▦" title={t.designs} caption={t.designsHint} onPress={() => router.push("/themes")} />
     </SettingsScreen>
   );
@@ -40,11 +51,11 @@ export function AppearanceScreen() {
 /** Settings > Playing: hints, turn clock, easy mode. Easy mode also switches on the large cards and four-colour deck. */
 export function PlayScreen() {
   const { profile: p, update } = useProfile();
-  const [prefs, setPrefs] = usePrefs();
+  const [, setPrefs] = usePrefs();
   const t = T.play;
   const setEasy = (on: boolean) => {
     update(on ? { easy: true, hints: true, timer: false } : { easy: false });
-    if (on) setPrefs({ ...prefs, largeCards: true, fourColor: true });
+    setPrefs((prev) => ({ ...prev, largeCards: on, fourColor: on }));
   };
   return (
     <SettingsScreen title={t.title}>
@@ -57,9 +68,11 @@ export function PlayScreen() {
   );
 }
 
-/** Settings > Sound and feel: stores the switches only; the app does not play audio or haptics yet. */
+/** Settings > Sound and feel: table sounds from the current room, their volume, and haptic strength. */
 export function SoundScreen() {
   const { profile: p, update } = useProfile();
+  const [prefs, setPrefs] = usePrefs();
+  const feel = useFeel();
   const t = T.sound;
   const set = (k: keyof typeof p.sound) => (v: boolean) => update({ sound: { ...p.sound, [k]: v } });
   return (
@@ -69,7 +82,10 @@ export function SoundScreen() {
         <ToggleRow label={t.effects} hint={t.effectsHint} value={p.sound.effects} onChange={set("effects")} />
         <ToggleRow label={t.haptics} hint={t.hapticsHint} value={p.sound.haptics} onChange={set("haptics")} />
       </SettingsGroup>
-      <Caption tone="warning">{t.note}</Caption>
+      <ChipGroup label={t.volume} options={VOLUMES} value={prefs.sfxVolume} onChange={(v) => { setPrefs((prev) => ({ ...prev, sfxVolume: v })); feel("tap"); }} />
+      <ChipGroup label={t.strength} hint={t.strengthHint} options={HAPTICS} value={prefs.hapticStrength} onChange={(v) => { setPrefs((prev) => ({ ...prev, hapticStrength: v })); feel("play"); }} />
     </SettingsScreen>
   );
 }
+
+const s = StyleSheet.create({ rooms: { flexDirection: "row", gap: 8 } });

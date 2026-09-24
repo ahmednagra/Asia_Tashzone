@@ -54,6 +54,6 @@ const s = StyleSheet.create({
   count: { fontFamily: fonts.ui.family, fontSize: 13 },
   filters: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   empty: { alignItems: "center", gap: 8, padding: 18 },
-  emptyTitle: { fontFamily: fonts.display.family, fontSize: 20, fontWeight: "600", textAlign: "center" },
+  emptyTitle: { fontFamily: fonts.display.family, fontSize: 20, textAlign: "center" },
   emptyHint: { fontFamily: fonts.ui.family, fontSize: 14, textAlign: "center" },
 });

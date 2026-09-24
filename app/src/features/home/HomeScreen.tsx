@@ -18,7 +18,7 @@ import { T, findGame, playable } from "../games/copy";
 
 /** Home (mockup "home"): wordmark + level, card fan, stats, quick play, "pick a game", join shortcuts. */
 export function Home() {
-  const { c, name } = useTheme();
+  const { t } = useTheme();
   const { profile } = useProfile();
   const nav = useGameNav();
   const { stats, recent } = profile;
@@ -28,7 +28,7 @@ export function Home() {
   return (
     <Screen>
       <View style={s.head}>
-        <Text accessibilityRole="header" style={[s.title, { color: name === "dark" ? material.goldLeaf : c.primary }]}>{T.home.title}</Text>
+        <Text accessibilityRole="header" style={[s.title, { color: t.accent.color, fontFamily: t.type.display, letterSpacing: t.type.tracking, textTransform: t.type.titleCase }]}>{T.home.title}</Text>
         <TagPill gold text={`★ ${T.home.level(level)}`} />
       </View>
       <CardFan />
@@ -50,7 +50,7 @@ export function Home() {
 }
 const s = StyleSheet.create({
   head: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", minHeight: 48 },
-  title: { fontFamily: fonts.display.family, fontSize: 32, fontWeight: "600" },
+  title: { fontFamily: fonts.display.family, fontSize: 32 },
   pickRow: { flexDirection: "row", alignItems: "center" },
   flex: { flex: 1 },
 });

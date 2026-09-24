@@ -76,7 +76,7 @@ const s = StyleSheet.create({
   ringTurn: { borderColor: onTable.gold, shadowColor: onTable.gold, shadowOpacity: 0.8, shadowRadius: 10, elevation: 6 },
   disc: { alignItems: "center", justifyContent: "center", borderWidth: 2, borderColor: material.goldLeafDim },
   bot: { borderStyle: "dashed", borderColor: material.goldLeafHot },
-  initial: { color: material.goldLeafHot, fontFamily: fonts.display.family, fontWeight: "700" },
+  initial: { color: material.goldLeafHot, fontFamily: fonts.display.family },
   dealer: { position: "absolute", right: -4, bottom: -2, backgroundColor: onTable.gold, borderRadius: 999, width: 17, height: 17, alignItems: "center", justifyContent: "center" },
   dealerText: { color: material.btnInk, fontSize: 9.5, fontWeight: "700" },
   plate: { flexDirection: "row", alignItems: "center", gap: 5, borderWidth: 1, borderColor: material.line, borderRadius: 999, paddingLeft: 8, paddingRight: 3, paddingVertical: 1.5, backgroundColor: material.feltRim },

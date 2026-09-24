@@ -38,6 +38,6 @@ const s = StyleSheet.create({
   card: { position: "absolute", bottom: 0, width: 58, height: 84, borderRadius: 8, backgroundColor: cards.face, padding: 5, borderWidth: 1, borderColor: "rgba(0,0,0,0.15)" },
   rank: { fontFamily: fonts.cardIndex.family, fontWeight: "700", fontSize: 18 },
   suit: { fontSize: 20, marginTop: -2 },
-  word: { fontFamily: fonts.display.family, fontWeight: "700", fontSize: 44, color: material.goldLeaf, marginTop: 18 },
+  word: { fontFamily: fonts.display.family, fontSize: 44, color: material.goldLeaf, marginTop: 18 },
   btns: { alignSelf: "stretch", gap: 10, marginTop: 24 },
 });

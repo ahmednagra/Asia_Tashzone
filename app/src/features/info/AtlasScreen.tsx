@@ -42,7 +42,7 @@ const s = StyleSheet.create({
   chips: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   row: { flexDirection: "row", alignItems: "center", gap: 10, minHeight: 32 },
   flex: { flex: 1 },
-  label: { fontFamily: fonts.ui.family, fontSize: 16, fontWeight: "600" },
+  label: { fontFamily: fonts.ui.semibold, fontSize: 16 },
   sub: { fontFamily: fonts.ui.family, fontSize: 13, lineHeight: 18, marginTop: 2 },
   tag: { fontFamily: fonts.ui.family, fontSize: 12 },
   count: { fontFamily: fonts.ui.family, fontSize: 13 },

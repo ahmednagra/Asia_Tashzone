@@ -57,7 +57,7 @@ export function HowToScreen() {
 const s = StyleSheet.create({
   row: { flexDirection: "row", gap: 10, alignItems: "center" },
   flex: { flex: 1 },
-  name: { fontFamily: fonts.display.family, fontSize: 20, fontWeight: "600" },
+  name: { fontFamily: fonts.display.family, fontSize: 20 },
   meta: { fontFamily: fonts.ui.family, fontSize: 13 },
   goal: { fontFamily: fonts.ui.family, fontSize: 15, lineHeight: 21, marginVertical: 10 },
 });

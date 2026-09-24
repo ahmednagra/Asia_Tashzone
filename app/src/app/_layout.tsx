@@ -1,43 +1,56 @@
-import React from "react";
-import { Redirect, Stack, useSegments, usePathname } from "expo-router";
+import React, { useEffect } from "react";
+import { Redirect, Stack, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useFonts } from "expo-font";
-import { Jost_400Regular, Jost_600SemiBold } from "@expo-google-fonts/jost";
+import * as SplashScreen from "expo-splash-screen";
+import * as ScreenOrientation from "expo-screen-orientation";
+import { Jost_400Regular, Jost_500Medium, Jost_600SemiBold, Jost_700Bold } from "@expo-google-fonts/jost";
 import { CormorantGaramond_600SemiBold } from "@expo-google-fonts/cormorant-garamond";
 import { BodoniModa_700Bold } from "@expo-google-fonts/bodoni-moda";
 import { NotoNastaliqUrdu_400Regular } from "@expo-google-fonts/noto-nastaliq-urdu";
 import { ThemeProvider, useTheme } from "../context/ThemeContext";
 import { ProfileProvider, useProfile } from "../store/profile";
+import { ErrorBoundary } from "../components/ui/ErrorBoundary";
 
-/** Tables are always dark felt, so the status bar stays light there whatever the theme. */
-function Shell() {
-  const { name } = useTheme();
+SplashScreen.preventAutoHideAsync().catch(() => {});
+
+const LOCKS: Record<string, ScreenOrientation.OrientationLock> = {
+  auto: ScreenOrientation.OrientationLock.DEFAULT,
+  portrait: ScreenOrientation.OrientationLock.PORTRAIT_UP,
+  landscape: ScreenOrientation.OrientationLock.LANDSCAPE,
+};
+
+function Shell({ fontsReady }: { fontsReady: boolean }) {
+  const { c, ready: themeReady, orientation } = useTheme();
   const { profile, ready } = useProfile();
-  const path = usePathname();
   const segments = useSegments();
-  if (!ready) return null;
-  // first run: everything except the onboarding flow redirects into it
+  const allReady = fontsReady && themeReady && ready;
+
+  useEffect(() => { if (allReady) SplashScreen.hideAsync().catch(() => {}); }, [allReady]);
+  useEffect(() => { ScreenOrientation.lockAsync(LOCKS[orientation] ?? LOCKS.auto!).catch(() => {}); }, [orientation]);
+
+  if (!allReady) return null;
   if (!profile.onboarded && segments[0] !== "onboarding") return <Redirect href="/onboarding/welcome" />;
-  const onTable = path.startsWith("/play") || path.startsWith("/online");
   return (
     <>
-      <StatusBar style={name === "dark" || onTable ? "light" : "dark"} />
-      <Stack screenOptions={{ headerShown: false }} />
+      <StatusBar style="light" />
+      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: c.bg }, animation: "fade_from_bottom" }} />
     </>
   );
 }
 
 export default function RootLayout() {
-  // family names match @tashzone/design-system fonts.*; system fallbacks render until loaded (§13.2)
-  useFonts({
-    Jost: Jost_400Regular, "Jost-SemiBold": Jost_600SemiBold, "Cormorant Garamond": CormorantGaramond_600SemiBold,
-    "Bodoni Moda": BodoniModa_700Bold, "Noto Nastaliq Urdu": NotoNastaliqUrdu_400Regular,
+  const [loaded, error] = useFonts({
+    Jost: Jost_400Regular, "Jost-Medium": Jost_500Medium, "Jost-SemiBold": Jost_600SemiBold, "Jost-Bold": Jost_700Bold,
+    "Cormorant Garamond": CormorantGaramond_600SemiBold, "Bodoni Moda": BodoniModa_700Bold, "Noto Nastaliq Urdu": NotoNastaliqUrdu_400Regular,
   });
   return (
-    <ThemeProvider>
-      <ProfileProvider>
-        <Shell />
-      </ProfileProvider>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider>
+        <ProfileProvider>
+          <Shell fontsReady={loaded || !!error} />
+        </ProfileProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }

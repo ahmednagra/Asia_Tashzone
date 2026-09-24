@@ -19,7 +19,7 @@ export function ChipGroup<V extends string | number>({ label, options, value, on
 }
 const s = StyleSheet.create({
   wrap: { gap: 6 },
-  label: { fontFamily: fonts.ui.family, fontSize: 12, letterSpacing: 1.4, fontWeight: "600" },
+  label: { fontFamily: fonts.ui.semibold, fontSize: 12, letterSpacing: 1.4 },
   row: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   hint: { fontFamily: fonts.ui.family, fontSize: 13, lineHeight: 18 },
 });

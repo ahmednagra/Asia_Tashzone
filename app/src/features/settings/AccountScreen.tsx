@@ -6,7 +6,7 @@ import { NavRow } from "../../components/ui/NavRow";
 import { SettingsScreen } from "../../components/ui/Settings";
 import { Sheet } from "../../components/ui/Sheet";
 import { StatusBanner } from "../../components/ui/StatusBanner";
-import { usePrefs, useTheme } from "../../context/ThemeContext";
+import { DEFAULT_PREFS, usePrefs, useTheme } from "../../context/ThemeContext";
 import { usePinGate } from "../../hooks/usePinGate";
 import { fonts } from "../../theme/tokens";
 import { useProfile } from "../../store/profile";
@@ -37,7 +37,7 @@ export function AccountScreen() {
   };
   const wipe = () => {
     reset();
-    setPrefs({ name: "dark", fourColor: false, reducedMotion: false, largeCards: false, system: true });
+    setPrefs(DEFAULT_PREFS);
     close();
   };
 
@@ -58,7 +58,7 @@ export function AccountScreen() {
       </Sheet>
 
       <Sheet visible={dialog === "wipe"} title={t.wipeTitle} onClose={close}
-        actions={<>{gate.hasPin ? null : <GoldButton label={t.wipeDo} onPress={wipe} />}<GoldButton kind="glass" label={t.cancel} onPress={close} /></>}>
+        actions={<><GoldButton label={t.cancel} onPress={close} />{gate.hasPin ? null : <GoldButton kind="glass" label={t.wipeDo} onPress={wipe} />}</>}>
         <Caption>{t.wipeBody}</Caption>
         {gate.hasPin ? <PinEntry prompt={t.wipePin} gate={gate} onComplete={async (pin) => { if (await gate.verify(pin)) wipe(); }} /> : null}
       </Sheet>

@@ -20,8 +20,8 @@ export function StepRow({ n, title, body }: { n: number; title: string; body: st
 const s = StyleSheet.create({
   row: { flexDirection: "row", alignItems: "flex-start", gap: 12 },
   num: { width: 34, height: 34, borderRadius: 17, backgroundColor: material.goldLeaf, alignItems: "center", justifyContent: "center" },
-  n: { fontFamily: fonts.ui.family, fontWeight: "700", fontSize: 15, color: material.btnInk },
+  n: { fontFamily: fonts.ui.bold, fontSize: 15, color: material.btnInk },
   text: { flex: 1, gap: 2 },
-  title: { fontFamily: fonts.ui.family, fontWeight: "600", fontSize: 15 },
+  title: { fontFamily: fonts.ui.semibold, fontSize: 15 },
   body: { fontFamily: fonts.ui.family, fontSize: 13, lineHeight: 18 },
 });

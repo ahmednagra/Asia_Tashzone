@@ -48,5 +48,5 @@ const s = StyleSheet.create({
   cell: { width: "30.5%", borderWidth: 1, borderRadius: 12, overflow: "hidden", opacity: 0.8 },
   swatch: { height: 64, justifyContent: "flex-end" },
   band: { height: 10 },
-  name: { fontFamily: fonts.ui.family, fontSize: 12, fontWeight: "600", padding: 8, minHeight: 44 },
+  name: { fontFamily: fonts.ui.semibold, fontSize: 12, padding: 8, minHeight: 44 },
 });
