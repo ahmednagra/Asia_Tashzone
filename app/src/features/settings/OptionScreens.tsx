@@ -8,7 +8,10 @@ import { SectionLabel } from "../../components/ui/SectionLabel";
 import { ToggleRow } from "../../components/ui/ToggleRow";
 import { type HapticStrength, type OrientationOption, type ThemePrefs, usePrefs } from "../../context/ThemeContext";
 import { useProfile } from "../../store/profile";
-import { THEME_IDS, themes, type ThemeId } from "../../theme/tokens";
+import { THEME_IDS, festivalWindow, openFestivals, themes, type ThemeId } from "../../theme/tokens";
+import { useTheme } from "../../context/ThemeContext";
+import { Caption } from "../../components/ui/Caption";
+import { shortDate } from "../../i18n";
 import { useFeel } from "../../utils/feel";
 import { RoomPreview } from "./RoomPreview";
 import { T } from "./copy";
@@ -26,6 +29,8 @@ export function AppearanceScreen() {
   const router = useRouter();
   const [prefs, setPrefs] = usePrefs();
   const feel = useFeel();
+  const { t: room } = useTheme();
+  const festivals = openFestivals();
   const t = T.looks;
   const patch = (p: Partial<ThemePrefs>) => setPrefs((prev) => ({ ...prev, ...p }));
   const choose = (id: ThemeId) => { if (id !== prefs.name) { patch({ name: id }); feel("switch"); } };
@@ -34,9 +39,19 @@ export function AppearanceScreen() {
       <View>
         <SectionLabel>{t.room}</SectionLabel>
         <View accessibilityRole="radiogroup" accessibilityLabel={t.room} style={s.rooms}>
-          {THEME_IDS.map((id) => <RoomPreview key={id} t={themes[id]} on={prefs.name === id} fourColor={prefs.fourColor} onPress={() => choose(id)} />)}
+          {THEME_IDS.map((id) => <RoomPreview key={id} t={themes[id]} on={room.id === id} fourColor={prefs.fourColor} onPress={() => choose(id)} />)}
         </View>
       </View>
+      {festivals.length ? (
+        <View>
+          <SectionLabel>{t.festival}</SectionLabel>
+          <View accessibilityRole="radiogroup" accessibilityLabel={t.festival} style={s.rooms}>
+            {festivals.map((id) => <RoomPreview key={id} t={themes[id]} on={room.id === id} fourColor={prefs.fourColor} onPress={() => choose(id)} />)}
+            {festivals.length === 1 ? <View style={s.spacer} /> : null}
+          </View>
+          <Caption tone="muted">{festivals.map((id) => t.until(shortDate(festivalWindow(id)!.end))).join(" · ")}</Caption>
+        </View>
+      ) : null}
       <SettingsGroup title={t.cards}>
         <ToggleRow label={t.four} hint={t.fourHint} value={prefs.fourColor} onChange={(v) => patch({ fourColor: v })} />
         <ToggleRow label={t.large} hint={t.largeHint} value={prefs.largeCards} onChange={(v) => patch({ largeCards: v })} />
@@ -88,4 +103,4 @@ export function SoundScreen() {
   );
 }
 
-const s = StyleSheet.create({ rooms: { flexDirection: "row", gap: 8 } });
+const s = StyleSheet.create({ rooms: { flexDirection: "row", gap: 8 }, spacer: { flex: 1 } });

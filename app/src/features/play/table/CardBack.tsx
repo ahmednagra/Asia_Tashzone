@@ -15,6 +15,27 @@ function Motif({ t, id }: { t: ThemeSpec; id: string }) {
       </Pattern>
     );
   }
+  if (b.kind === "crescent") {
+    return (
+      <Pattern id={id} width={12} height={12} patternUnits="userSpaceOnUse">
+        <Rect width={12} height={12} fill={b.base} />
+        <Circle cx={6} cy={6} r={3.2} fill={b.motif} />
+        <Circle cx={7.4} cy={5.2} r={2.8} fill={b.base} />
+        <Circle cx={1.5} cy={1.5} r={0.6} fill={b.line} />
+        <Circle cx={10.5} cy={10.5} r={0.6} fill={b.line} />
+      </Pattern>
+    );
+  }
+  if (b.kind === "diya") {
+    return (
+      <Pattern id={id} width={10} height={10} patternUnits="userSpaceOnUse">
+        <Rect width={10} height={10} fill={b.base} />
+        <Path d="M2.5 7.5H7.5L6.5 9H3.5Z" fill={b.motif} />
+        <Path d="M5 3C6.2 4.4 6 6 5 7C4 6 3.8 4.4 5 3Z" fill={b.motif} />
+        <Circle cx={5} cy={5.6} r={0.6} fill={b.line} />
+      </Pattern>
+    );
+  }
   if (b.kind === "stripe") {
     return (
       <Pattern id={id} width={6} height={6} patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
@@ -35,7 +56,7 @@ function Motif({ t, id }: { t: ThemeSpec; id: string }) {
 export function CardBack({ t, width, height }: { t: ThemeSpec; width: number; height?: number }) {
   const h = height ?? Math.round(width * 1.4);
   const id = `back-${t.id}`;
-  const border = t.cardBack.kind === "ajrak" ? t.accent.color : cards.face;
+  const border = t.cardBack.kind === "ajrak" || t.cardBack.kind === "diya" ? t.accent.color : cards.face;
   return (
     <View style={[s.card, { width, height: h, borderColor: border }]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
       <Svg width="100%" height="100%">

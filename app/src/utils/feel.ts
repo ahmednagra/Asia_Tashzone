@@ -1,14 +1,16 @@
 import { useCallback } from "react";
 import * as Haptics from "expo-haptics";
 import { createAudioPlayer, setAudioModeAsync, type AudioPlayer } from "expo-audio";
-import type { HapticLevel, ThemeId } from "../theme/tokens";
+import type { BaseThemeId, HapticLevel, ThemeId } from "../theme/tokens";
 import { useTheme } from "../context/ThemeContext";
 import { useProfile } from "../store/profile";
 
 export type Cue = "tap" | "lift" | "play" | "trick" | "turn" | "win" | "warn" | "switch";
 type SoundCue = "tap" | "play" | "trick" | "turn" | "win" | "switch";
 
-const SOUNDS: Record<ThemeId, Record<SoundCue, number>> = {
+const SOUND_SET: Record<ThemeId, BaseThemeId> = { emerald: "emerald", gold: "gold", arcade: "arcade", eid: "emerald", diwali: "gold" };
+
+const SOUNDS: Record<BaseThemeId, Record<SoundCue, number>> = {
   emerald: {
     tap: require("../../assets/sounds/emerald-tap.wav"), play: require("../../assets/sounds/emerald-play.wav"), trick: require("../../assets/sounds/emerald-trick.wav"),
     turn: require("../../assets/sounds/emerald-turn.wav"), win: require("../../assets/sounds/emerald-win.wav"), switch: require("../../assets/sounds/emerald-switch.wav"),
@@ -29,12 +31,13 @@ const players = new Map<string, AudioPlayer>();
 let modeSet = false;
 
 function player(theme: ThemeId, cue: SoundCue): AudioPlayer | null {
-  const key = `${theme}-${cue}`;
+  const set = SOUND_SET[theme];
+  const key = `${set}-${cue}`;
   const hit = players.get(key);
   if (hit) return hit;
   try {
     if (!modeSet) { modeSet = true; setAudioModeAsync({ playsInSilentMode: false, interruptionMode: "mixWithOthers" }).catch(() => {}); }
-    const p = createAudioPlayer(SOUNDS[theme][cue]);
+    const p = createAudioPlayer(SOUNDS[set][cue]);
     players.set(key, p);
     return p;
   } catch {

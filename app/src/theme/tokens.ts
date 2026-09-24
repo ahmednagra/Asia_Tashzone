@@ -5,9 +5,13 @@
  * come from the mockup and are decorative only — never used for text or state.
  */
 
-export type ThemeId = "emerald" | "gold" | "arcade";
+export type BaseThemeId = "emerald" | "gold" | "arcade";
+export type FestivalId = "eid" | "diwali";
+export type ThemeId = BaseThemeId | FestivalId;
 export type ThemeName = ThemeId;
-export const THEME_IDS: readonly ThemeId[] = ["emerald", "gold", "arcade"];
+export const THEME_IDS: readonly BaseThemeId[] = ["emerald", "gold", "arcade"];
+export const FESTIVAL_IDS: readonly FestivalId[] = ["eid", "diwali"];
+export const ALL_THEME_IDS: readonly ThemeId[] = [...THEME_IDS, ...FESTIVAL_IDS];
 
 export interface SemanticColors {
   bg: string; surface: string; surfaceRaised: string;
@@ -28,7 +32,7 @@ export interface ThemeSpec {
   accent: { color: string; on: string; dim: string; line: string; lineHard: string };
   value: { points: string; bid: string; coins: string };
   felt: { base: string; lit: string; deep: string; rim: string; rimWidth: number; rimStyle: "solid" | "double"; bands: readonly string[] };
-  cardBack: { kind: "weave" | "ajrak" | "stripe"; base: string; motif: string; line: string };
+  cardBack: { kind: "weave" | "ajrak" | "stripe" | "crescent" | "diya"; base: string; motif: string; line: string };
   type: { display: string; titleCase: "none" | "uppercase"; tracking: number; numerals: string };
   shape: { radius: number; chip: number; felt: number; button: number; sheet: number };
   surface: { kind: "glass" | "framed" | "slab"; bg: string; border: string; borderWidth: number; shadow?: string };
@@ -140,10 +144,103 @@ const arcade: ThemeSpec = {
   haptic: { play: "crisp", win: "firm" },
 };
 
-export const themes: Record<ThemeId, ThemeSpec> = { emerald: mehfil, gold: darbar, arcade };
+const chandRaat: ThemeSpec = {
+  id: "eid", label: { en: "Chand Raat", ur: "چاند رات", hi: "चाँद रात", ne: "चाँद रात", bn: "চাঁদ রাত" },
+  story: {
+    en: "Eid eve: a new moon, silver light and family at the table.",
+    ur: "عید کی رات: نیا چاند، چاندنی اور گھر والے ایک میز پر۔",
+    hi: "ईद की रात: नया चाँद, चाँदनी और परिवार एक टेबल पर।",
+    ne: "ईदको रात: नयाँ चन्द्रमा, चाँदनी र परिवार एउटै टेबलमा।",
+    bn: "ঈদের আগের রাত: নতুন চাঁদ, রুপালি আলো, টেবিলে পরিবার।",
+  },
+  c: {
+    bg: "#07131C", surface: "#0D1E29", surfaceRaised: "#132836",
+    text: "#EFF1EC", textSecondary: "#A8BFCB", textMuted: "#8EA6B3",
+    primary: "#E8D9A8", onPrimary: "#12161A",
+    success: "#7FE0B0", warning: "#F0B45A", error: "#F58A80", info: "#8CC8F2",
+    borderControl: "#5F7383", borderSubtle: "#22323F",
+    tableFelt: "#0C3A44",
+  },
+  accent: { color: "#E8D9A8", on: "#12161A", dim: "#A89A6E", line: "rgba(232,217,168,0.25)", lineHard: "rgba(232,217,168,0.45)" },
+  value: { points: "#8CC8F2", bid: "#FFA886", coins: "#E8D9A8" },
+  felt: { base: "#0C3A44", lit: "#15606E", deep: "#05191E", rim: "#9FB3BF", rimWidth: 3, rimStyle: "solid", bands: [] },
+  cardBack: { kind: "crescent", base: "#0C2A3A", motif: "#E8D9A8", line: "#FBF8F1" },
+  type: { display: "Cormorant Garamond", titleCase: "none", tracking: 0.5, numerals: "Cormorant Garamond" },
+  shape: { radius: 16, chip: 999, felt: 20, button: 999, sheet: 22 },
+  surface: { kind: "glass", bg: "rgba(232,217,168,0.06)", border: "rgba(232,217,168,0.25)", borderWidth: 1 },
+  button: { kind: "gradient", fill: ["#EEF2F4", "#C9B27A"], ink: "#111A22", caps: false },
+  vignette: ["#10304A", "#07131C"],
+  ornament: "vignette",
+  tab: { bg: "rgba(7,19,28,0.96)", border: "rgba(232,217,168,0.25)", borderWidth: 1 },
+  sheet: { bg: "#0E1F2B", border: "rgba(232,217,168,0.4)" },
+  motion: "lush",
+  haptic: { play: "gentle", win: "crisp" },
+};
+
+const deepavali: ThemeSpec = {
+  id: "diwali", label: { en: "Diwali", ur: "دیوالی", hi: "दिवाली", ne: "तिहार", bn: "দীপাবলি" },
+  story: {
+    en: "Festival of lights: marigolds, diyas and a warm table.",
+    ur: "روشنیوں کا تہوار: گیندے کے پھول، دیے اور گرم جوش محفل۔",
+    hi: "रोशनी का त्योहार: गेंदे के फूल, दीये और गरमाहट भरी टेबल।",
+    ne: "बत्तीको पर्व: सयपत्री, दियो र न्यानो टेबल।",
+    bn: "আলোর উৎসব: গাঁদা ফুল, প্রদীপ আর উষ্ণ টেবিল।",
+  },
+  c: {
+    bg: "#140A05", surface: "#21110A", surfaceRaised: "#2D180D",
+    text: "#FBEEDB", textSecondary: "#E6C9A2", textMuted: "#C29E77",
+    primary: "#FFB547", onPrimary: "#1A0D02",
+    success: "#7FD6A2", warning: "#FFC56B", error: "#FF9A8C", info: "#8CC8F2",
+    borderControl: "#8E6B48", borderSubtle: "#3D2415",
+    tableFelt: "#3A1B08",
+  },
+  accent: { color: "#FFB547", on: "#1A0D02", dim: "#B87A24", line: "rgba(255,181,71,0.28)", lineHard: "rgba(255,181,71,0.5)" },
+  value: { points: "#8CC8F2", bid: "#FFA886", coins: "#FFB547" },
+  felt: { base: "#3A1B08", lit: "#6B3512", deep: "#1C0B03", rim: "#D8962E", rimWidth: 4, rimStyle: "solid", bands: [] },
+  cardBack: { kind: "diya", base: "#5A1E0C", motif: "#FFB547", line: "#FBF8F1" },
+  type: { display: "Cormorant Garamond", titleCase: "uppercase", tracking: 1.8, numerals: "Cormorant Garamond" },
+  shape: { radius: 8, chip: 999, felt: 12, button: 8, sheet: 12 },
+  surface: { kind: "framed", bg: "#24130A", border: "#8E6B48", borderWidth: 1, shadow: "rgba(255,181,71,0.25)" },
+  button: { kind: "embossed", fill: ["#FFD98A", "#E0901F"], ink: "#1A0D02", press: "#7A430B", caps: true },
+  vignette: ["#4A200A", "#140A05"],
+  ornament: "rule",
+  tab: { bg: "#21110A", border: "#8E6B48", borderWidth: 2 },
+  sheet: { bg: "#21110A", border: "#8E6B48" },
+  motion: "standard",
+  haptic: { play: "crisp", win: "firm" },
+};
+
+export const themes: Record<ThemeId, ThemeSpec> = { emerald: mehfil, gold: darbar, arcade, eid: chandRaat, diwali: deepavali };
+
+const FESTIVAL_DAYS: Record<FestivalId, readonly (readonly [string, number, number])[]> = {
+  eid: [["2026-03-20", 3, 7], ["2026-05-27", 3, 7], ["2027-03-10", 3, 7], ["2027-05-17", 3, 7], ["2028-02-27", 3, 7], ["2028-05-05", 3, 7]],
+  diwali: [["2026-11-08", 5, 7], ["2027-10-29", 5, 7], ["2028-10-17", 5, 7]],
+};
+
+const DAY = 86_400_000;
+const utcDay = (iso: string) => Date.parse(`${iso}T00:00:00Z`);
+const today = (now: Date) => Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+
+export function festivalWindow(id: FestivalId, now: Date = new Date()): { start: Date; end: Date } | null {
+  const d = today(now);
+  for (const [iso, before, after] of FESTIVAL_DAYS[id]) {
+    const start = utcDay(iso) - before * DAY;
+    const end = utcDay(iso) + after * DAY;
+    if (d >= start && d <= end) return { start: new Date(start), end: new Date(end) };
+  }
+  return null;
+}
+
+export const openFestivals = (now: Date = new Date()): FestivalId[] => FESTIVAL_IDS.filter((id) => festivalWindow(id, now));
+export const isFestival = (id: ThemeId): id is FestivalId => (FESTIVAL_IDS as readonly string[]).includes(id);
+
+export function roomFor(id: ThemeId, now: Date = new Date()): ThemeSpec {
+  if (isFestival(id) && !festivalWindow(id, now)) return mehfil;
+  return themes[id] ?? mehfil;
+}
 
 export function toThemeId(v: unknown): ThemeId {
-  return v === "gold" || v === "arcade" || v === "emerald" ? v : "emerald";
+  return typeof v === "string" && (ALL_THEME_IDS as readonly string[]).includes(v) ? (v as ThemeId) : "emerald";
 }
 
 /** Anything drawn on the felt; ≥ 4.5:1 on both felts. */

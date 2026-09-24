@@ -1,7 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
-import { AccessibilityInfo } from "react-native";
+import { AccessibilityInfo, AppState } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { type SemanticColors, type ThemeId, type ThemeSpec, themes, toThemeId } from "../theme/tokens";
+import { type SemanticColors, type ThemeId, type ThemeSpec, roomFor, themes, toThemeId } from "../theme/tokens";
 import { type Lang, getLang, isRTL, subscribeLang } from "../i18n";
 
 export type OrientationOption = "auto" | "portrait" | "landscape";
@@ -67,6 +67,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [osCalm, setOsCalm] = useState(false);
   const touched = useRef(false);
   const lang = useSyncExternalStore(subscribeLang, getLang, getLang);
+  const [day, setDay] = useState(() => new Date().toDateString());
   const writes = useRef<Promise<unknown>>(Promise.resolve());
 
   useEffect(() => {
@@ -84,6 +85,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     return () => sub.remove();
   }, []);
 
+  useEffect(() => {
+    const sub = AppState.addEventListener("change", (st) => { if (st === "active") setDay(new Date().toDateString()); });
+    return () => sub.remove();
+  }, []);
+
   const setPrefs = useCallback<SetPrefs>((next) => {
     touched.current = true;
     setPrefsState((prev) => {
@@ -95,9 +101,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const value = useMemo<Theme>(() => {
-    const t = themes[prefs.name] ?? themes.emerald;
+    const t = roomFor(prefs.name, new Date(day));
     return { ...prefs, t, c: t.c, calm: prefs.reducedMotion || osCalm, ready, lang, rtl: isRTL(lang) };
-  }, [prefs, osCalm, ready, lang]);
+  }, [prefs, osCalm, ready, lang, day]);
   const pair = useMemo<[ThemePrefs, SetPrefs]>(() => [prefs, setPrefs], [prefs, setPrefs]);
   return (
     <PrefsCtx.Provider value={pair}>

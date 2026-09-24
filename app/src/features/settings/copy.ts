@@ -35,6 +35,8 @@ export const T = localized("settings", {
     looks: {
       title: "Appearance",
       room: "Room",
+      festival: "Festival room",
+      until: (date: string) => `Until ${date}`,
       cards: "Cards",
       four: "Four-colour deck", fourHint: "Blue diamonds, green clubs",
       large: "Large cards", largeHint: "Bigger faces, fewer per row",
@@ -150,6 +152,8 @@ export const T = localized("settings", {
     looks: {
       title: "انداز",
       room: "روم",
+      festival: "تہوار کا روم",
+      until: (date: string) => `${date} تک`,
       cards: "پتے",
       four: "چار رنگوں والی گڈی", fourHint: "اینٹ نیلی، چڑیا سبز",
       large: "بڑے پتے", largeHint: "بڑی شکلیں، قطار میں کم پتے",
@@ -265,6 +269,8 @@ export const T = localized("settings", {
     looks: {
       title: "दिखावट",
       room: "रूम",
+      festival: "त्योहार रूम",
+      until: (date: string) => `${date} तक`,
       cards: "पत्ते",
       four: "चार रंगों वाली गड्डी", fourHint: "ईंट नीली, चिड़ी हरी",
       large: "बड़े पत्ते", largeHint: "बड़े चित्र, एक पंक्ति में कम पत्ते",
@@ -380,6 +386,8 @@ export const T = localized("settings", {
     looks: {
       title: "रूपरङ",
       room: "रुम",
+      festival: "चाडपर्व रुम",
+      until: (date: string) => `${date} सम्म`,
       cards: "पत्ती",
       four: "चार रङको गड्डी", fourHint: "इँट नीलो, चिडी हरियो",
       large: "ठूला पत्ती", largeHint: "ठूला चित्र, एक लहरमा कम पत्ती",
@@ -495,6 +503,8 @@ export const T = localized("settings", {
     looks: {
       title: "চেহারা",
       room: "রুম",
+      festival: "উৎসবের রুম",
+      until: (date: string) => `${date} পর্যন্ত`,
       cards: "তাস",
       four: "চার রঙের তাস", fourHint: "রুইতন নীল, চিড়িতন সবুজ",
       large: "বড় তাস", largeHint: "বড় ছবি, এক সারিতে কম তাস",

@@ -106,3 +106,13 @@ export function displayFace(latinFace: string, size: number, l: Lang = current):
   if (l === "en") return { fontFamily: latinFace, fontSize: size };
   return { fontFamily: latinFace, fontSize: size, lineHeight: Math.round(size * 1.45), letterSpacing: 0, textTransform: "none" };
 }
+
+const LOCALES: Record<Lang, string> = { en: "en-GB", ur: "ur-PK-u-nu-latn", hi: "hi-IN-u-nu-latn", ne: "ne-NP-u-nu-latn", bn: "bn-BD-u-nu-latn" };
+
+export function shortDate(d: Date, l: Lang = current): string {
+  try {
+    return d.toLocaleDateString(LOCALES[l], { day: "numeric", month: "short", timeZone: "UTC" });
+  } catch {
+    return d.toISOString().slice(0, 10);
+  }
+}

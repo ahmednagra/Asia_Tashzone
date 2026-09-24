@@ -1,10 +1,10 @@
 /** Re-measures every theme claim so token edits cannot silently break accessibility or long-session comfort. */
 import { describe, expect, it } from "vitest";
-import { THEME_IDS, cards, contrast, onTable, themes, toThemeId } from "./tokens";
+import { ALL_THEME_IDS, THEME_IDS, cards, contrast, festivalWindow, onTable, openFestivals, roomFor, themes, toThemeId } from "./tokens";
 
 const solid = (v: string) => /^#[0-9a-fA-F]{6}$/.test(v);
 
-describe.each(THEME_IDS)("theme %s", (id) => {
+describe.each(ALL_THEME_IDS)("theme %s", (id) => {
   const t = themes[id];
   const c = t.c;
 
@@ -81,6 +81,7 @@ describe("shared rules", () => {
     expect(toThemeId(undefined)).toBe("emerald");
     expect(toThemeId("gold")).toBe("gold");
     expect(toThemeId("arcade")).toBe("arcade");
+    expect(toThemeId("eid")).toBe("eid");
   });
 
   it("no purple or pink hues in semantic tokens", () => {
@@ -91,7 +92,30 @@ describe("shared rules", () => {
       const h = max === r ? ((g - b) / d) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
       return (h * 60 + 360) % 360;
     };
-    const all = [...THEME_IDS.flatMap((id) => [...Object.values(themes[id].c), ...Object.values(themes[id].value)]), ...Object.values(onTable)];
+    const all = [...ALL_THEME_IDS.flatMap((id) => [...Object.values(themes[id].c), ...Object.values(themes[id].value)]), ...Object.values(onTable)];
     for (const v of all) { const h = hue(v); if (h !== null) expect(h < 260 || h > 345, v).toBe(true); }
+  });
+});
+
+describe("festival rooms", () => {
+  it("open only around the festival dates", () => {
+    expect(festivalWindow("eid", new Date(2026, 2, 20))).not.toBeNull();
+    expect(festivalWindow("eid", new Date(2026, 2, 16))).toBeNull();
+    expect(festivalWindow("eid", new Date(2026, 2, 27))).not.toBeNull();
+    expect(festivalWindow("eid", new Date(2026, 2, 28))).toBeNull();
+    expect(festivalWindow("diwali", new Date(2026, 10, 8))).not.toBeNull();
+    expect(openFestivals(new Date(2026, 6, 1))).toEqual([]);
+  });
+
+  it("fall back to Mehfil outside their window without losing the choice", () => {
+    expect(roomFor("diwali", new Date(2026, 10, 10)).id).toBe("diwali");
+    expect(roomFor("diwali", new Date(2026, 6, 1)).id).toBe("emerald");
+    expect(roomFor("gold", new Date(2026, 6, 1)).id).toBe("gold");
+  });
+
+  it("stay distinct from the three permanent rooms", () => {
+    const base = new Set(THEME_IDS.map((id) => themes[id].felt.base));
+    expect(base.has(themes.eid.felt.base)).toBe(false);
+    expect(base.has(themes.diwali.felt.base)).toBe(false);
   });
 });
