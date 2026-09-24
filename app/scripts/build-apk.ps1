@@ -50,8 +50,22 @@ $env:PATH = "$Jdk\bin;$env:PATH"
 Run 'java' @('-version')
 
 Step 2 'Android command-line tools'
-$sdkmanager = Join-Path $Sdk 'cmdline-tools\latest\bin\sdkmanager.bat'
-if (-not (Test-Path $sdkmanager)) {
+function Find-SdkManager {
+  $dirs = Get-ChildItem (Join-Path $Sdk 'cmdline-tools') -Directory -ErrorAction SilentlyContinue
+  $found = foreach ($d in $dirs) {
+    $bat = Join-Path $d.FullName 'bin\sdkmanager.bat'
+    $props = Join-Path $d.FullName 'source.properties'
+    if ((Test-Path $bat) -and (Test-Path $props)) {
+      $m = Select-String -Path $props -Pattern '^Pkg\.Revision=(\d+)'
+      if ($m) { [pscustomobject]@{ Bat = $bat; Rev = [int]$m.Matches[0].Groups[1].Value } }
+    }
+  }
+  $classic = $found | Where-Object { $_.Rev -lt 16 } | Sort-Object Rev -Descending | Select-Object -First 1
+  if ($classic) { return $classic.Bat }
+  return ($found | Sort-Object Rev -Descending | Select-Object -First 1).Bat
+}
+$sdkmanager = Find-SdkManager
+if (-not $sdkmanager) {
   $zip = Join-Path $Toolchain 'cmdline-tools.zip'
   Write-Host 'downloading command-line tools (~150 MB)'
   Invoke-WebRequest -Uri $CmdlineToolsUrl -OutFile $zip
@@ -61,27 +75,22 @@ if (-not (Test-Path $sdkmanager)) {
   New-Item -ItemType Directory -Force -Path (Join-Path $Sdk 'cmdline-tools') | Out-Null
   Move-Item (Join-Path $tmp 'cmdline-tools') (Join-Path $Sdk 'cmdline-tools\latest')
   Remove-Item -Recurse -Force $tmp, $zip
+  $sdkmanager = Find-SdkManager
 }
+Write-Host "sdkmanager: $sdkmanager"
 $env:ANDROID_HOME = $Sdk
 $env:ANDROID_SDK_ROOT = $Sdk
-$env:PATH = "$Sdk\cmdline-tools\latest\bin;$Sdk\platform-tools;$env:PATH"
+$env:PATH = "$(Split-Path $sdkmanager);$Sdk\platform-tools;$env:PATH"
 
-Step 3 'SDK licences, platform-tools and current command-line tools'
-1..60 | ForEach-Object { 'y' } | & $sdkmanager --licenses | Out-Null
-$props = Join-Path $Sdk 'cmdline-tools\latest\source.properties'
-$rev = if (Test-Path $props) { [double]((Select-String -Path $props -Pattern '^Pkg\.Revision=(\d+(\.\d+)?)').Matches[0].Groups[1].Value) } else { 0 }
-if ($rev -lt 16) {
-  Write-Host "updating command-line tools $rev to the latest"
-  Run $sdkmanager @('cmdline-tools;latest')
-  $fresh = Join-Path $Sdk 'cmdline-tools\latest-2'
-  if (Test-Path $fresh) {
-    $old = Join-Path $Sdk 'cmdline-tools\previous'
-    if (Test-Path $old) { Remove-Item -Recurse -Force $old }
-    Move-Item (Join-Path $Sdk 'cmdline-tools\latest') $old
-    Move-Item $fresh (Join-Path $Sdk 'cmdline-tools\latest')
-  }
+Step 3 'SDK licences and platform-tools'
+$adb = Join-Path $Sdk 'platform-tools\adb.exe'
+$licensed = (Get-ChildItem (Join-Path $Sdk 'licenses') -File -ErrorAction SilentlyContinue).Count -gt 0
+if ($licensed -and (Test-Path $adb)) {
+  Write-Host 'already set up (licences accepted, platform-tools present)'
+} else {
+  1..60 | ForEach-Object { 'y' } | & $sdkmanager --licenses | Out-Null
+  Run $sdkmanager @('platform-tools')
 }
-Run $sdkmanager @('platform-tools')
 
 $env:EXPO_PUBLIC_API_URL = $ApiUrl
 $env:EAS_NO_VCS = '1'
