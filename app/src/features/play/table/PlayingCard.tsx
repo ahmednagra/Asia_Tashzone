@@ -4,6 +4,7 @@ import { cards, fonts, onTable, radius } from "../../../theme/tokens";
 import { SUIT_GLYPH, cardLabel, rankLabel } from "./logic";
 import { useTheme } from "../../../context/ThemeContext";
 import { CardBack } from "./CardBack";
+import { T } from "./copy";
 
 export interface PlayingCardProps {
   card?: string;
@@ -70,7 +71,7 @@ export const PlayingCard = memo(function PlayingCard({
       </Text>
     </View>
   ) : (
-    <View accessible accessibilityLabel="face-down card">
+    <View accessible accessibilityLabel={T.seatUi.faceDown}>
       <CardBack t={t} width={width} height={h} />
     </View>
   );
@@ -108,7 +109,7 @@ export const PlayingCard = memo(function PlayingCard({
       hitSlop={{ top: 12, bottom: 12, left: 2, right: Math.max(hitSlopRight, 4) }}
       accessibilityRole="button"
       accessibilityLabel={cardLabel(card, legal)}
-      accessibilityHint={legal ? (lifted ? "Tap again to play it" : "Tap to raise it, then tap again to play") : undefined}
+      accessibilityHint={legal ? (lifted ? T.seatUi.tapAgain : T.seatUi.tapToRaise) : undefined}
       accessibilityState={{ disabled: !pressable, selected: lifted }}
     >
       {body}

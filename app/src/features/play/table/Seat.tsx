@@ -3,6 +3,8 @@ import { Animated, StyleSheet, Text, View } from "react-native";
 import { fonts, onTable } from "../../../theme/tokens";
 import { useTheme } from "../../../context/ThemeContext";
 import { AvatarView, avatarBg } from "../../onboarding/AvatarView";
+import { scriptText } from "../../../i18n";
+import { T } from "./copy";
 
 export const PlayerAvatar = memo(function PlayerAvatar({ name, size, turn, bot, avatar }: { name: string; size: number; turn: boolean; bot: boolean; avatar?: number }) {
   const { t, calm } = useTheme();
@@ -47,13 +49,15 @@ export const Seat = memo(function Seat({ name, isTurn, badge, badgeColor, spoken
   name: string; isTurn: boolean; badge: string; badgeColor?: string; spoken?: string; control: "human" | "handover" | "bot"; dealer: boolean;
   online?: boolean; out?: boolean; compact?: boolean; voids?: readonly string[];
 }) {
-  const { t } = useTheme();
-  const status = control === "bot" ? "Bot" : control === "handover" ? "Auto-playing" : online ? null : "Offline";
+  const { t, lang } = useTheme();
+  const U = T.seatUi;
+  const status = control === "bot" ? U.bot : control === "handover" ? U.auto : online ? null : U.offline;
+  const spokenLabel = [name, isTurn ? U.theirTurn : "", spoken, voids.join(T.sep), status ?? ""].filter(Boolean).join(T.sep);
   return (
     <View
       style={[s.wrap, compact && s.compact, out && s.out]}
       accessible
-      accessibilityLabel={`${name}${isTurn ? ", their turn" : ""}${spoken ? `, ${spoken}` : ""}${voids.length ? `, ${voids.join(", ")}` : ""}${status ? `, ${status}` : ""}`}
+      accessibilityLabel={spokenLabel}
       accessibilityLiveRegion={isTurn ? "polite" : "none"}
     >
       <View>
@@ -64,8 +68,8 @@ export const Seat = memo(function Seat({ name, isTurn, badge, badgeColor, spoken
         <Text style={s.name} numberOfLines={1}>{name}</Text>
         <View style={[s.count, { borderColor: t.accent.line }, out && s.countSafe]}><Text style={[s.countText, { color: badgeColor ?? onTable.text }, out && s.countSafeText]}>{badge}</Text></View>
       </View>
-      {voids.length > 0 && <Text style={s.voids}>{voids.join(" ")}</Text>}
-      {status && <Text style={s.status}>{status.toUpperCase()}</Text>}
+      {voids.length > 0 && <Text style={[s.voids, scriptText(lang)]}>{voids.join(" ")}</Text>}
+      {status && <Text style={[s.status, scriptText(lang)]}>{lang === "en" ? status.toUpperCase() : status}</Text>}
     </View>
   );
 });
@@ -81,7 +85,7 @@ const s = StyleSheet.create({
   dealerText: { fontFamily: fonts.ui.bold, fontSize: 9.5 },
   plate: { flexDirection: "row", alignItems: "center", gap: 5, borderWidth: 1, borderRadius: 999, paddingLeft: 8, paddingRight: 3, paddingVertical: 1.5 },
   name: { color: onTable.text, fontFamily: fonts.ui.family, fontSize: 11.5, maxWidth: 64 },
-  count: { minWidth: 19, height: 19, borderRadius: 10, paddingHorizontal: 4, backgroundColor: "rgba(255,255,255,0.06)", borderWidth: 1, alignItems: "center", justifyContent: "center" },
+  count: { minWidth: 19, minHeight: 19, borderRadius: 10, paddingHorizontal: 4, backgroundColor: "rgba(255,255,255,0.06)", borderWidth: 1, alignItems: "center", justifyContent: "center" },
   countText: { fontFamily: fonts.ui.semibold, fontSize: 11, fontVariant: ["tabular-nums"] },
   countSafe: { backgroundColor: onTable.success, borderColor: onTable.success },
   countSafeText: { color: "#16181D" },

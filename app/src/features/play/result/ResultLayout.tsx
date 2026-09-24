@@ -8,7 +8,9 @@ import { GoldButton } from "../../../components/ui/GoldButton";
 import { fonts, radius } from "../../../theme/tokens";
 import { useTheme } from "../../../context/ThemeContext";
 import { useFeel } from "../../../utils/feel";
+import { displayFace, scriptText } from "../../../i18n";
 import type { ResultRow } from "./model";
+import { R } from "./copy";
 
 const NUM = /[−-]?\d+(?:\.\d+)?/;
 
@@ -59,10 +61,8 @@ export function ScoreRows({ title, rows }: { title: string; rows: readonly Resul
   );
 }
 
-const PLACES = ["1ST", "2ND", "3RD"] as const;
-
 export function VictoryPodium({ rows }: { rows: readonly ResultRow[] }) {
-  const { c, t, calm } = useTheme();
+  const { c, t, calm, lang } = useTheme();
   const { height } = useWindowDimensions();
   const compact = height < 800;
   const rise = useRef(new Animated.Value(0)).current;
@@ -91,7 +91,7 @@ export function VictoryPodium({ rows }: { rows: readonly ResultRow[] }) {
     if (!row) return null;
     const first = place === 0;
     return (
-      <Animated.View style={[s.podiumCol, first && s.podiumCol1, motion]} accessible accessibilityLabel={`${PLACES[place]!.toLowerCase()}: ${row.label}, ${row.value}`}>
+      <Animated.View style={[s.podiumCol, first && s.podiumCol1, motion]} accessible accessibilityLabel={`${R.placesSpoken[place]}: ${row.label}, ${row.value}`}>
         <View style={[s.medal, { borderColor: first ? t.accent.color : c.borderControl, backgroundColor: first ? t.accent.line : "transparent" }]}>
           <Text style={[s.medalText, { color: first ? t.accent.color : c.textSecondary }]}>{place + 1}</Text>
         </View>
@@ -106,7 +106,7 @@ export function VictoryPodium({ rows }: { rows: readonly ResultRow[] }) {
           ]}
         >
           <CountUp text={row.value} run={count} style={[s.podiumScore, { color: first ? t.accent.on : t.value.coins }]} />
-          <Text style={[s.podiumRank, { color: first ? t.accent.on : c.textSecondary }]}>{PLACES[place]}</Text>
+          <Text style={[s.podiumRank, { color: first ? t.accent.on : c.textSecondary }, scriptText(lang)]} numberOfLines={1}>{R.places[place]}</Text>
         </View>
       </Animated.View>
     );
@@ -140,7 +140,7 @@ export function ResultLayout({
   children: React.ReactNode;
   actions: React.ReactNode;
 }) {
-  const { c, t, calm } = useTheme();
+  const { c, t, calm, lang } = useTheme();
   const feel = useFeel();
   const { height } = useWindowDimensions();
   const compact = height < 800;
@@ -164,8 +164,8 @@ export function ResultLayout({
   const onShareMatch = async () => {
     try {
       await Share.share({
-        message: `TashZone Match Complete: ${headline}! ${blurb ?? ""}`,
-        title: "TashZone Match Result",
+        message: R.share(headline, blurb ?? ""),
+        title: R.shareTitle,
       });
     } catch {}
   };
@@ -178,7 +178,7 @@ export function ResultLayout({
       footer={
         <View style={s.footer}>
           {hero && (
-            <GoldButton kind="glass" label="Share result" onPress={onShareMatch} />
+            <GoldButton kind="glass" label={R.shareButton} onPress={onShareMatch} />
           )}
           {actions}
         </View>
@@ -193,8 +193,8 @@ export function ResultLayout({
             ))}
           </View>
         )}
-        {label ? <Text style={[s.eyebrow, { color: c.textMuted }]}>{label.toUpperCase()}</Text> : null}
-        <Text style={[s.headline, { color: hero ? t.accent.color : c.text, fontFamily: t.type.display, fontSize: hero ? (compact ? 30 : 36) : 22 }, hero && { textAlign: "center" }]}>
+        {label ? <Text style={[s.eyebrow, { color: c.textMuted }, scriptText(lang)]}>{lang === "en" ? label.toUpperCase() : label}</Text> : null}
+        <Text style={[s.headline, { color: hero ? t.accent.color : c.text }, displayFace(t.type.display, hero ? (compact ? 30 : 36) : 22, lang), hero && { textAlign: "center" }]}>
           {headline}
         </Text>
         {blurb ? <Caption center={hero} size={hero ? 14 : 13}>{blurb}</Caption> : null}

@@ -8,14 +8,15 @@ import { TagPill } from "../../../../components/ui/TagPill";
 import { fonts } from "../../../../theme/tokens";
 import { useTheme } from "../../../../context/ThemeContext";
 import { houseRules } from "../insights";
+import { T } from "../copy";
 
 /** House rules (mockup `sheet==='rules'`): the rules this match was compiled with. They are fixed for the match, so they are shown, not switched. */
 export function RulesSheet({ visible, onClose, view }: { visible: boolean; onClose: () => void; view: any }) {
   const { c } = useTheme();
   const rows = houseRules(view);
   return (
-    <Sheet visible={visible} title="House rules" onClose={onClose} actions={<GoldButton label="Done" onPress={onClose} />}>
-      <Caption>These rules are fixed for this match. Start a new table to change them.</Caption>
+    <Sheet visible={visible} title={T.sheets.houseRules} onClose={onClose} actions={<GoldButton label={T.sheets.done} onPress={onClose} />}>
+      <Caption>{T.sheets.rulesFixed}</Caption>
       <View style={s.list}>
         {rows.map((r) => (
           <GlassCard key={r.title} style={s.row}>
@@ -23,7 +24,7 @@ export function RulesSheet({ visible, onClose, view }: { visible: boolean; onClo
               <Text style={[s.title, { color: c.text }]}>{r.title}</Text>
               <Caption>{r.text}</Caption>
             </View>
-            {r.on !== null ? <TagPill text={r.on ? "On" : "Off"} gold={r.on} /> : null}
+            {r.on !== null ? <TagPill text={r.on ? T.sheets.on : T.sheets.off} gold={r.on} /> : null}
           </GlassCard>
         ))}
       </View>

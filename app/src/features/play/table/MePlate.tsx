@@ -2,21 +2,23 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { fonts, onTable } from "../../../theme/tokens";
 import { useTheme } from "../../../context/ThemeContext";
+import { scriptText } from "../../../i18n";
 import { PlayerAvatar } from "./Seat";
+import { T } from "./copy";
 
 /** The player's own plate below the felt (mockup `.me-plate`): profile avatar, name, cards left, YOUR TURN, the instruction and the clock. */
 export function MePlate({ name, avatar, cards, turn, instruction, clock }: {
   name: string; avatar: number; cards: number; turn: boolean; instruction: string; clock?: React.ReactNode;
 }) {
-  const { t } = useTheme();
+  const { t, lang } = useTheme();
   return (
     <View style={s.row}>
       <PlayerAvatar name={name} size={36} turn={turn} bot={false} avatar={avatar} />
       <View style={s.text}>
         <View style={s.line}>
           <Text style={s.name} numberOfLines={1}>{name}</Text>
-          <View style={[s.count, { borderColor: t.accent.line, backgroundColor: t.surface.bg }]} accessible accessibilityLabel={`${cards} cards in hand`}><Text style={[s.countText, { color: t.accent.color }]}>{cards}</Text></View>
-          {turn ? <View style={[s.tag, { borderColor: t.accent.color }]}><Text style={[s.tagText, { color: t.accent.color }]}>YOUR TURN</Text></View> : null}
+          <View style={[s.count, { borderColor: t.accent.line, backgroundColor: t.surface.bg }]} accessible accessibilityLabel={T.seatUi.inHand(cards)}><Text style={[s.countText, { color: t.accent.color }]}>{cards}</Text></View>
+          {turn ? <View style={[s.tag, { borderColor: t.accent.color }]}><Text style={[s.tagText, { color: t.accent.color }, scriptText(lang)]} numberOfLines={1}>{T.seatUi.yourTurn}</Text></View> : null}
         </View>
         <Text style={[s.ask, { color: t.accent.color }]} accessibilityLiveRegion="polite" numberOfLines={2}>{instruction}</Text>
         {clock}

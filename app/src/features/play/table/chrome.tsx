@@ -5,6 +5,7 @@ import { fonts, minTouchTarget, onTable } from "../../../theme/tokens";
 import { useTheme } from "../../../context/ThemeContext";
 import { CLOCK_LOW_MS, timeLeftFraction } from "./insights";
 import { useDeadlineLeft, useTurnClock } from "./hooks";
+import { T } from "./copy";
 
 /** Static pill over the felt (mockup `.chip.mini`). */
 export function FeltChip({ text, warn, color }: { text: string; warn?: boolean; color?: string }) {
@@ -45,7 +46,7 @@ export function TurnBar({ remainingMs, totalMs, width = 64 }: { remainingMs: num
   const low = remainingMs <= CLOCK_LOW_MS;
   const frac = timeLeftFraction(remainingMs, totalMs);
   return (
-    <View style={[s.track, { width }]} accessible accessibilityRole="progressbar" accessibilityLabel={`Time left: ${Math.max(0, Math.ceil(remainingMs / 1000))} seconds`}
+    <View style={[s.track, { width }]} accessible accessibilityRole="progressbar" accessibilityLabel={T.seatUi.timeLeft(Math.max(0, Math.ceil(remainingMs / 1000)))}
       accessibilityValue={{ min: 0, max: 100, now: Math.round(frac * 100) }}>
       <View style={[s.fill, { width: `${frac * 100}%`, backgroundColor: low ? onTable.error : t.accent.color }]} />
     </View>

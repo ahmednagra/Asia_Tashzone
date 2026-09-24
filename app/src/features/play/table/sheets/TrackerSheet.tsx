@@ -7,6 +7,7 @@ import { cards, fonts } from "../../../../theme/tokens";
 import { useTheme } from "../../../../context/ThemeContext";
 import { SUIT_GLYPH, cardLabel, rankLabel } from "../logic";
 import { SUITS_ORDER, trackerRow } from "../insights";
+import { T } from "../copy";
 
 /** What has gone (mockup `sheet==='tracker'`): struck-through cards were played this hand, gold ones are in your hand. Read from the view. */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -14,14 +15,14 @@ export function TrackerSheet({ visible, onClose, view }: { visible: boolean; onC
   const { c, t, fourColor } = useTheme();
   const suits = fourColor ? cards.fourColor : cards.twoColor;
   return (
-    <Sheet visible={visible} title="What has gone" onClose={onClose} actions={<GoldButton label="Close" onPress={onClose} />}>
-      <Caption>Struck-through cards have been played this hand. Gold ones are in your hand. Anything that goes back into a hand is un-struck.</Caption>
+    <Sheet visible={visible} title={T.sheets.tracker} onClose={onClose} actions={<GoldButton label={T.sheets.close} onPress={onClose} />}>
+      <Caption>{T.sheets.trackerNote}</Caption>
       {visible && SUITS_ORDER.map((suit) => (
         <View key={suit} style={s.suitRow}>
           <View style={s.chip} accessibilityElementsHidden importantForAccessibility="no-hide-descendants"><Text style={[s.glyph, { color: suits[suit as keyof typeof suits] }]}>{SUIT_GLYPH[suit]}</Text></View>
           <View style={s.ranks}>
             {trackerRow(view, suit).map(({ card, status }) => (
-              <View key={card} accessible accessibilityLabel={`${cardLabel(card)}, ${status === "gone" ? "played" : status === "mine" ? "in your hand" : "still out"}`}
+              <View key={card} accessible accessibilityLabel={`${cardLabel(card)}${T.sep}${status === "gone" ? T.sheets.played : status === "mine" ? T.sheets.mine : T.sheets.out}`}
                 style={[s.box, { borderColor: status === "mine" ? t.accent.color : c.borderSubtle, opacity: status === "gone" ? 0.3 : 1 }]}>
                 <Text style={[s.rank, { color: status === "mine" ? t.accent.color : c.text }, status === "gone" && s.struck]}>{rankLabel(card)}</Text>
               </View>

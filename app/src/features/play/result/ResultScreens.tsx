@@ -3,11 +3,15 @@ import { Redirect, useRouter } from "expo-router";
 import { ConfirmSheet } from "../../../components/ui/ConfirmSheet";
 import { GoldButton } from "../../../components/ui/GoldButton";
 import { readOutcome } from "../session";
+import { useTheme } from "../../../context/ThemeContext";
+import { T } from "../table/copy";
 import { ResultLayout, ScoreRows, VictoryPodium } from "./ResultLayout";
+import { R } from "./copy";
 
 export function HandResultScreen() {
   const router = useRouter();
   const [confirm, setConfirm] = useState(false);
+  useTheme();
   const o = readOutcome();
   if (!o || o.kind !== "hand") return <Redirect href="/" />;
   const { data } = o;
@@ -26,25 +30,25 @@ export function HandResultScreen() {
               else router.replace("/result/game");
             }}
           />
-          <GoldButton label="Leave the match" kind="glass" onPress={() => setConfirm(true)} />
+          <GoldButton label={R.leave} kind="glass" onPress={() => setConfirm(true)} />
         </>
       }
     >
       <ScoreRows title={data.rowsTitle} rows={data.rows} />
       <ConfirmSheet
         visible={confirm}
-        title="Leave this match?"
+        title={R.leaveTitle}
         onCancel={() => setConfirm(false)}
         onConfirm={() => {
           setConfirm(false);
           router.back();
           o.onLeave();
         }}
-        confirmLabel="Leave the match"
-        cancelLabel="Keep playing"
+        confirmLabel={R.leave}
+        cancelLabel={R.keepPlaying}
         facts={[
-          { mark: "H", title: "This game ends here", body: "A game against bots is not held open: leaving closes the table for good." },
-          { mark: "!", title: "The running score is dropped", body: "No match result is recorded for a match you leave." },
+          { mark: "H", title: T.screen.endsTitle, body: T.screen.endsBody },
+          { mark: "!", title: R.scoreDroppedTitle, body: R.scoreDroppedBody },
         ]}
       />
     </ResultLayout>
@@ -53,6 +57,7 @@ export function HandResultScreen() {
 
 export function GameResultScreen() {
   const router = useRouter();
+  useTheme();
   const o = readOutcome();
   if (!o || o.kind !== "game") return <Redirect href="/" />;
   const { data } = o;
@@ -66,14 +71,14 @@ export function GameResultScreen() {
       actions={
         <>
           <GoldButton
-            label="Deal again"
+            label={R.dealAgain}
             onPress={() => {
               o.onAgain();
               router.back();
             }}
           />
           <GoldButton
-            label="Back to the table list"
+            label={R.backToList}
             kind="glass"
             onPress={() => {
               router.back();

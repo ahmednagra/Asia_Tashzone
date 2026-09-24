@@ -8,6 +8,7 @@ import { useTheme } from "../../../context/ThemeContext";
 import { useBackAction } from "../../../hooks/useBackAction";
 import { useProfile } from "../../../store/profile";
 import { fonts, onTable } from "../../../theme/tokens";
+import { displayFace, scriptText } from "../../../i18n";
 import { useFeel } from "../../../utils/feel";
 import { FeltChip, RoundButton, TurnClock } from "./chrome";
 import { CallPicker, HandOverStrip, RedealStrip, TakeButton, TrumpPicker } from "./Controls";
@@ -15,7 +16,8 @@ import { Felt } from "./Felt";
 import { Hand } from "./Hand";
 import { useTrickHold } from "./hooks";
 import { breakWarning, type HandSort, instructionLine, lastTrick, mySeat, phaseWord, statusLine, voidTags } from "./insights";
-import { type Area, cardLabel, tableModel, trickOffset } from "./logic";
+import { type Area, cardLabel, seatName, tableModel, trickOffset } from "./logic";
+import { T } from "./copy";
 import { MePlate } from "./MePlate";
 import { Seat } from "./Seat";
 import { ArrangeSheet, type HandLayout } from "./sheets/ArrangeSheet";
@@ -74,7 +76,7 @@ export function TableScreen({
   const { width, height } = useWindowDimensions();
   const landscape = width > height;
   const inset = useSafeAreaInsets();
-  const { t, calm, largeCards } = useTheme();
+  const { t, calm, largeCards, lang, rtl } = useTheme();
   const feel = useFeel();
   const focused = useIsFocused();
   const { profile, update } = useProfile();
@@ -88,8 +90,8 @@ export function TableScreen({
 
   const me = mySeat(view);
   const h = view.hand;
-  const model = useMemo(() => tableModel(view, me, names), [view, me, names]);
-  const voids = useMemo(() => model.seats.map((x) => voidTags(view, x.seat)), [view, model]);
+  const model = useMemo(() => tableModel(view, me, names), [view, me, names, lang]);
+  const voids = useMemo(() => model.seats.map((x) => voidTags(view, x.seat)), [view, model, lang]);
   const many = model.seats.length > 5;
   const isCompact = landscape || height < 700;
   const sideW = landscape ? Math.round(Math.min(width * 0.46, 420)) : 0;
@@ -106,7 +108,8 @@ export function TableScreen({
   const instruction = instructionLine(view, names);
   const warn = breakWarning(view, names);
   const last = lastTrick(view, names);
-  const nameOf = (seat: number) => names[seat] ?? `Seat ${seat + 1}`;
+  const nameOf = (seat: number) => seatName(names, seat);
+  const S = T.screen;
 
   const totalMs: number = view.rules?.turn_ms ?? 20000;
   const clockOn = !!clock && profile.timer && !profile.easy && myTurn && h.phase !== "WINDOW";
@@ -180,25 +183,25 @@ export function TableScreen({
 
   const topBar = (
     <View style={s.topBar}>
-      <RoundButton glyph="☰" label="Table menu" onPress={() => setSheet("menu")} />
+      <RoundButton glyph="☰" label={S.menu} onPress={() => setSheet("menu")} />
       <Text
-        style={[s.status, { fontFamily: t.type.display }, status.mine && { color: t.accent.color }]}
+        style={[s.status, displayFace(t.type.display, 16, lang), status.mine && { color: t.accent.color }]}
         numberOfLines={1}
         accessibilityRole="header"
         accessibilityLiveRegion="polite"
       >
         {status.text}
       </Text>
-      <RoundButton glyph="▦" label="What has gone" onPress={() => setSheet("tracker")} />
+      <RoundButton glyph="▦" label={S.tracker} onPress={() => setSheet("tracker")} />
     </View>
   );
 
   const felt = (
-    <View style={s.scene} onLayout={(e) => setFeltH(e.nativeEvent.layout.height)}>
+    <View style={[s.scene, s.ltr]} onLayout={(e) => setFeltH(e.nativeEvent.layout.height)}>
       <Felt>
         <View style={s.hudRow}>
           {model.hud.map((x) => (
-            <FeltChip key={x} text={x} color={/^Points/.test(x) ? t.value.points : undefined} />
+            <FeltChip key={x.text} text={x.text} color={x.points ? t.value.points : undefined} />
           ))}
         </View>
 
@@ -209,7 +212,7 @@ export function TableScreen({
 
           <View style={s.centerStage}>
             {feltH >= 220 ? (
-              <Text style={s.phase} accessibilityElementsHidden importantForAccessibility="no">
+              <Text style={[s.phase, scriptText(lang)]} accessibilityElementsHidden importantForAccessibility="no">
                 {phaseWord(view)}
               </Text>
             ) : null}
@@ -218,10 +221,10 @@ export function TableScreen({
               accessible
               accessibilityLabel={
                 h && shown.trick.length
-                  ? `In the trick: ${shown.trick.map((p) => `${nameOf(p.seat)}, ${cardLabel(p.card)}`).join("; ")}`
+                  ? S.inTrick(shown.trick.map((p) => `${nameOf(p.seat)}${T.sep}${cardLabel(p.card)}`).join("; "))
                   : h
-                  ? "No cards in the trick"
-                  : "Waiting to deal"
+                  ? S.trickEmpty
+                  : S.waitingDeal
               }
             >
               {shown.trick.map((p) => {
@@ -279,12 +282,12 @@ export function TableScreen({
         ) : null}
       />
       <View style={s.actionsRow}>
-        {undo?.can ? <RoundButton glyph="↶" label="Undo your last card" onPress={undo.run} /> : null}
-        {last ? <RoundButton glyph="↺" label="The last trick" onPress={() => setSheet("last")} /> : null}
+        {undo?.can ? <RoundButton glyph={rtl ? "↷" : "↶"} label={S.undo} onPress={undo.run} /> : null}
+        {last ? <RoundButton glyph={rtl ? "↻" : "↺"} label={S.last} onPress={() => setSheet("last")} /> : null}
         {profile.hints && hint && myTurn ? (
           <RoundButton
             glyph="?"
-            label="Hint"
+            label={S.hint}
             on
             onPress={() => {
               setHintMove(hint());
@@ -384,7 +387,7 @@ export function TableScreen({
         onLeave={onLeave ? () => setSheet("leave") : undefined}
       />
       <RulesSheet visible={sheet === "rules"} onClose={close} view={view} />
-      <InfoSheet visible={sheet === "info"} onClose={close} title="Table info" rows={info ?? []} />
+      <InfoSheet visible={sheet === "info"} onClose={close} title={S.tableInfo} rows={info ?? []} />
       <LastTrickSheet visible={sheet === "last"} onClose={close} view={view} names={names} />
       <ArrangeSheet
         visible={sheet === "arrange"}
@@ -398,36 +401,24 @@ export function TableScreen({
       <HintSheet visible={sheet === "hint"} onClose={close} view={view} move={hintMove} />
       <ConfirmSheet
         visible={sheet === "leave"}
-        title="Leave this match?"
+        title={S.leaveTitle}
         onCancel={close}
         onConfirm={() => {
           close();
           onLeave?.();
         }}
-        confirmLabel="Leave the match"
-        cancelLabel="Stay at the table"
+        confirmLabel={S.leave}
+        cancelLabel={S.stay}
         standing={[
-          `${h?.my_hand?.length ?? 0} in hand`,
-          `${model.seats.length} seats`,
-          ...(h ? [`${model.hud[0] ?? ""}`] : []),
+          S.inHand(h?.my_hand?.length ?? 0),
+          S.seats(model.seats.length),
+          ...(h ? [model.hud[0]?.text ?? ""] : []),
         ].filter(Boolean)}
         facts={[
-          {
-            mark: "H",
-            title: "This game ends here",
-            body: "A game against bots is not held open: leaving closes the table for good.",
-          },
+          { mark: "H", title: S.endsTitle, body: S.endsBody },
           h && h.phase !== "DONE" && !view.match.over
-            ? {
-                mark: "!",
-                title: "The hand in progress is dropped",
-                body: "No result is recorded for it, and the running score goes with it.",
-              }
-            : {
-                mark: "·",
-                title: "Nothing is in progress",
-                body: "You can leave without losing anything.",
-              },
+            ? { mark: "!", title: S.droppedTitle, body: S.droppedBody }
+            : { mark: "·", title: S.idleTitle, body: S.idleBody },
         ]}
       />
     </View>
@@ -471,6 +462,9 @@ const s = StyleSheet.create({
     flex: 1,
     minHeight: 0,
     marginVertical: 2,
+  },
+  ltr: {
+    direction: "ltr",
   },
   flash: {
     position: "absolute",

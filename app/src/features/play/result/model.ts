@@ -1,6 +1,8 @@
 /** Result screens' data (pure, tested in Node): built from the SeatView of a finished hand or match, never from hidden state. */
-import { formatScore, tableModel } from "../table/logic";
+import { formatScore, seatName, tableModel } from "../table/logic";
 import { mySeat } from "../table/insights";
+import { CARD, T } from "../table/copy";
+import { R } from "./copy";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -30,11 +32,9 @@ export interface GameResult {
   lostBhabhi: boolean;
 }
 
-const ORD = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"];
-export const ordinal = (n: number): string => ORD[n - 1] ?? `${n}th`;
-const nameOf = (names: readonly string[], seat: number) => names[seat] ?? `Seat ${seat + 1}`;
+export const ordinal = (n: number): string => CARD.ord(n);
+const nameOf = (names: readonly string[], seat: number) => seatName(names, seat);
 const signed = (tenths: number) => `${tenths > 0 ? "+" : ""}${formatScore(tenths)}`;
-const unit = (game: string) => (game === "callbreak" ? "Round" : "Hand");
 
 /** The hand that just finished (call when `view.hand.phase === "DONE"`); null when there is nothing to report. */
 export function handResult(view: any, names: readonly string[]): HandResult | null {
@@ -44,37 +44,38 @@ export function handResult(view: any, names: readonly string[]): HandResult | nu
   const done: number = m.hands_played;
   const total: number = view.rules.rounds ?? 0;
   const hasNext = !m.over;
-  const base = { title: `${unit(game)} ${done}`, hasNext, nextLabel: hasNext ? `Deal ${unit(game).toLowerCase()} ${done + 1}` : "See the match result" };
+  const round = game === "callbreak";
+  const base = { title: round ? R.round(done) : R.hand(done), hasNext, nextLabel: hasNext ? (round ? R.dealRound(done + 1) : R.dealHand(done + 1)) : R.seeMatch };
   if (game === "callbreak") {
     const last = m.history[m.history.length - 1];
     if (!last) return null;
     const rows: ResultRow[] = (last.calls as number[]).map((call, seat) => ({
-      key: String(seat), label: seat === me ? "You" : nameOf(names, seat),
-      detail: `called ${call}, won ${last.tricks[seat]}`,
+      key: String(seat), label: seat === me ? R.you : nameOf(names, seat),
+      detail: R.calledWon(call, last.tricks[seat]),
       value: signed(last.deltas[seat]), tone: last.deltas[seat] > 0 ? "plus" : "minus", mine: seat === me,
     }));
     const made = last.deltas[me] > 0;
-    return { ...base, headline: made ? "You made your call" : "You missed your call", blurb: "Why the score changed:", rowsTitle: `Round ${done} of ${total}`, rows };
+    return { ...base, headline: made ? R.madeCall : R.missedCall, blurb: R.whyScore, rowsTitle: R.roundOf(done, total), rows };
   }
   if (game === "courtpiece") {
     const last = m.results[m.results.length - 1];
     if (!last) return null;
     const myTeam = me % 2;
     const rows: ResultRow[] = [0, 1].map((t) => ({
-      key: String(t), label: t === myTeam ? "Your team" : "Other team", detail: `${last.tricks[t]} tricks · ${m.points[t]} points in all`,
+      key: String(t), label: t === myTeam ? R.yourTeam : R.otherTeam, detail: R.teamDetail(last.tricks[t], m.points[t]),
       value: `+${last.points[t]}`, tone: last.points[t] > 0 ? "plus" : "plain", mine: t === myTeam,
     }));
     const won = last.winner === myTeam;
-    return { ...base, headline: `${won ? "Your team won" : "The other team won"} the hand${last.court ? ": a court" : ""}`, blurb: "Points from this hand:", rowsTitle: "Where the teams stand", rows };
+    return { ...base, headline: R.teamWonHand(won, !!last.court), blurb: R.pointsFromHand, rowsTitle: R.teamsStand, rows };
   }
   const last = m.results[m.results.length - 1];
   if (!last) return null;
   const left = view.hand?.counts?.[last.bhabhi];
   const rows: ResultRow[] = [
-    ...(last.finish_order as number[]).map((seat, i) => ({ key: `o${seat}`, label: `${i + 1}. ${seat === me ? "You" : nameOf(names, seat)}`, detail: "got away", value: "safe", tone: "plus" as Tone, mine: seat === me })),
-    { key: "b", label: `${last.finish_order.length + 1}. ${last.bhabhi === me ? "You" : nameOf(names, last.bhabhi)}`, detail: left === undefined ? undefined : `left with ${left}`, value: "Bhabhi", tone: "minus" as Tone, mine: last.bhabhi === me },
+    ...(last.finish_order as number[]).map((seat, i) => ({ key: `o${seat}`, label: `${i + 1}. ${seat === me ? R.you : nameOf(names, seat)}`, detail: R.gotAway, value: R.safe, tone: "plus" as Tone, mine: seat === me })),
+    { key: "b", label: `${last.finish_order.length + 1}. ${last.bhabhi === me ? R.you : nameOf(names, last.bhabhi)}`, detail: left === undefined ? undefined : R.leftWith(left), value: R.bhabhi, tone: "minus" as Tone, mine: last.bhabhi === me },
   ];
-  return { ...base, headline: last.bhabhi === me ? "You are the Bhabhi" : `${nameOf(names, last.bhabhi)} is the Bhabhi`, blurb: last.bhabhi === me ? "You were left holding the cards." : "You got away.", rowsTitle: "Finishing order", rows };
+  return { ...base, headline: last.bhabhi === me ? R.youBhabhi : R.isBhabhi(nameOf(names, last.bhabhi)), blurb: last.bhabhi === me ? R.youHeld : R.youGotAway, rowsTitle: R.finishing, rows };
 }
 
 /** The whole match once `view.match.over`. */
@@ -85,7 +86,7 @@ export function gameResult(view: any, names: readonly string[]): GameResult | nu
   const game = tm.game;
   const myRow = tm.results.find((r) => r.seat === me);
   const rows: ResultRow[] = tm.results.map((r) => ({
-    key: String(r.seat), label: `${r.place ?? "-"}. ${r.seat === me ? "You" : nameOf(names, r.seat)}`,
+    key: String(r.seat), label: `${r.place ?? "-"}. ${r.seat === me ? R.you : nameOf(names, r.seat)}`,
     value: r.score, tone: r.place === 1 ? "gold" : "plain", mine: r.seat === me,
   }));
   const top = tm.results[0]!;
@@ -95,19 +96,19 @@ export function gameResult(view: any, names: readonly string[]): GameResult | nu
     const lost = max > 0 && counts[me] === max;
     const worst = counts.indexOf(max);
     return {
-      label: lost ? "This match goes against you" : "The match is over",
-      head: max === 0 ? "No Bhabhi" : worst === me ? "You" : nameOf(names, worst),
-      line: max === 0 ? "Everybody got away." : lost ? "You were left holding the cards most often. That makes you the Bhabhi." : `${nameOf(names, worst)} was left holding the cards most often.`,
-      rowsTitle: "Times Bhabhi", rows, won: !lost, lostBhabhi: lost,
+      label: lost ? R.matchAgainst : R.matchOver,
+      head: max === 0 ? R.noBhabhi : worst === me ? R.you : nameOf(names, worst),
+      line: max === 0 ? R.everybodyAway : lost ? R.youMost : R.mostOften(nameOf(names, worst)),
+      rowsTitle: R.timesBhabhi, rows, won: !lost, lostBhabhi: lost,
     };
   }
   if (game === "courtpiece") {
     const won = (myRow?.place ?? 2) === 1;
-    return { label: won ? "Your team takes it" : "The other team takes it", head: won ? "Your team" : "The other team", line: `First to ${view.rules.target_points} points.`, rowsTitle: "Points", rows: [0, 1].map((t) => ({ key: `t${t}`, label: t === me % 2 ? "Your team" : "Other team", value: `${view.match.points[t]} pts`, tone: t === view.match.winner ? "gold" : "plain", mine: t === me % 2 })), won, lostBhabhi: false };
+    return { label: won ? R.teamTakes : R.otherTakes, head: won ? R.yourTeam : R.theOtherTeam, line: R.firstTo(view.rules.target_points), rowsTitle: R.points, rows: [0, 1].map((t) => ({ key: `t${t}`, label: t === me % 2 ? R.yourTeam : R.otherTeam, value: T.model.pts(view.match.points[t]), tone: t === view.match.winner ? "gold" : "plain", mine: t === me % 2 })), won, lostBhabhi: false };
   }
   const won = myRow?.place === 1;
   return {
-    label: won ? "You won the match" : "The match is over", head: top.seat === me ? "You" : nameOf(names, top.seat),
-    line: myRow?.place ? `You placed ${ordinal(myRow.place)} of ${tm.results.length}.` : "", rowsTitle: "Final scores", rows, won, lostBhabhi: false,
+    label: won ? R.wonMatch : R.matchOver, head: top.seat === me ? R.you : nameOf(names, top.seat),
+    line: myRow?.place ? R.placed(myRow.place, tm.results.length) : "", rowsTitle: R.finalScores, rows, won, lostBhabhi: false,
   };
 }

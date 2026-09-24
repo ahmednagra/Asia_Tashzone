@@ -5,12 +5,13 @@ import { GoldButton } from "../../../../components/ui/GoldButton";
 import { Sheet } from "../../../../components/ui/Sheet";
 import { fonts } from "../../../../theme/tokens";
 import { useTheme } from "../../../../context/ThemeContext";
+import { T } from "../copy";
 
 /** Table info: game, preset, length, players and bots, as chosen at setup. */
 export function InfoSheet({ visible, onClose, title, rows }: { visible: boolean; onClose: () => void; title: string; rows: readonly (readonly [string, string])[] }) {
   const { c } = useTheme();
   return (
-    <Sheet visible={visible} title={title} onClose={onClose} actions={<GoldButton label="Done" onPress={onClose} />}>
+    <Sheet visible={visible} title={title} onClose={onClose} actions={<GoldButton label={T.sheets.done} onPress={onClose} />}>
       <GlassCard>
         {rows.map(([k, v]) => (
           <View key={k} style={s.row} accessible accessibilityLabel={`${k}: ${v}`}>

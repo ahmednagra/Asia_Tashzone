@@ -6,6 +6,7 @@ import { useFeel } from "../../../utils/feel";
 import { type HandSort, sortHand } from "./insights";
 import { type HandSpot, handGeometry } from "./logic";
 import { PlayingCard } from "./PlayingCard";
+import { T } from "./copy";
 
 interface HandCardSlotProps {
   id: string;
@@ -125,6 +126,7 @@ export const Hand = memo(function Hand({
   sort?: HandSort;
 }) {
   const feel = useFeel();
+  useTheme();
   const [armed, setArmed] = useState<string | null>(null);
 
   const playable = useMemo(() => new Set(legal.flatMap((m) => (m.t === "Play" ? [m.card] : []))), [legal]);
@@ -176,7 +178,7 @@ export const Hand = memo(function Hand({
   const isTurnActive = playable.size > 0;
 
   return (
-    <View style={s.wrap} accessibilityLabel={`Your hand, ${cards.length} cards`}>
+    <View style={s.wrap} accessibilityLabel={T.seatUi.hand(cards.length)}>
       <View style={[s.fanContainer, { width: maxWidth, height: geo.height }]}>
         {ordered.map((c, i) => {
           const isPlayable = playable.has(c);
