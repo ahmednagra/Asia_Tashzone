@@ -43,6 +43,7 @@
     "plugins": [
       "./plugins/with-release-signing",
       "./plugins/with-build-hygiene",
+      "./plugins/with-play-games",
       "expo-router",
       [
         "expo-camera",
@@ -69,7 +70,8 @@
           "enableBackgroundPlayback": false,
           "enableBackgroundRecording": false
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "scheme": "tashzone",
     "experiments": {

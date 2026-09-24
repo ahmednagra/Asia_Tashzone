@@ -14,6 +14,7 @@ import { ThemeProvider, useTheme } from "../context/ThemeContext";
 import { ProfileProvider, useProfile } from "../store/profile";
 import { ErrorBoundary } from "../components/ui/ErrorBoundary";
 import { setLang } from "../i18n";
+import { setGuestProtection } from "../features/multiplayer/http";
 import { RoomSwitch } from "../components/ui/RoomSwitch";
 import { StorageNotice } from "../components/ui/StorageNotice";
 import { UpdateNotice } from "../components/ui/UpdateNotice";
@@ -33,6 +34,7 @@ function Shell({ fontsReady }: { fontsReady: boolean }) {
   const allReady = fontsReady && themeReady && ready;
 
   useLayoutEffect(() => { setLang(profile.lang); }, [profile.lang]);
+  useEffect(() => { setGuestProtection(profile.protectedMode); }, [profile.protectedMode]);
 
   useEffect(() => { if (allReady) SplashScreen.hideAsync().catch(() => {}); }, [allReady]);
   useEffect(() => { SystemUI.setBackgroundColorAsync(c.bg).catch(() => {}); }, [c.bg]);
