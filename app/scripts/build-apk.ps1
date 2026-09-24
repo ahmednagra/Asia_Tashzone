@@ -1,5 +1,7 @@
 param(
   [switch]$Install,
+  [switch]$Clean,
+  [switch]$AllAbis,
   [string]$ApiUrl = $(if ($env:EXPO_PUBLIC_API_URL) { $env:EXPO_PUBLIC_API_URL } else { 'https://api.141-148-193-78.sslip.io' }),
   [string]$Toolchain = 'D:\android-toolchain'
 )
@@ -100,14 +102,39 @@ $signed = Test-Path (Join-Path $App 'credentials\keystore.properties')
 if ($signed) { Write-Host 'Signing: release keystore (app\credentials)' -ForegroundColor Green }
 else { Write-Host 'Signing: DEBUG key (no app\credentials\keystore.properties): installable, but cannot upgrade a release-signed install' -ForegroundColor Yellow }
 
-Step 4 'pnpm install'
+function Get-Fingerprint([string[]]$paths, [string]$extra) {
+  $sha = [Security.Cryptography.SHA256]::Create()
+  $buf = New-Object IO.MemoryStream
+  foreach ($p in $paths) {
+    foreach ($f in (Get-ChildItem -Path $p -File -Recurse -ErrorAction SilentlyContinue | Sort-Object FullName)) {
+      $bytes = [IO.File]::ReadAllBytes($f.FullName)
+      if ($f.Name -eq 'app.json') { $bytes = [Text.Encoding]::UTF8.GetBytes(([Text.Encoding]::UTF8.GetString($bytes) -replace '"versionCode":\s*\d+', '"versionCode": 0')) }
+      $buf.Write($bytes, 0, $bytes.Length)
+    }
+  }
+  $e = [Text.Encoding]::UTF8.GetBytes($extra)
+  $buf.Write($e, 0, $e.Length)
+  ([BitConverter]::ToString($sha.ComputeHash($buf.ToArray())) -replace '-', '').ToLower()
+}
+
+$abis = if ($AllAbis) { 'armeabi-v7a,arm64-v8a' } else { 'arm64-v8a' }
+Write-Host "CPU types: $abis$(if (-not $AllAbis) { '   (add -AllAbis for old 32-bit phones)' })"
+
+Step 4 'dependencies'
 Set-Location $Root
-Run 'pnpm' @('install', '--frozen-lockfile', '--config.confirmModulesPurge=false')
+$installStamp = Join-Path $Root 'node_modules\.tz-install'
+$installPrint = Get-Fingerprint @((Join-Path $Root 'pnpm-lock.yaml'), (Join-Path $Root 'package.json'), (Join-Path $Root 'patches'), (Join-Path $App 'package.json')) ''
+if ($Clean -or -not (Test-Path $installStamp) -or ((Get-Content $installStamp -Raw).Trim() -ne $installPrint)) {
+  Run 'pnpm' @('install', '--frozen-lockfile', '--config.confirmModulesPurge=false')
+  Set-Content -Path $installStamp -Value $installPrint -NoNewline
+} else {
+  Write-Host 'unchanged since the last build; skipping pnpm install'
+}
 
 Step 5 'build shared packages'
 Run 'pnpm' @('build')
 
-Step 6 'raise versionCode, then expo prebuild (android)'
+Step 6 'versionCode and native project'
 Set-Location $App
 $appJson = Join-Path $App 'app.json'
 $text = [IO.File]::ReadAllText($appJson)
@@ -117,23 +144,43 @@ $next = $was + 1
 [IO.File]::WriteAllText($appJson, ($text -replace '"versionCode":\s*\d+', ('"versionCode": ' + $next)), (New-Object Text.UTF8Encoding $false))
 Write-Host "versionCode $was -> $next (commit app/app.json after a build you ship)"
 $env:NODE_ENV = 'production'
-Run 'npx' @('expo', 'prebuild', '--platform', 'android', '--clean', '--no-install')
 $gradleFile = Join-Path $App 'android\app\build.gradle'
+$prebuildStamp = Join-Path $App 'android\.tz-prebuild'
+$nativePrint = Get-Fingerprint @($appJson, (Join-Path $App 'package.json'), (Join-Path $App 'plugins'), (Join-Path $App 'assets\icon.png'), (Join-Path $App 'assets\adaptive-icon.png'), (Join-Path $App 'assets\adaptive-background.png'), (Join-Path $App 'assets\splash-icon.png'), (Join-Path $Root 'pnpm-lock.yaml'), (Join-Path $Root 'patches')) "signed=$signed"
+$fresh = $Clean -or -not (Test-Path $gradleFile) -or -not (Test-Path $prebuildStamp) -or ((Get-Content $prebuildStamp -Raw).Trim() -ne $nativePrint)
+if ($fresh) {
+  Write-Host 'native config changed (or -Clean): regenerating android\'
+  Run 'npx' @('expo', 'prebuild', '--platform', 'android', '--clean', '--no-install')
+  Set-Content -Path $prebuildStamp -Value $nativePrint -NoNewline
+} else {
+  Write-Host 'native config unchanged: keeping android\ for an incremental build'
+  $g = [IO.File]::ReadAllText($gradleFile)
+  [IO.File]::WriteAllText($gradleFile, ($g -replace 'versionCode(\s*=?\s*)\d+', ('versionCode${1}' + $next)), (New-Object Text.UTF8Encoding $false))
+}
 if (-not (Test-Path $gradleFile)) { Fail 'prebuild did not produce android\app\build.gradle' }
 if ($signed -and -not (Select-String -Path $gradleFile -Pattern 'tzKeystoreProps' -Quiet)) {
   Fail 'the release-signing plugin did not apply (no tzKeystoreProps in build.gradle); refusing to build a debug-signed release'
 }
 
-Step 7 'gradle assembleRelease (10-25 minutes the first time)'
+Step 7 "gradle assembleRelease ($(if ($fresh) { 'full build: 10-25 minutes' } else { 'incremental: usually a few minutes' }))"
 Set-Location (Join-Path $App 'android')
-Run '.\gradlew.bat' @('assembleRelease')
+Run '.\gradlew.bat' @('assembleRelease', "-PreactNativeArchitectures=$abis", '--build-cache')
 
 Step 8 'collect and verify the APK'
 $apk = Get-ChildItem (Join-Path $App 'android\app\build\outputs\apk\release') -Filter '*.apk' | Select-Object -First 1
 if (-not $apk) { Fail 'no APK was produced' }
 $version = (Get-Content (Join-Path $App 'app.json') -Raw | ConvertFrom-Json).expo.version
-$target = Join-Path $Out "TashZone-$version-release.apk"
+$target = Join-Path $Out "TashZone-$version-$next$(if ($AllAbis) { '' } else { '-arm64' })-release.apk"
 Copy-Item $apk.FullName $target -Force
+$buildTools = Get-ChildItem (Join-Path $Sdk 'build-tools') -Directory -ErrorAction SilentlyContinue | Sort-Object Name -Descending | Select-Object -First 1
+$aapt2 = if ($buildTools) { Join-Path $buildTools.FullName 'aapt2.exe' }
+if ($aapt2 -and (Test-Path $aapt2)) {
+  $perms = & $aapt2 dump permissions $target 2>$null | Select-String -Pattern "uses-permission.*name='([^']+)'" | ForEach-Object { $_.Matches[0].Groups[1].Value } | Sort-Object -Unique
+  Write-Host ("permissions: " + ($perms -join ', '))
+  $banned = @('android.permission.RECORD_AUDIO', 'android.permission.ACCESS_FINE_LOCATION', 'android.permission.ACCESS_COARSE_LOCATION', 'android.permission.READ_CONTACTS', 'android.permission.SYSTEM_ALERT_WINDOW', 'android.permission.READ_EXTERNAL_STORAGE', 'android.permission.WRITE_EXTERNAL_STORAGE')
+  $leaked = $perms | Where-Object { $banned -contains $_ }
+  if ($leaked) { Fail ("the APK requests blocked permissions: " + ($leaked -join ', ') + ". A dependency added them; block them in app.json android.blockedPermissions.") }
+}
 $apksigner = Get-ChildItem (Join-Path $Sdk 'build-tools') -Directory -ErrorAction SilentlyContinue | Sort-Object Name -Descending | ForEach-Object { Join-Path $_.FullName 'apksigner.bat' } | Where-Object { Test-Path $_ } | Select-Object -First 1
 if ($apksigner) { & $apksigner verify --print-certs $target }
 Write-Host ""

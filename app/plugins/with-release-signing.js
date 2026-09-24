@@ -102,7 +102,7 @@ const PHONE_ABIS = ['armeabi-v7a', 'arm64-v8a'];
 
 const ABI_BLOCK = `
         ndk {
-            abiFilters ${PHONE_ABIS.map((abi) => `'${abi}'`).join(', ')}
+            abiFilters(*((findProperty('reactNativeArchitectures') ?: '${PHONE_ABIS.join(',')}').toString().split(',')))
         }
 `;
 
