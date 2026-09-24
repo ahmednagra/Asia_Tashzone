@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from "react";
+import React, { memo, useEffect, useRef } from "react";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
-import { cards, fonts, material, onTable, radius } from "../../../theme/tokens";
+import { cards, fonts, onTable, radius } from "../../../theme/tokens";
 import { SUIT_GLYPH, cardLabel, rankLabel } from "./logic";
 import { useTheme } from "../../../context/ThemeContext";
+import { CardBack } from "./CardBack";
 
 export interface PlayingCardProps {
   card?: string;
@@ -15,7 +16,7 @@ export interface PlayingCardProps {
   hitSlopRight?: number;
 }
 
-export function PlayingCard({
+export const PlayingCard = memo(function PlayingCard({
   card,
   width,
   legal = false,
@@ -25,20 +26,19 @@ export function PlayingCard({
   pressableWhenBlocked,
   hitSlopRight = 0,
 }: PlayingCardProps) {
-  const t = useTheme();
+  const { t, fourColor, calm } = useTheme();
   const h = Math.round(width * 1.4);
-  const suits = t.fourColor ? cards.fourColor : cards.twoColor;
+  const suits = fourColor ? cards.fourColor : cards.twoColor;
 
   const liftAnim = useRef(new Animated.Value(lifted ? 1 : 0)).current;
 
   useEffect(() => {
-    Animated.spring(liftAnim, {
-      toValue: lifted ? 1 : 0,
-      friction: 7,
-      tension: 90,
-      useNativeDriver: true,
-    }).start();
-  }, [lifted, liftAnim]);
+    const anim = calm
+      ? Animated.timing(liftAnim, { toValue: lifted ? 1 : 0, duration: 120, useNativeDriver: true })
+      : Animated.spring(liftAnim, { toValue: lifted ? 1 : 0, friction: t.motion === "juicy" ? 5 : 7, tension: 90, useNativeDriver: true });
+    anim.start();
+    return () => anim.stop();
+  }, [lifted, liftAnim, calm, t.motion]);
 
   const translateY = liftAnim.interpolate({
     inputRange: [0, 1],
@@ -47,9 +47,10 @@ export function PlayingCard({
 
   const scale = liftAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [1, 1.07],
+    outputRange: [1, calm ? 1 : 1.07],
   });
 
+  const ink = card ? suits[card[1] as keyof typeof suits] : undefined;
   const face = card ? (
     <View
       style={[
@@ -58,24 +59,24 @@ export function PlayingCard({
         dimmed && s.faceDimmed,
       ]}
     >
-      <Text style={[s.index, { color: suits[card[1] as keyof typeof suits], fontSize: Math.max(12, width * 0.3) }]}>
+      <Text style={[s.index, { color: ink, fontSize: Math.max(12, width * 0.3) }]}>
         {rankLabel(card)}
       </Text>
-      <Text style={[s.pip, { color: suits[card[1] as keyof typeof suits], fontSize: Math.max(10, width * 0.26) }]}>
+      <Text style={[s.pip, { color: ink, fontSize: Math.max(10, width * 0.26) }]}>
         {SUIT_GLYPH[card[1]!]}
       </Text>
-      <Text style={[s.center, { color: suits[card[1] as keyof typeof suits], fontSize: Math.max(18, width * 0.5) }]}>
+      <Text style={[s.center, { color: ink, fontSize: Math.max(18, width * 0.5) }]}>
         {SUIT_GLYPH[card[1]!]}
       </Text>
     </View>
   ) : (
-    <View accessible accessibilityLabel="face-down card" style={[s.back, { width, height: h, borderRadius: radius.card }]}>
-      <View style={[s.backInner, { borderRadius: radius.card - 3 }]} />
+    <View accessible accessibilityLabel="face-down card">
+      <CardBack t={t} width={width} height={h} />
     </View>
   );
 
   const haloBorderColor = lifted
-    ? "#F6E0B0"
+    ? t.accent.color
     : legal
     ? onTable.legalHalo
     : "transparent";
@@ -89,7 +90,7 @@ export function PlayingCard({
           borderRadius: radius.card + 3,
           transform: [{ translateY }, { scale }],
         },
-        lifted && s.liftedGlow,
+        lifted && [s.liftedGlow, { shadowColor: t.accent.color }],
         dimmed && { opacity: 0.45 },
       ]}
     >
@@ -99,19 +100,21 @@ export function PlayingCard({
 
   if (!onPress || !card) return body;
 
+  const pressable = legal || !!pressableWhenBlocked;
   return (
     <Pressable
       onPress={onPress}
-      disabled={!legal && !pressableWhenBlocked}
+      disabled={!pressable}
       hitSlop={{ top: 12, bottom: 12, left: 2, right: Math.max(hitSlopRight, 4) }}
       accessibilityRole="button"
       accessibilityLabel={cardLabel(card, legal)}
-      accessibilityState={{ disabled: !legal }}
+      accessibilityHint={legal ? (lifted ? "Tap again to play it" : "Tap to raise it, then tap again to play") : undefined}
+      accessibilityState={{ disabled: !pressable, selected: lifted }}
     >
       {body}
     </Pressable>
   );
-}
+});
 
 const s = StyleSheet.create({
   halo: {
@@ -119,7 +122,6 @@ const s = StyleSheet.create({
     borderWidth: 2,
   },
   liftedGlow: {
-    shadowColor: onTable.gold,
     shadowOpacity: 0.85,
     shadowRadius: 10,
     elevation: 8,
@@ -140,7 +142,6 @@ const s = StyleSheet.create({
   },
   index: {
     fontFamily: fonts.cardIndex.family,
-    fontWeight: "700",
     lineHeight: undefined,
   },
   pip: {
@@ -150,19 +151,6 @@ const s = StyleSheet.create({
     position: "absolute",
     right: 4,
     bottom: 0,
-    opacity: 0.9,
-  },
-  back: {
-    backgroundColor: material.felt,
-    padding: 3,
-    borderWidth: 1,
-    borderColor: material.goldLeafDim,
-  },
-  backInner: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: material.goldLeaf,
-    backgroundColor: material.feltDeep,
     opacity: 0.9,
   },
 });

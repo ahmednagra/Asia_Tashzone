@@ -1,21 +1,22 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Animated, StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import { useIsFocused } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { type SeatMove, estimateCallbreakTricks } from "@tashzone/engine";
 import { ConfirmSheet } from "../../../components/ui/ConfirmSheet";
 import { useTheme } from "../../../context/ThemeContext";
+import { useBackAction } from "../../../hooks/useBackAction";
 import { useProfile } from "../../../store/profile";
-import { fonts, material, onTable } from "../../../theme/tokens";
-import { triggerSound } from "../../../utils/sound";
-import { ActionPill, FeltChip, RoundButton } from "./chrome";
+import { fonts, onTable } from "../../../theme/tokens";
+import { useFeel } from "../../../utils/feel";
+import { FeltChip, RoundButton, TurnClock } from "./chrome";
 import { CallPicker, HandOverStrip, RedealStrip, TakeButton, TrumpPicker } from "./Controls";
 import { Felt } from "./Felt";
 import { Hand } from "./Hand";
-import { useDeadlineLeft, useTrickHold, useTurnClock } from "./hooks";
+import { useTrickHold } from "./hooks";
 import { breakWarning, type HandSort, instructionLine, lastTrick, mySeat, phaseWord, statusLine, voidTags } from "./insights";
 import { type Area, cardLabel, tableModel, trickOffset } from "./logic";
 import { MePlate } from "./MePlate";
-import { PlayingCard } from "./PlayingCard";
 import { Seat } from "./Seat";
 import { ArrangeSheet, type HandLayout } from "./sheets/ArrangeSheet";
 import { HintSheet } from "./sheets/HintSheet";
@@ -24,6 +25,7 @@ import { LastTrickSheet } from "./sheets/LastTrickSheet";
 import { RulesSheet } from "./sheets/RulesSheet";
 import { type SheetName, TableMenuSheet } from "./sheets/TableMenuSheet";
 import { TrackerSheet } from "./sheets/TrackerSheet";
+import { TrickCard } from "./TrickCard";
 
 export interface TableScreenProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -70,24 +72,32 @@ export function TableScreen({
   betweenHands,
 }: TableScreenProps) {
   const { width, height } = useWindowDimensions();
+  const landscape = width > height;
   const inset = useSafeAreaInsets();
-  const { largeCards } = useTheme();
+  const { t, calm, largeCards } = useTheme();
+  const feel = useFeel();
+  const focused = useIsFocused();
   const { profile, update } = useProfile();
   const [sheet, setSheet] = useState<SheetName | null>(null);
   const [layout, setLayout] = useState<HandLayout>("fan");
   const [sort, setSort] = useState<HandSort>("suit");
   const [hintMove, setHintMove] = useState<SeatMove | null>(null);
+  const [feltH, setFeltH] = useState(999);
+  const [roomH, setRoomH] = useState(0);
+  const [handTop, setHandTop] = useState<number | null>(null);
 
   const me = mySeat(view);
   const h = view.hand;
-  const model = tableModel(view, me, names);
+  const model = useMemo(() => tableModel(view, me, names), [view, me, names]);
+  const voids = useMemo(() => model.seats.map((x) => voidTags(view, x.seat)), [view, model]);
   const many = model.seats.length > 5;
-  const isCompact = height < 740;
+  const isCompact = landscape || height < 700;
+  const sideW = landscape ? Math.round(Math.min(width * 0.46, 420)) : 0;
 
-  const cardW = Math.min(
-    largeCards ? 80 : 70,
-    Math.max(42, Math.floor((width / (many ? 9.2 : 7.6)) * (largeCards ? 1.12 : 1)))
-  );
+  const cardW = landscape
+    ? Math.min(largeCards ? 80 : 70, Math.max(42, Math.floor(Math.min(width / 7.6, height * 0.2) * (largeCards ? 1.12 : 1))))
+    : Math.min(largeCards ? 80 : 70, Math.max(42, Math.floor((width / (many ? 9.2 : 7.6)) * (largeCards ? 1.12 : 1))));
+  const handW = landscape ? sideW - 8 : Math.min(width - 16 - inset.left - inset.right, 680);
 
   const legal: readonly SeatMove[] = view.legal;
   const myTurn = !!h && h.turn === me && legal.length > 0 && !view.match.over;
@@ -101,13 +111,30 @@ export function TableScreen({
   const totalMs: number = view.rules?.turn_ms ?? 20000;
   const clockOn = !!clock && profile.timer && !profile.easy && myTurn && h.phase !== "WINDOW";
   const turnKey = h ? `${h.hand_id}|${h.phase}|${h.trick?.length ?? 0}|${h.my_hand?.length ?? 0}|${h.turn}` : "none";
-  const localLeft = useTurnClock(clockOn, turnKey, totalMs, sheet !== null, () => clock?.onExpire());
   const serverOn = !clock && !!deadline && profile.timer && !profile.easy && myTurn;
-  const serverLeft = useDeadlineLeft(deadline, serverOn);
-  const remaining = serverLeft ?? localLeft;
-  const showClock = clockOn || (serverOn && serverLeft !== null);
+
+  const live = useRef({ onMove, onBlocked, clock, feel });
+  live.current = { onMove, onBlocked, clock, feel };
+  const expire = useCallback(() => live.current.clock?.onExpire(), []);
+  const playCard = useCallback((card: string) => {
+    live.current.feel("play");
+    live.current.onMove({ t: "Play", card });
+  }, []);
+  const hasBlocked = !!onBlocked;
+  const blocked = useMemo(() => (hasBlocked ? (card: string) => live.current.onBlocked?.(card) : undefined), [hasBlocked]);
+
+  const wasTurn = useRef(false);
+  useEffect(() => {
+    if (myTurn && !wasTurn.current) live.current.feel("turn");
+    wasTurn.current = myTurn;
+  }, [myTurn]);
+  useEffect(() => { if (shown.taken) live.current.feel("trick"); }, [shown.taken]);
+  useEffect(() => { if (warn) live.current.feel("warn"); }, [warn]);
+
+  useBackAction(() => setSheet("leave"), !!onLeave && focused && sheet === null);
 
   const inArea = (a: Area) => model.seats.filter((x) => x.area === a).map((x) => x.seat);
+  const badgeColor = model.game === "callbreak" ? t.value.bid : model.game === "courtpiece" ? t.value.points : undefined;
   const seatEl = (seat: number) => {
     const x = model.seats[seat]!;
     return (
@@ -116,10 +143,11 @@ export function TableScreen({
         name={nameOf(seat)}
         isTurn={x.isTurn}
         badge={x.badge}
+        badgeColor={badgeColor}
         spoken={x.spoken}
         out={x.out}
         compact={many || isCompact}
-        voids={voidTags(view, seat)}
+        voids={voids[seat]}
         control={controls?.[seat] ?? "bot"}
         dealer={x.dealer}
       />
@@ -131,7 +159,7 @@ export function TableScreen({
   const canTrump = legal.some((m) => m.t === "ChooseTrump");
   const canTake = legal.some((m) => m.t === "Take");
   const notice = model.notice ?? shown.taken;
-  const close = () => setSheet(null);
+  const close = useCallback(() => setSheet(null), []);
 
   const trickW = isCompact ? 160 : 180;
   const trickH = isCompact ? 135 : 155;
@@ -139,195 +167,210 @@ export function TableScreen({
 
   const flashAnim = useRef(new Animated.Value(0)).current;
   useEffect(() => {
-    if (warn) {
-      Animated.sequence([
-        Animated.timing(flashAnim, { toValue: 1, duration: 200, useNativeDriver: false }),
-        Animated.timing(flashAnim, { toValue: 0, duration: 600, useNativeDriver: false }),
-      ]).start();
-    }
-  }, [warn, flashAnim]);
+    if (!warn) { flashAnim.setValue(0); return; }
+    const anim = calm
+      ? Animated.timing(flashAnim, { toValue: 1, duration: 120, useNativeDriver: true })
+      : Animated.sequence([
+          Animated.timing(flashAnim, { toValue: 1, duration: 200, useNativeDriver: true }),
+          Animated.timing(flashAnim, { toValue: 0, duration: 600, useNativeDriver: true }),
+        ]);
+    anim.start();
+    return () => anim.stop();
+  }, [warn, calm, flashAnim]);
 
-  const flashBorderColor = flashAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: ["rgba(227, 189, 110, 0.3)", "#d13028"],
-  });
+  const topBar = (
+    <View style={s.topBar}>
+      <RoundButton glyph="☰" label="Table menu" onPress={() => setSheet("menu")} />
+      <Text
+        style={[s.status, { fontFamily: t.type.display }, status.mine && { color: t.accent.color }]}
+        numberOfLines={1}
+        accessibilityRole="header"
+        accessibilityLiveRegion="polite"
+      >
+        {status.text}
+      </Text>
+      <RoundButton glyph="▦" label="What has gone" onPress={() => setSheet("tracker")} />
+    </View>
+  );
 
-  return (
-    <View
-      style={[
-        s.room,
-        {
-          paddingTop: inset.top + 2,
-          paddingBottom: Math.max(inset.bottom, 4),
-        },
-      ]}
-    >
-      <View style={s.topBar}>
-        <RoundButton glyph="☰" label="Table menu" onPress={() => setSheet("menu")} />
-        <Text
-          style={[s.status, status.mine && { color: material.goldLeafHot }]}
-          numberOfLines={1}
-          accessibilityRole="header"
-          accessibilityLiveRegion="polite"
-        >
-          {status.text}
-        </Text>
-        <RoundButton glyph="▦" label="What has gone" onPress={() => setSheet("tracker")} />
-      </View>
+  const felt = (
+    <View style={s.scene} onLayout={(e) => setFeltH(e.nativeEvent.layout.height)}>
+      <Felt>
+        <View style={s.hudRow}>
+          {model.hud.map((x) => (
+            <FeltChip key={x} text={x} color={/^Points/.test(x) ? t.value.points : undefined} />
+          ))}
+        </View>
 
-      <View style={s.scene}>
-        <Animated.View style={{ flex: 1, borderColor: flashBorderColor }}>
-          <Felt>
-            <View style={s.hudRow}>
-              {model.hud.map((t) => (
-                <FeltChip key={t} text={t} />
-              ))}
+        <View style={s.topSeatsRow}>{inArea("top").map(seatEl)}</View>
+
+        <View style={s.middleArena}>
+          <View style={s.sideSeats}>{leftSeats.map(seatEl)}</View>
+
+          <View style={s.centerStage}>
+            {feltH >= 220 ? (
+              <Text style={s.phase} accessibilityElementsHidden importantForAccessibility="no">
+                {phaseWord(view)}
+              </Text>
+            ) : null}
+            <View
+              style={[s.trick, { width: trickW, height: trickH }]}
+              accessible
+              accessibilityLabel={
+                h && shown.trick.length
+                  ? `In the trick: ${shown.trick.map((p) => `${nameOf(p.seat)}, ${cardLabel(p.card)}`).join("; ")}`
+                  : h
+                  ? "No cards in the trick"
+                  : "Waiting to deal"
+              }
+            >
+              {shown.trick.map((p) => {
+                const area = model.seats[p.seat]!.area;
+                const idx = Math.max(0, inArea(area).indexOf(p.seat));
+                const off = trickOffset(area, idx);
+                return (
+                  <TrickCard
+                    key={`${p.seat}-${p.card}`}
+                    card={p.card}
+                    width={w}
+                    left={trickW / 2 - w / 2 + off.x}
+                    top={trickH / 2 - (w * 1.4) / 2 + off.y}
+                    fromX={off.x * 2.5}
+                    fromY={off.y * 2.5}
+                  />
+                );
+              })}
             </View>
+            {warn ? <Text style={[s.warn, { backgroundColor: t.felt.deep }]} accessibilityLiveRegion="assertive">{warn}</Text> : null}
+          </View>
 
-            <View style={s.topSeatsRow}>{inArea("top").map(seatEl)}</View>
+          <View style={s.sideSeats}>{inArea("right").map(seatEl)}</View>
+        </View>
 
-            <View style={s.middleArena}>
-              <View style={s.sideSeats}>{leftSeats.map(seatEl)}</View>
-
-              <View style={s.centerStage}>
-                <Text style={s.phase} accessibilityElementsHidden importantForAccessibility="no">
-                  {phaseWord(view)}
-                </Text>
-                <View
-                  style={[s.trick, { width: trickW, height: trickH }]}
-                  accessible
-                  accessibilityLabel={
-                    h && shown.trick.length
-                      ? `In the trick: ${shown.trick.map((p) => `${nameOf(p.seat)}, ${cardLabel(p.card)}`).join("; ")}`
-                      : h
-                      ? "No cards in the trick"
-                      : "Waiting to deal"
-                  }
-                >
-                  {shown.trick.map((p) => {
-                    const area = model.seats[p.seat]!.area;
-                    const idx = Math.max(0, inArea(area).indexOf(p.seat));
-                    const off = trickOffset(area, idx);
-                    return (
-                      <View
-                        key={`${p.seat}-${p.card}`}
-                        style={{
-                          position: "absolute",
-                          left: trickW / 2 - w / 2 + off.x,
-                          top: trickH / 2 - (w * 1.4) / 2 + off.y,
-                        }}
-                      >
-                        <PlayingCard card={p.card} width={w} />
-                      </View>
-                    );
-                  })}
-                </View>
-                {warn ? <Text style={s.warn} accessibilityLiveRegion="assertive">{warn}</Text> : null}
-              </View>
-
-              <View style={s.sideSeats}>{inArea("right").map(seatEl)}</View>
-            </View>
-
-            <View style={s.noticeBox}>
-              {h?.window ? (
-                <RedealStrip
-                  canRequest={legal.some((m) => m.t === "RequestRedeal")}
-                  requested={h.my_redeal_requested}
-                  onRequest={() => onMove({ t: "RequestRedeal" })}
-                />
-              ) : null}
-              {notice ? (
-                <Text style={s.notice} accessibilityLiveRegion="polite">
-                  {notice}
-                </Text>
-              ) : null}
-            </View>
-          </Felt>
-        </Animated.View>
-      </View>
-
-      <View style={s.bridgeBar}>
-        <MePlate
-          name={nameOf(me)}
-          avatar={profile.avatar}
-          cards={h?.my_hand?.length ?? 0}
-          turn={myTurn}
-          instruction={instruction}
-          clock={showClock ? { remainingMs: remaining, totalMs } : null}
-        />
-        <View style={s.actionsRow}>
-          {undo?.can ? <ActionPill label="↶ Undo" onPress={undo.run} /> : null}
-          {last ? <ActionPill label="Last" onPress={() => setSheet("last")} /> : null}
-          <ActionPill label="⇄ Arrange" onPress={() => setSheet("arrange")} />
-          {profile.hints && hint && myTurn ? (
-            <ActionPill
-              label="Hint"
-              primary
-              onPress={() => {
-                setHintMove(hint());
-                setSheet("hint");
-              }}
+        <View style={s.noticeBox}>
+          {h?.window ? (
+            <RedealStrip
+              canRequest={legal.some((m) => m.t === "RequestRedeal")}
+              requested={h.my_redeal_requested}
+              onRequest={() => onMove({ t: "RequestRedeal" })}
             />
           ) : null}
+          {notice ? (
+            <Text style={s.notice} accessibilityLiveRegion="polite">
+              {notice}
+            </Text>
+          ) : null}
         </View>
+      </Felt>
+      <Animated.View pointerEvents="none" style={[s.flash, { borderRadius: t.shape.felt + 18, opacity: flashAnim }]} />
+    </View>
+  );
+
+  const bridge = (
+    <View style={s.bridgeBar}>
+      <MePlate
+        name={nameOf(me)}
+        avatar={profile.avatar}
+        cards={h?.my_hand?.length ?? 0}
+        turn={myTurn}
+        instruction={instruction}
+        clock={clockOn || serverOn ? (
+          <TurnClock local={clockOn} turnKey={turnKey} totalMs={totalMs} paused={sheet !== null} deadline={serverOn ? deadline ?? null : null} onExpire={expire} width={96} />
+        ) : null}
+      />
+      <View style={s.actionsRow}>
+        {undo?.can ? <RoundButton glyph="↶" label="Undo your last card" onPress={undo.run} /> : null}
+        {last ? <RoundButton glyph="↺" label="The last trick" onPress={() => setSheet("last")} /> : null}
+        {profile.hints && hint && myTurn ? (
+          <RoundButton
+            glyph="?"
+            label="Hint"
+            on
+            onPress={() => {
+              setHintMove(hint());
+              setSheet("hint");
+            }}
+          />
+        ) : null}
       </View>
+    </View>
+  );
 
-      {toast ? (
-        <Text style={s.toast} accessibilityLiveRegion="assertive">
-          {toast}
-        </Text>
-      ) : null}
+  const hand = h?.my_hand ? (
+    <Hand
+      cards={h.my_hand}
+      legal={legal}
+      layout={layout}
+      sort={sort}
+      cardWidth={cardW}
+      maxWidth={handW}
+      textScale={textScale}
+      onPlay={playCard}
+      onBlocked={blocked}
+    />
+  ) : null;
 
-      {h?.my_hand && (
-        <Hand
-          cards={h.my_hand}
-          legal={legal}
-          layout={layout}
-          sort={sort}
-          cardWidth={cardW}
-          textScale={textScale}
-          onPlay={(card) => onMove({ t: "Play", card })}
-          onBlocked={onBlocked}
-        />
+  const tray =
+    callMoves.length > 0 && h?.my_hand ? (
+      <CallPicker
+        min={callMoves[0]!.n}
+        max={callMoves[callMoves.length - 1]!.n}
+        suggestion={Math.min(
+          view.rules.call_max,
+          Math.max(view.rules.call_min, Math.round(estimateCallbreakTricks(h.my_hand, view.rules.trump)))
+        )}
+        onCall={(n) => onMove({ t: "Call", n })}
+      />
+    ) : canTrump && h?.my_hand ? (
+      <TrumpPicker suggestion={suggestTrump(h.my_hand)} onChoose={(suit) => onMove({ t: "ChooseTrump", suit })} />
+    ) : canTake ? (
+      <TakeButton onTake={() => onMove({ t: "Take" })} />
+    ) : betweenHands ? (
+      <HandOverStrip {...betweenHands} />
+    ) : null;
+
+  const toastEl = toast ? (
+    <Text style={[s.toast, { backgroundColor: t.sheet.bg, borderColor: t.accent.color }]} accessibilityLiveRegion="assertive">
+      {toast}
+    </Text>
+  ) : null;
+
+  const pad = {
+    paddingTop: inset.top + 2,
+    paddingBottom: Math.max(inset.bottom, 4),
+    paddingLeft: inset.left + 6,
+    paddingRight: inset.right + 6,
+    backgroundColor: t.c.bg,
+  };
+
+  return (
+    <View style={[s.room, pad, landscape && s.roomLandscape]} onLayout={(e) => setRoomH(e.nativeEvent.layout.height)}>
+      {landscape ? (
+        <>
+          <View style={s.leftPane}>
+            {felt}
+            {tray ? <View style={s.trayLandscape}>{tray}</View> : null}
+          </View>
+          <View style={[s.side, { width: sideW }]}>
+            {topBar}
+            <View style={s.grow} />
+            {bridge}
+            {hand}
+          </View>
+        </>
+      ) : (
+        <>
+          {topBar}
+          {felt}
+          {bridge}
+          <View onLayout={(e) => setHandTop(e.nativeEvent.layout.y)}>{hand}</View>
+          {tray ? (
+            <View style={[s.trayPortrait, { bottom: handTop !== null && roomH > 0 ? Math.max(8, roomH - handTop + 4) : 110 }]}>{tray}</View>
+          ) : null}
+        </>
       )}
 
-      {callMoves.length > 0 && h?.my_hand && (
-        <View style={s.floatingOverlay}>
-          <CallPicker
-            min={callMoves[0]!.n}
-            max={callMoves[callMoves.length - 1]!.n}
-            suggestion={Math.min(
-              view.rules.call_max,
-              Math.max(
-                view.rules.call_min,
-                Math.round(estimateCallbreakTricks(h.my_hand, view.rules.trump))
-              )
-            )}
-            onCall={(n) => onMove({ t: "Call", n })}
-          />
-        </View>
-      )}
-
-      {canTrump && h?.my_hand && (
-        <View style={s.floatingOverlay}>
-          <TrumpPicker
-            suggestion={suggestTrump(h.my_hand)}
-            onChoose={(suit) => onMove({ t: "ChooseTrump", suit })}
-          />
-        </View>
-      )}
-
-      {canTake && (
-        <View style={s.floatingOverlay}>
-          <TakeButton onTake={() => onMove({ t: "Take" })} />
-        </View>
-      )}
-
-      {betweenHands && (
-        <View style={s.floatingOverlay}>
-          <HandOverStrip {...betweenHands} />
-        </View>
-      )}
+      {toastEl}
 
       <TableMenuSheet
         visible={sheet === "menu"}
@@ -394,30 +437,49 @@ export function TableScreen({
 const s = StyleSheet.create({
   room: {
     flex: 1,
-    backgroundColor: material.feltRim,
-    paddingHorizontal: 6,
     overflow: "hidden",
     justifyContent: "space-between",
+  },
+  roomLandscape: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  leftPane: {
+    flex: 1,
+    minWidth: 0,
+  },
+  side: {
+    justifyContent: "flex-end",
+  },
+  grow: {
+    flex: 1,
   },
   topBar: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    minHeight: 38,
+    minHeight: 44,
     paddingHorizontal: 2,
   },
   status: {
     flex: 1,
     color: onTable.secondary,
-    fontFamily: fonts.display.family,
     fontSize: 16,
-    fontWeight: "600",
     textAlign: "center",
   },
   scene: {
     flex: 1,
     minHeight: 0,
     marginVertical: 2,
+  },
+  flash: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderWidth: 3,
+    borderColor: onTable.error,
   },
   hudRow: {
     flexDirection: "row",
@@ -448,8 +510,8 @@ const s = StyleSheet.create({
     flexShrink: 1,
   },
   phase: {
-    color: material.goldLeafDim,
-    fontFamily: fonts.display.family,
+    color: onTable.muted,
+    fontFamily: fonts.ui.medium,
     fontSize: 11,
     letterSpacing: 2.5,
     marginBottom: 2,
@@ -459,15 +521,15 @@ const s = StyleSheet.create({
   },
   warn: {
     color: onTable.text,
-    backgroundColor: material.feltRim,
+    fontFamily: fonts.ui.medium,
     borderWidth: 1,
     borderColor: onTable.error,
     borderRadius: 12,
     paddingHorizontal: 10,
     paddingVertical: 4,
-    fontSize: 11,
+    fontSize: 13,
     textAlign: "center",
-    maxWidth: 220,
+    maxWidth: 240,
     marginTop: 2,
   },
   noticeBox: {
@@ -476,6 +538,7 @@ const s = StyleSheet.create({
   },
   notice: {
     color: onTable.warning,
+    fontFamily: fonts.ui.family,
     textAlign: "center",
     fontSize: 13,
   },
@@ -489,7 +552,7 @@ const s = StyleSheet.create({
   },
   actionsRow: {
     flexDirection: "row",
-    gap: 5,
+    gap: 6,
     alignItems: "center",
   },
   toast: {
@@ -497,24 +560,30 @@ const s = StyleSheet.create({
     top: "42%",
     alignSelf: "center",
     color: onTable.text,
+    fontFamily: fonts.ui.medium,
     fontSize: 14,
-    backgroundColor: "rgba(6, 32, 25, 0.94)",
     borderWidth: 1.5,
-    borderColor: onTable.gold,
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 7,
+    maxWidth: "90%",
     zIndex: 200,
     shadowColor: "#000",
     shadowOpacity: 0.5,
     shadowRadius: 10,
     elevation: 8,
   },
-  floatingOverlay: {
+  trayPortrait: {
     position: "absolute",
-    bottom: 110,
     left: 10,
     right: 10,
+    zIndex: 150,
+  },
+  trayLandscape: {
+    position: "absolute",
+    left: 8,
+    right: 8,
+    bottom: 8,
     zIndex: 150,
   },
 });

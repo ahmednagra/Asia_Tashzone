@@ -1,94 +1,69 @@
-import React, { useMemo, useRef, useState } from "react";
-import {
-  Animated,
-  PanResponder,
-  StyleSheet,
-  View,
-  useWindowDimensions,
-} from "react-native";
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Animated, PanResponder, StyleSheet, View } from "react-native";
 import type { SeatMove } from "@tashzone/engine";
+import { useTheme } from "../../../context/ThemeContext";
+import { useFeel } from "../../../utils/feel";
 import { type HandSort, sortHand } from "./insights";
+import { type HandSpot, handGeometry } from "./logic";
 import { PlayingCard } from "./PlayingCard";
 
 interface HandCardSlotProps {
+  id: string;
   card: string;
-  index: number;
-  total: number;
-  step: number;
-  leftStart: number;
-  responsiveCardW: number;
+  spot: HandSpot;
+  cardW: number;
   isPlayable: boolean;
   isDimmed: boolean;
   isArmed: boolean;
-  onPress: () => void;
-  onBlocked?: (card: string) => void;
-  onPlay: (card: string) => void;
-  hitSlopRight: number;
+  blockable: boolean;
+  onTap: (id: string) => void;
+  onSwipe: (id: string) => boolean;
 }
 
-function HandCardSlot({
-  card,
-  index,
-  total,
-  step,
-  leftStart,
-  responsiveCardW,
-  isPlayable,
-  isDimmed,
-  isArmed,
-  onPress,
-  onBlocked,
-  onPlay,
-  hitSlopRight,
-}: HandCardSlotProps) {
+const HandCardSlot = memo(function HandCardSlot({ id, card, spot, cardW, isPlayable, isDimmed, isArmed, blockable, onTap, onSwipe }: HandCardSlotProps) {
+  const { calm } = useTheme();
   const pan = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
+  const live = useRef({ id, isPlayable, calm, onTap, onSwipe });
+  live.current = { id, isPlayable, calm, onTap, onSwipe };
+  const busy = useRef(false);
 
-  const u = index - (total - 1) / 2;
-  const degPerCard = Math.min(2.8, 30 / total);
-  const arcFactor = total > 7 ? 0.38 : 0.55;
-  const rotDeg = isArmed ? 0 : u * degPerCard;
-  const arcDrop = isArmed ? -14 : Math.min(12, u * u * arcFactor);
-  const cardX = leftStart + index * step;
+  const press = useCallback(() => {
+    if (!busy.current) live.current.onTap(live.current.id);
+  }, []);
 
   const panResponder = useMemo(
     () =>
       PanResponder.create({
         onStartShouldSetPanResponder: () => true,
-        onMoveShouldSetPanResponder: (_, gesture) =>
-          Math.abs(gesture.dy) > 4 || Math.abs(gesture.dx) > 4,
-        onPanResponderMove: (_, gesture) => {
-          if (gesture.dy < 0) {
-            pan.setValue({ x: gesture.dx * 0.25, y: gesture.dy });
-          }
+        onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dy) > 4 || Math.abs(g.dx) > 4,
+        onPanResponderMove: (_, g) => {
+          if (!busy.current && g.dy < 0) pan.setValue({ x: g.dx * 0.25, y: g.dy });
         },
-        onPanResponderRelease: (_, gesture) => {
-          if (gesture.dy < -50 || (gesture.dy < -25 && gesture.vy < -0.4)) {
-            if (isPlayable) {
-              Animated.timing(pan, {
-                toValue: { x: gesture.dx * 0.4, y: -100 },
-                duration: 140,
-                useNativeDriver: true,
-              }).start(() => {
-                onPlay(card);
+        onPanResponderRelease: (_, g) => {
+          if (busy.current) return;
+          const now = live.current;
+          if (g.dy < -50 || (g.dy < -25 && g.vy < -0.4)) {
+            if (now.isPlayable) {
+              busy.current = true;
+              const finish = () => {
                 pan.setValue({ x: 0, y: 0 });
-              });
+                if (!now.onSwipe(now.id)) busy.current = false;
+                else setTimeout(() => { busy.current = false; }, 1500);
+              };
+              if (now.calm) { finish(); return; }
+              Animated.timing(pan, { toValue: { x: g.dx * 0.4, y: -100 }, duration: 140, useNativeDriver: true }).start(finish);
               return;
-            } else {
-              onBlocked?.(card);
             }
-          } else if (Math.abs(gesture.dy) < 8 && Math.abs(gesture.dx) < 8) {
-            onPress();
+            now.onTap(now.id);
+          } else if (Math.abs(g.dy) < 8 && Math.abs(g.dx) < 8) {
+            now.onTap(now.id);
           }
-
-          Animated.spring(pan, {
-            toValue: { x: 0, y: 0 },
-            friction: 7,
-            tension: 80,
-            useNativeDriver: true,
-          }).start();
+          if (now.calm) { pan.setValue({ x: 0, y: 0 }); return; }
+          Animated.spring(pan, { toValue: { x: 0, y: 0 }, friction: 7, tension: 80, useNativeDriver: true }).start();
         },
+        onPanResponderTerminate: () => pan.setValue({ x: 0, y: 0 }),
       }),
-    [card, isPlayable, onPlay, onBlocked, onPress, pan]
+    [pan]
   );
 
   return (
@@ -97,37 +72,45 @@ function HandCardSlot({
       style={[
         s.cardSlot,
         {
-          left: cardX,
-          top: 14 + arcDrop,
-          zIndex: isArmed ? 100 : index + 1,
-          transform: [
-            { translateX: pan.x },
-            { translateY: pan.y },
-            { rotate: `${rotDeg}deg` },
-          ],
+          left: spot.x,
+          top: isArmed ? spot.y - 14 : spot.y + spot.drop,
+          zIndex: isArmed ? 1000 : spot.z,
+          transform: [{ translateX: pan.x }, { translateY: pan.y }, { rotate: `${isArmed ? 0 : spot.rot}deg` }],
         },
       ]}
     >
       <PlayingCard
         card={card}
-        width={responsiveCardW}
+        width={cardW}
         legal={isPlayable}
         lifted={isArmed}
         dimmed={isDimmed}
-        pressableWhenBlocked={!!onBlocked}
-        hitSlopRight={hitSlopRight}
-        onPress={onPress}
+        pressableWhenBlocked={blockable}
+        hitSlopRight={spot.slopRight}
+        onPress={press}
       />
     </Animated.View>
   );
-}
+});
 
-export function Hand({
+function occurrenceIds(cards: readonly string[]): string[] {
+  const seen = new Map<string, number>();
+  return cards.map((c) => {
+    const n = seen.get(c) ?? 0;
+    seen.set(c, n + 1);
+    return `${c}#${n}`;
+  });
+}
+const cardOf = (id: string) => id.slice(0, id.indexOf("#"));
+
+export const Hand = memo(function Hand({
   cards,
   legal,
   onPlay,
   onBlocked,
   cardWidth,
+  maxWidth,
+  textScale = 1,
   layout = "fan",
   sort = "suit",
 }: {
@@ -136,88 +119,87 @@ export function Hand({
   onPlay: (card: string) => void;
   onBlocked?: (card: string) => void;
   cardWidth: number;
+  maxWidth: number;
   textScale?: number;
   layout?: "fan" | "spread";
   sort?: HandSort;
 }) {
-  const { width } = useWindowDimensions();
+  const feel = useFeel();
   const [armed, setArmed] = useState<string | null>(null);
 
-  const playable = new Set(legal.flatMap((m) => (m.t === "Play" ? [m.card] : [])));
-  const ordered = sortHand(cards, sort);
-  const N = ordered.length;
-  if (N === 0) return null;
+  const playable = useMemo(() => new Set(legal.flatMap((m) => (m.t === "Play" ? [m.card] : []))), [legal]);
+  const ordered = useMemo(() => sortHand(cards, sort), [cards, sort]);
+  const ids = useMemo(() => occurrenceIds(ordered), [ordered]);
+  const geo = useMemo(() => handGeometry(ordered.length, maxWidth, cardWidth, layout, textScale), [ordered.length, maxWidth, cardWidth, layout, textScale]);
 
-  const maxFanWidth = Math.min(width - 16, 680);
-  const responsiveCardW = Math.min(
-    cardWidth,
-    Math.max(46, Math.floor(maxFanWidth / (N > 8 ? 6.5 : 5.2)))
-  );
-  const cardH = Math.round(responsiveCardW * 1.4);
+  const handKey = cards.join(",");
+  const legalKey = [...playable].sort().join(",");
+  const lock = useRef<string | null>(null);
+  useEffect(() => {
+    setArmed(null);
+    lock.current = null;
+  }, [handKey, legalKey]);
 
-  const step =
-    N <= 1
-      ? 0
-      : layout === "spread" && N <= 6
-      ? responsiveCardW + 4
-      : Math.min(responsiveCardW * 0.72, (maxFanWidth - responsiveCardW) / (N - 1));
+  const live = useRef({ armed, playable, onPlay, onBlocked, feel, key: `${handKey}|${legalKey}` });
+  live.current = { armed, playable, onPlay, onBlocked, feel, key: `${handKey}|${legalKey}` };
 
-  const totalFanSpan = responsiveCardW + (N - 1) * step;
-  const leftStart = Math.max(0, (maxFanWidth - totalFanSpan) / 2);
+  const play = useCallback((id: string): boolean => {
+    const now = live.current;
+    const card = cardOf(id);
+    if (!now.playable.has(card) || lock.current === now.key) return false;
+    const key = now.key;
+    lock.current = key;
+    setTimeout(() => { if (lock.current === key) lock.current = null; }, 1500);
+    setArmed(null);
+    now.onPlay(card);
+    return true;
+  }, []);
 
+  const onTap = useCallback((id: string) => {
+    const now = live.current;
+    const card = cardOf(id);
+    if (!now.playable.has(card)) {
+      now.onBlocked?.(card);
+      return;
+    }
+    if (now.armed === id) {
+      play(id);
+      return;
+    }
+    setArmed(id);
+    now.feel("lift");
+  }, [play]);
+
+  const onSwipe = useCallback((id: string) => play(id), [play]);
+
+  if (ordered.length === 0) return null;
   const isTurnActive = playable.size > 0;
 
   return (
     <View style={s.wrap} accessibilityLabel={`Your hand, ${cards.length} cards`}>
-      <View
-        style={[
-          s.fanContainer,
-          {
-            width: maxFanWidth,
-            height: cardH + 24,
-          },
-        ]}
-      >
+      <View style={[s.fanContainer, { width: maxWidth, height: geo.height }]}>
         {ordered.map((c, i) => {
           const isPlayable = playable.has(c);
-          const isDimmed = isTurnActive && !isPlayable;
-          const isArmed = armed === c;
-          const hitSlop = i < N - 1 ? Math.max(0, step - responsiveCardW + 6) : 10;
-
           return (
             <HandCardSlot
-              key={`${c}#${i}`}
+              key={ids[i]}
+              id={ids[i]!}
               card={c}
-              index={i}
-              total={N}
-              step={step}
-              leftStart={leftStart}
-              responsiveCardW={responsiveCardW}
+              spot={geo.spots[i]!}
+              cardW={geo.cardW}
               isPlayable={isPlayable}
-              isDimmed={isDimmed}
-              isArmed={isArmed}
-              hitSlopRight={hitSlop}
-              onBlocked={onBlocked}
-              onPlay={onPlay}
-              onPress={() => {
-                if (!isPlayable) {
-                  onBlocked?.(c);
-                  return;
-                }
-                if (isArmed) {
-                  setArmed(null);
-                  onPlay(c);
-                } else {
-                  setArmed(c);
-                }
-              }}
+              isDimmed={isTurnActive && !isPlayable}
+              isArmed={armed === ids[i]}
+              blockable={!!onBlocked}
+              onTap={onTap}
+              onSwipe={onSwipe}
             />
           );
         })}
       </View>
     </View>
   );
-}
+});
 
 const s = StyleSheet.create({
   wrap: {

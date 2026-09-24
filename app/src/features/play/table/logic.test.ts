@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { bhabhi, compile, sha256Hex } from "@tashzone/engine";
-import { cardLabel, fanLayout, formatScore, handOrder, positionOf, ringAreas, tableModel } from "./logic";
+import { cardLabel, fanLayout, formatScore, handGeometry, handOrder, positionOf, ringAreas, tableModel } from "./logic";
 
 describe("presentation helpers", () => {
   it("human at the bottom, clockwise to the left; table never mirrors", () => {
@@ -18,6 +18,19 @@ describe("presentation helpers", () => {
     expect(fanLayout(13, 700, 64).rows).toBe(1);
     expect(fanLayout(13, 320, 64).rows).toBe(2);
     expect(fanLayout(13, 700, 64, 2).rows).toBe(2);
+  });
+  it("hand geometry keeps a 28 dp strip and makes Spread real for 13 cards", () => {
+    const fan = handGeometry(13, 344, 60, "fan");
+    expect(fan.rows).toBe(2);
+    const firstRow = fan.spots.filter((p) => p.z < 100);
+    expect(firstRow[1]!.x - firstRow[0]!.x).toBeGreaterThanOrEqual(28);
+    const spread = handGeometry(13, 344, 60, "spread");
+    expect(spread.rows).toBe(2);
+    const row0 = spread.spots.filter((p) => p.z < 100);
+    for (let i = 1; i < row0.length; i++) expect(row0[i]!.x - row0[i - 1]!.x).toBeGreaterThanOrEqual(spread.cardW);
+    expect(row0[row0.length - 1]!.x + spread.cardW).toBeLessThanOrEqual(344);
+    expect(spread.cardW).toBeGreaterThanOrEqual(40);
+    expect(handGeometry(0, 344, 60).spots).toEqual([]);
   });
 });
 

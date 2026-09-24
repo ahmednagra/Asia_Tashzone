@@ -49,6 +49,37 @@ export function fanLayout(count: number, width: number, cardWidth: number, textS
   return one;
 }
 
+export interface HandSpot { x: number; y: number; drop: number; rot: number; z: number; slopRight: number }
+
+export function handGeometry(count: number, maxWidth: number, cardWidth: number, layout: "fan" | "spread" = "fan", textScale = 1): { cardW: number; height: number; rows: number; spots: HandSpot[] } {
+  if (count <= 0) return { cardW: cardWidth, height: 0, rows: 0, spots: [] };
+  const spread = layout === "spread";
+  const want = count > 6 ? Math.ceil(count / 2) : count;
+  const w = spread
+    ? Math.max(40, Math.min(cardWidth, Math.floor((maxWidth - (want - 1) * 4) / want)))
+    : Math.min(cardWidth, Math.max(46, Math.floor(maxWidth / (count > 8 ? 6.5 : 5.2))));
+  const h = Math.round(w * 1.4);
+  const l = fanLayout(count, maxWidth, w, textScale, layout);
+  const pitch = spread ? h + 6 : Math.round(h * 0.52);
+  const spots: HandSpot[] = [];
+  for (let i = 0; i < count; i++) {
+    const row = Math.floor(i / l.perRow);
+    const col = i % l.perRow;
+    const inRow = Math.min(l.perRow, count - row * l.perRow);
+    const span = w + (inRow - 1) * l.step;
+    const u = col - (inRow - 1) / 2;
+    spots.push({
+      x: Math.max(0, (maxWidth - span) / 2) + col * l.step,
+      y: 14 + row * pitch,
+      drop: spread ? 0 : Math.min(12, u * u * (inRow > 7 ? 0.38 : 0.55)),
+      rot: spread ? 0 : u * Math.min(2.8, 30 / inRow),
+      z: row * 100 + col + 1,
+      slopRight: col < inRow - 1 ? Math.max(0, l.step - w + 6) : 10,
+    });
+  }
+  return { cardW: w, height: h + (l.rows - 1) * pitch + 26, rows: l.rows, spots };
+}
+
 export function formatScore(tenths: number): string {
   const sign = tenths < 0 ? "−" : "";
   const a = Math.abs(tenths);

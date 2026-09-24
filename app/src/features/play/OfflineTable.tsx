@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "expo-router";
+import { Redirect, Stack, useRouter } from "expo-router";
 import type { SeatMove } from "@tashzone/engine";
 import { BOT_NAMES, compile } from "@tashzone/engine";
 import { LocalTable } from "@tashzone/match";
@@ -7,12 +7,14 @@ import { ChipGroup } from "../../components/ui/ChipGroup";
 import { Caption } from "../../components/ui/Caption";
 import { GoldButton } from "../../components/ui/GoldButton";
 import { Header } from "../../components/ui/Header";
+import { StatusBanner } from "../../components/ui/StatusBanner";
 import { Screen } from "../../components/ui/Screen";
 import { useProfile } from "../../store/profile";
 import { ERROR_MESSAGES, GAMES, GENERIC_ERROR, SETUP } from "../../constants/games";
 import { randomSeedHex } from "../../utils/random";
 import { type Outcome, clearOutcome, publishOutcome } from "./session";
 import { gameResult, handResult } from "./result/model";
+import type { SetupInfo } from "../../types/game";
 import { BOT_LEVELS, type Choice, defaultChoice, describeChoice, settingsFor } from "./setup";
 import { TableScreen } from "./table/TableScreen";
 
@@ -23,19 +25,38 @@ const TOAST_MS = 2500;
 
 /** Setup sheet (choices: preset, length, players, bot strength, deal) then the table. `initial` skips the sheet (deep link). */
 export function OfflineTable({ gameId, profileId, initial, onExit }: { gameId: string; profileId: string; initial?: Choice | null; onExit: () => void }) {
-  const info = SETUP[profileId]!;
+  const info = SETUP[profileId];
   const [choice, setChoice] = useState<Choice | null>(initial ?? null);
-  const [draft, setDraft] = useState<Choice>(() => initial ?? defaultChoice(info));
-  if (!choice) return <Setup profileId={profileId} draft={draft} setDraft={setDraft} onStart={() => setChoice(draft)} />;
-  return <Table gameId={gameId} profileId={profileId} choice={choice} onExit={onExit} onNew={() => setChoice(null)} />;
+  const [draft, setDraft] = useState<Choice | null>(() => (info ? initial ?? defaultChoice(info) : null));
+  const [error, setError] = useState<string | null>(null);
+  const compiled = useMemo(() => {
+    if (!info || !choice) return null;
+    try {
+      return compile(profileId, settingsFor(info, choice), choice.preset);
+    } catch (e) {
+      return { ok: false as const, error: e instanceof Error ? e.message : String(e) };
+    }
+  }, [info, choice, profileId]);
+  useEffect(() => {
+    if (compiled && !compiled.ok) {
+      setError("This combination of rules could not be set up. Pick different options and deal again.");
+      setChoice(null);
+    }
+  }, [compiled]);
+  if (!info || !draft) return <Redirect href="/" />;
+  if (!choice || !compiled?.ok) {
+    return <Setup info={info} draft={draft} setDraft={setDraft} error={error} onStart={() => { setError(null); setChoice(draft); }} />;
+  }
+  return <Table gameId={gameId} info={info} rules={compiled.rules} choice={choice} onExit={onExit} onNew={() => setChoice(null)} />;
 }
 
-function Setup({ profileId, draft, setDraft, onStart }: { profileId: string; draft: Choice; setDraft: (c: Choice) => void; onStart: () => void }) {
-  const info = SETUP[profileId]!;
-  const preset = info.presets.find((p) => p.id === draft.preset)!;
+function Setup({ info, draft, setDraft, error, onStart }: { info: SetupInfo; draft: Choice; setDraft: (c: Choice) => void; error: string | null; onStart: () => void }) {
+  const preset = info.presets.find((p) => p.id === draft.preset) ?? info.presets[0]!;
   return (
     <Screen footer={<GoldButton label="Deal" onPress={onStart} />}>
+      <Stack.Screen options={{ gestureEnabled: true }} />
       <Header title="New table" />
+      {error ? <StatusBanner tone="warn" title="The table could not start" body={error} /> : null}
       <ChipGroup label="Rules" value={draft.preset} onChange={(v) => setDraft({ ...draft, preset: v })} options={info.presets.map((p) => ({ value: p.id, label: p.label }))} />
       <Caption>{preset.hint}</Caption>
       <ChipGroup label={info.lengthLabel} value={draft.length} onChange={(v) => setDraft({ ...draft, length: v })} options={info.lengths.map((l, i) => ({ value: i, label: l.label }))} />
@@ -46,18 +67,17 @@ function Setup({ profileId, draft, setDraft, onStart }: { profileId: string; dra
   );
 }
 
-function Table({ gameId, profileId, choice, onExit, onNew }: { gameId: string; profileId: string; choice: Choice; onExit: () => void; onNew: () => void }) {
-  const info = SETUP[profileId]!;
+type Rules = Extract<ReturnType<typeof compile>, { ok: true }>["rules"];
+
+function Table({ gameId, info, rules, choice, onExit, onNew }: { gameId: string; info: SetupInfo; rules: Rules; choice: Choice; onExit: () => void; onNew: () => void }) {
   const router = useRouter();
   const { profile, recordResult } = useProfile();
   const [run, setRun] = useState(0);
   const held = useRef<(() => void) | null>(null);
 
   const table = useMemo(() => {
-    const c = compile(profileId, settingsFor(info, choice), choice.preset);
-    if (!c.ok) throw new Error(c.error);
     held.current = null;
-    return new LocalTable(c.rules, {
+    return new LocalTable(rules, {
       randomSeed: randomSeedHex, botLevel: choice.level, interHandMs: HOLD_MS,
       schedule: (fn, ms) => {
         if (ms === HOLD_MS) { held.current = fn; return () => { if (held.current === fn) held.current = null; }; }
@@ -68,7 +88,7 @@ function Table({ gameId, profileId, choice, onExit, onNew }: { gameId: string; p
     });
     // `run` rebuilds the table for "Deal again"
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profileId, choice, info, run]);
+  }, [rules, choice, run]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [view, setView] = useState<any>(table.view());
@@ -86,7 +106,13 @@ function Table({ gameId, profileId, choice, onExit, onNew }: { gameId: string; p
     const code = table.explain(m);
     setToast(code ? ERROR_MESSAGES[code] ?? GENERIC_ERROR : GENERIC_ERROR);
   };
-  const autoplay = () => { const m = table.hint(); if (m && table.play(m)) setToast("Played for you: the clock ran out"); };
+  const autoplay = () => {
+    const legal: readonly SeatMove[] = viewRef.current.legal ?? [];
+    let m: SeatMove | null = null;
+    try { m = table.hint(); } catch { m = null; }
+    m = m ?? legal.find((x) => x.t === "Play") ?? legal[0] ?? null;
+    if (m && table.play(m)) setToast("Played for you: the clock ran out");
+  };
   const release = useCallback(() => { const f = held.current; held.current = null; f?.(); }, []);
 
   /* ── the deal is held between hands; an annulled hand is simply dealt again ── */
@@ -142,6 +168,8 @@ function Table({ gameId, profileId, choice, onExit, onNew }: { gameId: string; p
       : null;
 
   return (
+    <>
+    <Stack.Screen options={{ gestureEnabled: false }} />
     <TableScreen
       view={view} names={names} controls={["human", ...Array.from({ length: table.seats - 1 }, () => "bot" as const)]}
       onMove={move} onBlocked={(card) => move({ t: "Play", card })} toast={toast}
@@ -150,5 +178,6 @@ function Table({ gameId, profileId, choice, onExit, onNew }: { gameId: string; p
       onLeave={onExit} betweenHands={betweenHands}
       info={[["Game", gameName], ...describeChoice(info, choice)]}
     />
+    </>
   );
 }
