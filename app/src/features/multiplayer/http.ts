@@ -94,6 +94,17 @@ export async function adoptToken(next: string): Promise<void> {
   if (previous && previous !== next) request<void>("/api/v1/auth/logout", { method: "POST", token: previous }).catch(() => {});
 }
 
+export async function deleteServerProfile(): Promise<void> {
+  const current = await readToken();
+  if (!current) return;
+  try {
+    await request<void>("/api/v1/players/me", { method: "DELETE", token: current });
+  } catch (e) {
+    if (!(e instanceof ApiFailure) || e.status !== 401) throw e;
+  }
+  await clearToken();
+}
+
 export async function freshGuest(displayName: string): Promise<void> {
   await registerGuest(displayName);
 }

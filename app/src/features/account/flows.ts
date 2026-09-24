@@ -1,4 +1,4 @@
-import { account, adoptToken, ApiFailure, freshGuest, hasAccount, online, signOut } from "../multiplayer/http";
+import { account, adoptToken, ApiFailure, deleteServerProfile, freshGuest, hasAccount, online, signOut } from "../multiplayer/http";
 import { type Provider, type ProviderCredential, deviceProviders, providerCredential } from "../../services/googleAuth";
 import { readToken } from "../../services/session";
 import type { Profile } from "../../store/profileModel";
@@ -82,6 +82,10 @@ export async function listDevices(profile: Profile) {
 
 export function signOutDevice(id: string, profile: Profile): Promise<void> {
   return account.endSession(nameOf(profile), id);
+}
+
+export function deleteEverythingOnline(): Promise<void> {
+  return deleteServerProfile();
 }
 
 export async function signOutHere(): Promise<void> {

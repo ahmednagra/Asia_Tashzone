@@ -3,6 +3,10 @@ import type { MeView, ProgressBody, ProgressView } from "../../types/api";
 
 const NAME_MAX = 24;
 
+export function progressKey(p: Profile): string {
+  return `${p.name}|${p.avatar}|${p.stats.matches}|${p.stats.wins}|${p.stats.streak}|${p.stats.bhabhi}`;
+}
+
 export function toProgress(stats: Profile["stats"]): ProgressBody {
   const wins = Math.min(stats.wins, stats.matches);
   return {

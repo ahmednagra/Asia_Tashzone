@@ -15,7 +15,7 @@ import { useProfile } from "../../store/profile";
 import { exportProfile, importProfile } from "../../store/profileModel";
 import { A } from "../account/copy";
 import { authMessage } from "../account/errors";
-import { type AccountState, type LinkResult, accountState, linkProvider, signOutHere, switchToLinked, unlinkProvider } from "../account/flows";
+import { type AccountState, type LinkResult, accountState, deleteEverythingOnline, linkProvider, signOutHere, switchToLinked, unlinkProvider } from "../account/flows";
 import { nick } from "../onboarding/copy";
 import { type Provider, SignInError } from "../../services/googleAuth";
 import { T } from "./copy";
@@ -103,7 +103,18 @@ export function AccountScreen() {
     update(next);
     close();
   };
-  const wipe = () => {
+  const wipe = async () => {
+    if (busy) return;
+    setBusy(true);
+    setMessage(null);
+    try {
+      await deleteEverythingOnline();
+    } catch (e) {
+      setMessage(authMessage(e));
+      setBusy(false);
+      return;
+    }
+    setBusy(false);
     reset();
     setPrefs(DEFAULT_PREFS);
     close();
@@ -175,8 +186,10 @@ export function AccountScreen() {
       </Sheet>
 
       <Sheet visible={dialog === "wipe"} title={t.wipeTitle} onClose={close}
-        actions={<><GoldButton label={t.cancel} onPress={close} />{gate.hasPin ? null : <GoldButton kind="glass" label={t.wipeDo} onPress={wipe} />}</>}>
+        actions={<><GoldButton label={t.cancel} onPress={close} />{gate.hasPin ? null : <GoldButton kind="glass" label={t.wipeDo} onPress={wipe} disabled={busy} />}</>}>
         <Caption>{t.wipeBody}</Caption>
+        <Caption>{t.wipeOnline}</Caption>
+        {message ? <Caption tone="error">{message}</Caption> : null}
         {gate.hasPin ? <PinEntry prompt={t.wipePin} gate={gate} onComplete={async (pin) => { if (await gate.verify(pin)) wipe(); }} /> : null}
       </Sheet>
     </SettingsScreen>
