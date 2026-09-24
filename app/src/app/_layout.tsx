@@ -11,6 +11,8 @@ import { NotoNastaliqUrdu_400Regular } from "@expo-google-fonts/noto-nastaliq-ur
 import { ThemeProvider, useTheme } from "../context/ThemeContext";
 import { ProfileProvider, useProfile } from "../store/profile";
 import { ErrorBoundary } from "../components/ui/ErrorBoundary";
+import { RoomSwitch } from "../components/ui/RoomSwitch";
+import { StorageNotice } from "../components/ui/StorageNotice";
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -35,6 +37,8 @@ function Shell({ fontsReady }: { fontsReady: boolean }) {
     <>
       <StatusBar style="light" />
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: c.bg }, animation: "fade_from_bottom" }} />
+      <RoomSwitch />
+      <StorageNotice />
     </>
   );
 }
