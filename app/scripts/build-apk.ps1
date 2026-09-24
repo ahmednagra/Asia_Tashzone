@@ -66,8 +66,21 @@ $env:ANDROID_HOME = $Sdk
 $env:ANDROID_SDK_ROOT = $Sdk
 $env:PATH = "$Sdk\cmdline-tools\latest\bin;$Sdk\platform-tools;$env:PATH"
 
-Step 3 'SDK licences and platform-tools'
+Step 3 'SDK licences, platform-tools and current command-line tools'
 1..60 | ForEach-Object { 'y' } | & $sdkmanager --licenses | Out-Null
+$props = Join-Path $Sdk 'cmdline-tools\latest\source.properties'
+$rev = if (Test-Path $props) { [double]((Select-String -Path $props -Pattern '^Pkg\.Revision=(\d+(\.\d+)?)').Matches[0].Groups[1].Value) } else { 0 }
+if ($rev -lt 16) {
+  Write-Host "updating command-line tools $rev to the latest"
+  Run $sdkmanager @('cmdline-tools;latest')
+  $fresh = Join-Path $Sdk 'cmdline-tools\latest-2'
+  if (Test-Path $fresh) {
+    $old = Join-Path $Sdk 'cmdline-tools\previous'
+    if (Test-Path $old) { Remove-Item -Recurse -Force $old }
+    Move-Item (Join-Path $Sdk 'cmdline-tools\latest') $old
+    Move-Item $fresh (Join-Path $Sdk 'cmdline-tools\latest')
+  }
+}
 Run $sdkmanager @('platform-tools')
 
 $env:EXPO_PUBLIC_API_URL = $ApiUrl
