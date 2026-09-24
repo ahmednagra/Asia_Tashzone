@@ -16,6 +16,24 @@ const MANIFEST_FIXES = {
   "expo-modules-core": [[/(android:name="com\.facebook\.soloader\.enabled"\s+android:value="true")\s+tools:replace="android:value"/, "$1"]],
 };
 
+const ZEROCONF_ABIS = 'abiFilters(*(findProperty("reactNativeArchitectures") ?: "armeabi-v7a,arm64-v8a,x86,x86_64").toString().split(","))';
+
+function appendLine(text, line) {
+  const eol = text.includes("\r\n") ? "\r\n" : "\n";
+  return `${text.replace(/\s+$/, "")}${eol}${line}${eol}`;
+}
+
+const SOURCE_FIXES = {
+  "react-native-zeroconf": [
+    ["android/build.gradle", (s) => s.replace('abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"', ZEROCONF_ABIS)],
+    ["android/src/main/jni/Application.mk", (s) => (s.includes("APP_CFLAGS") ? s : appendLine(s, "APP_CFLAGS += -Wno-address-of-packed-member"))],
+    ["android/src/main/jni/mdnsresponder/mDNSPosix/mDNSPosix.c", (s) => s.replace("char keyword[10];", "char keyword[11];")],
+  ],
+  "expo-modules-core": [
+    ["android/src/main/cpp/fabric/ExpoComponentDescriptorFactory.cpp", (s) => s.replace("react::RawPropsParser(/*useRawPropsJsiValue=*/true)", "react::RawPropsParser()")],
+  ],
+};
+
 function packagesIn(root) {
   if (!fs.existsSync(root)) return [];
   const names = [];
@@ -70,6 +88,15 @@ for (const root of roots) {
     const nextGradle = fixGradle(gradle, manifest);
     changed += write(gradleFile, gradle, nextGradle);
     if (manifest !== null) changed += write(manifestFile, manifest, fixManifest(name, manifest, nextGradle));
+  }
+}
+for (const root of roots) {
+  for (const [name, fixes] of Object.entries(SOURCE_FIXES)) {
+    for (const [rel, fix] of fixes) {
+      const file = path.join(root, name, rel);
+      const text = read(file);
+      if (text !== null) changed += write(file, text, fix(text));
+    }
   }
 }
 console.log(`fix-native-modules: ${changed} file(s) updated`);
