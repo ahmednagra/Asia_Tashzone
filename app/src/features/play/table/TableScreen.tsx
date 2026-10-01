@@ -58,6 +58,8 @@ function suggestTrump(hand: readonly string[]): string {
   return best;
 }
 
+const THULLA_HOLD_MS = 3000;
+
 export function TableScreen({
   view,
   names,
@@ -108,7 +110,7 @@ export function TableScreen({
 
   const legal: readonly SeatMove[] = view.legal;
   const myTurn = !!h && h.turn === me && legal.length > 0 && !view.match.over;
-  const shown = useTrickHold(view, names, 900);
+  const shown = useTrickHold(view, names, 900, THULLA_HOLD_MS);
   const status = statusLine(view, names);
   const instruction = instructionLine(view, names);
   const warn = breakWarning(view, names);
@@ -136,7 +138,7 @@ export function TableScreen({
     if (myTurn && !wasTurn.current) live.current.feel("turn");
     wasTurn.current = myTurn;
   }, [myTurn]);
-  useEffect(() => { if (shown.taken) live.current.feel("trick"); }, [shown.taken]);
+  useEffect(() => { if (shown.taken) live.current.feel(shown.thulla ? "thulla" : "trick"); }, [shown.taken, shown.thulla]);
   useEffect(() => { if (warn) live.current.feel("warn"); }, [warn]);
 
   useBackAction(() => setSheet("leave"), !!onLeave && focused && sheet === null);
@@ -263,7 +265,12 @@ export function TableScreen({
               onRequest={() => onMove({ t: "RequestRedeal" })}
             />
           ) : null}
-          {notice ? (
+          {shown.thulla ? (
+            <View style={s.thullaBanner} accessibilityLiveRegion="assertive">
+              <Text style={s.thullaWord}>{T.say.thullaBanner}</Text>
+              <Text style={s.thullaWho} numberOfLines={1}>{shown.taken}</Text>
+            </View>
+          ) : notice ? (
             <Text style={s.notice} accessibilityLiveRegion="polite">
               {notice}
             </Text>
@@ -548,6 +555,28 @@ const s = StyleSheet.create({
   noticeBox: {
     minHeight: 18,
     justifyContent: "center",
+  },
+  thullaBanner: {
+    alignSelf: "center",
+    alignItems: "center",
+    paddingHorizontal: 22,
+    paddingVertical: 4,
+    borderRadius: 14,
+    backgroundColor: "#B3261E",
+    borderWidth: 1.5,
+    borderColor: "#FFD9D5",
+  },
+  thullaWord: {
+    color: "#FFFFFF",
+    fontFamily: fonts.ui.family,
+    fontWeight: "800",
+    fontSize: 22,
+    letterSpacing: 2,
+  },
+  thullaWho: {
+    color: "#FFE9E6",
+    fontFamily: fonts.ui.family,
+    fontSize: 12,
   },
   notice: {
     color: onTable.warning,

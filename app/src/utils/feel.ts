@@ -5,27 +5,27 @@ import type { BaseThemeId, HapticLevel, ThemeId } from "../theme/tokens";
 import { useTheme } from "../context/ThemeContext";
 import { useProfile } from "../store/profile";
 
-export type Cue = "tap" | "lift" | "play" | "trick" | "turn" | "win" | "warn" | "switch";
-type SoundCue = "tap" | "play" | "trick" | "turn" | "win" | "switch";
+export type Cue = "tap" | "lift" | "play" | "trick" | "turn" | "win" | "warn" | "switch" | "thulla";
+type SoundCue = "tap" | "play" | "trick" | "turn" | "win" | "switch" | "thulla";
 
 const SOUND_SET: Record<ThemeId, BaseThemeId> = { emerald: "emerald", gold: "gold", arcade: "arcade", eid: "emerald", diwali: "gold" };
 
 const SOUNDS: Record<BaseThemeId, Record<SoundCue, number>> = {
   emerald: {
     tap: require("../../assets/sounds/emerald-tap.wav"), play: require("../../assets/sounds/emerald-play.wav"), trick: require("../../assets/sounds/emerald-trick.wav"),
-    turn: require("../../assets/sounds/emerald-turn.wav"), win: require("../../assets/sounds/emerald-win.wav"), switch: require("../../assets/sounds/emerald-switch.wav"),
+    turn: require("../../assets/sounds/emerald-turn.wav"), win: require("../../assets/sounds/emerald-win.wav"), switch: require("../../assets/sounds/emerald-switch.wav"), thulla: require("../../assets/sounds/thulla.wav"),
   },
   gold: {
     tap: require("../../assets/sounds/gold-tap.wav"), play: require("../../assets/sounds/gold-play.wav"), trick: require("../../assets/sounds/gold-trick.wav"),
-    turn: require("../../assets/sounds/gold-turn.wav"), win: require("../../assets/sounds/gold-win.wav"), switch: require("../../assets/sounds/gold-switch.wav"),
+    turn: require("../../assets/sounds/gold-turn.wav"), win: require("../../assets/sounds/gold-win.wav"), switch: require("../../assets/sounds/gold-switch.wav"), thulla: require("../../assets/sounds/thulla.wav"),
   },
   arcade: {
     tap: require("../../assets/sounds/arcade-tap.wav"), play: require("../../assets/sounds/arcade-play.wav"), trick: require("../../assets/sounds/arcade-trick.wav"),
-    turn: require("../../assets/sounds/arcade-turn.wav"), win: require("../../assets/sounds/arcade-win.wav"), switch: require("../../assets/sounds/arcade-switch.wav"),
+    turn: require("../../assets/sounds/arcade-turn.wav"), win: require("../../assets/sounds/arcade-win.wav"), switch: require("../../assets/sounds/arcade-switch.wav"), thulla: require("../../assets/sounds/thulla.wav"),
   },
 };
 
-const SOUND_OF: Partial<Record<Cue, SoundCue>> = { tap: "tap", play: "play", trick: "trick", turn: "turn", win: "win", switch: "switch", warn: "turn" };
+const SOUND_OF: Partial<Record<Cue, SoundCue>> = { tap: "tap", play: "play", trick: "trick", turn: "turn", win: "win", switch: "switch", warn: "turn", thulla: "thulla" };
 
 const players = new Map<string, AudioPlayer>();
 let modeSet = false;
@@ -74,6 +74,7 @@ export function buzz(cue: Cue, themeLevel: { play: HapticLevel; win: HapticLevel
     case "play": { const l = scale(themeLevel.play, cap); if (l !== "off") run(Haptics.impactAsync(IMPACT[l])); return; }
     case "trick": case "turn": run(Haptics.impactAsync(IMPACT[scale("gentle", cap) as Exclude<HapticLevel, "off">])); return;
     case "win": if (scale(themeLevel.win, cap) !== "off") run(Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)); return;
+    case "thulla": run(Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)); return;
     case "warn": run(Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning)); return;
   }
 }

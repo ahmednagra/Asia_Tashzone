@@ -98,6 +98,7 @@ export const T = localized("play.table", {
       took: (name: string) => `${name} took it.`,
       pickedUpBroken: (name: string) => `${name} picked it up: suit broken.`,
       putAside: (name: string) => `Put aside. ${name} leads again.`,
+      thullaBanner: "THULLA!",
     },
     phase: {
       over: "match over",
@@ -338,6 +339,7 @@ export const T = localized("play.table", {
       took: (name: string) => `${name} نے لیا۔`,
       pickedUpBroken: (name: string) => `${name} نے پتے اٹھائے: ٹھلا لگا۔`,
       putAside: (name: string) => `الگ رکھا۔ پھر ${name} کی چال۔`,
+      thullaBanner: "ٹھلا!",
     },
     phase: {
       over: "میچ ختم",
@@ -578,6 +580,7 @@ export const T = localized("play.table", {
       took: (name: string) => `${name} ने लिया।`,
       pickedUpBroken: (name: string) => `${name} ने पत्ते उठाए: ठुल्ला लगा।`,
       putAside: (name: string) => `अलग रखा। फिर ${name} की चाल।`,
+      thullaBanner: "ठुल्ला!",
     },
     phase: {
       over: "मैच खत्म",
@@ -818,6 +821,7 @@ export const T = localized("play.table", {
       took: (name: string) => `${name}ले लिए।`,
       pickedUpBroken: (name: string) => `${name}ले उठाए: ठुल्ला पर्‍यो।`,
       putAside: (name: string) => `छुट्टै राखियो। फेरि ${name}को चाल।`,
+      thullaBanner: "ठुल्ला!",
     },
     phase: {
       over: "म्याच सकियो",
@@ -1058,6 +1062,7 @@ export const T = localized("play.table", {
       took: (name: string) => `${name} নিল।`,
       pickedUpBroken: (name: string) => `${name} তুলে নিল: ঠুল্লা পড়েছে।`,
       putAside: (name: string) => `সরিয়ে রাখা হলো। আবার ${name}-এর চাল।`,
+      thullaBanner: "ঠুল্লা!",
     },
     phase: {
       over: "ম্যাচ শেষ",
