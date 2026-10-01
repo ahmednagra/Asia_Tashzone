@@ -59,6 +59,8 @@ function suggestTrump(hand: readonly string[]): string {
 }
 
 const THULLA_HOLD_MS = 3000;
+/** While the thulla is on show nothing can be played, so the hand gets no legal moves. */
+const NO_MOVES: readonly SeatMove[] = [];
 
 export function TableScreen({
   view,
@@ -290,7 +292,7 @@ export function TableScreen({
         turn={myTurn}
         instruction={instruction}
         clock={clockOn || serverOn ? (
-          <TurnClock local={clockOn} turnKey={turnKey} totalMs={totalMs} paused={sheet !== null} deadline={serverOn ? deadline ?? null : null} onExpire={expire} width={96} />
+          <TurnClock local={clockOn} turnKey={turnKey} totalMs={totalMs} paused={sheet !== null || shown.thulla} deadline={serverOn ? deadline ?? null : null} onExpire={expire} width={96} />
         ) : null}
       />
       <View style={s.actionsRow}>
@@ -314,14 +316,14 @@ export function TableScreen({
   const hand = h?.my_hand ? (
     <Hand
       cards={h.my_hand}
-      legal={legal}
+      legal={shown.thulla ? NO_MOVES : legal}
       layout={layout}
       sort={sort}
       cardWidth={cardW}
       maxWidth={handW}
       textScale={textScale}
       onPlay={playCard}
-      onBlocked={blocked}
+      onBlocked={shown.thulla ? undefined : blocked}
     />
   ) : null;
 
