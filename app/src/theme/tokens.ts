@@ -5,7 +5,13 @@
  * come from the mockup and are decorative only — never used for text or state.
  */
 
-export type ThemeName = "dark" | "light";
+export type BaseThemeId = "emerald" | "gold" | "arcade";
+export type FestivalId = "eid" | "diwali";
+export type ThemeId = BaseThemeId | FestivalId;
+export type ThemeName = ThemeId;
+export const THEME_IDS: readonly BaseThemeId[] = ["emerald", "gold", "arcade"];
+export const FESTIVAL_IDS: readonly FestivalId[] = ["eid", "diwali"];
+export const ALL_THEME_IDS: readonly ThemeId[] = [...THEME_IDS, ...FESTIVAL_IDS];
 
 export interface SemanticColors {
   bg: string; surface: string; surfaceRaised: string;
@@ -16,24 +22,231 @@ export interface SemanticColors {
   tableFelt: string;
 }
 
-export const colors: Record<ThemeName, SemanticColors> = {
-  dark: {
-    bg: "#0E0F12", surface: "#171A1F", surfaceRaised: "#20242B",
-    text: "#F2EEE4", textSecondary: "#B9B3A6", textMuted: "#8F897D",
-    primary: "#D4A646", onPrimary: "#1B1D21",
-    success: "#3FB67A", warning: "#F08A3C", error: "#F06A6A", info: "#5AA9E6",
+export type HapticLevel = "off" | "gentle" | "crisp" | "firm";
+
+export interface ThemeSpec {
+  id: ThemeId;
+  label: { en: string; ur: string; hi: string; ne: string; bn: string };
+  story: { en: string; ur: string; hi: string; ne: string; bn: string };
+  c: SemanticColors;
+  accent: { color: string; on: string; dim: string; line: string; lineHard: string };
+  value: { points: string; bid: string; coins: string };
+  felt: { base: string; lit: string; deep: string; rim: string; rimWidth: number; rimStyle: "solid" | "double"; bands: readonly string[] };
+  cardBack: { kind: "weave" | "ajrak" | "stripe" | "crescent" | "diya"; base: string; motif: string; line: string };
+  type: { display: string; titleCase: "none" | "uppercase"; tracking: number; numerals: string };
+  shape: { radius: number; chip: number; felt: number; button: number; sheet: number };
+  surface: { kind: "glass" | "framed" | "slab"; bg: string; border: string; borderWidth: number; shadow?: string };
+  button: { kind: "gradient" | "embossed" | "slab"; fill: readonly [string, string]; ink: string; edge?: string; press?: string; caps: boolean };
+  vignette: readonly [string, string];
+  ornament: "vignette" | "rule" | "bands";
+  tab: { bg: string; border: string; borderWidth: number; pill?: string };
+  sheet: { bg: string; border: string };
+  motion: "lush" | "standard" | "juicy";
+  haptic: { play: HapticLevel; win: HapticLevel };
+}
+
+const mehfil: ThemeSpec = {
+  id: "emerald", label: { en: "Mehfil", ur: "محفل", hi: "महफ़िल", ne: "महफिल", bn: "মেহফিল" },
+  story: {
+    en: "A lamp-lit courtyard gathering on green baize.",
+    ur: "چراغوں سے روشن صحن میں سبز کپڑے پر محفل۔",
+    hi: "दीयों से रोशन आँगन में हरे कपड़े पर जमी महफ़िल।",
+    ne: "दियोले उज्यालो आँगनमा हरियो कपडामा जमेको महफिल।",
+    bn: "প্রদীপ জ্বলা উঠোনে সবুজ কাপড়ের ওপর জমজমাট আসর।",
+  },
+  c: {
+    bg: "#070F0D", surface: "#0D1915", surfaceRaised: "#12231D",
+    text: "#F4ECD8", textSecondary: "#A0BDB1", textMuted: "#8AA69B",
+    primary: "#E3BD6E", onPrimary: "#16181D",
+    success: "#7FE0B0", warning: "#F0B45A", error: "#F58A80", info: "#8CC8F2",
     borderControl: "#666E7C", borderSubtle: "#2C313A",
-    tableFelt: "#0F3B2E",
+    tableFelt: "#0F4A3C",
   },
-  light: {
-    bg: "#F6F3EC", surface: "#FFFFFF", surfaceRaised: "#FFFFFF",
-    text: "#1B1D21", textSecondary: "#4A4F57", textMuted: "#676C74",
-    primary: "#8A6512", onPrimary: "#FFFFFF",
-    success: "#1F7A4D", warning: "#A8520F", error: "#B3261E", info: "#1B5FA8",
-    borderControl: "#8C8577", borderSubtle: "#D9D3C7",
-    tableFelt: "#154A37",
-  },
+  accent: { color: "#E3BD6E", on: "#16181D", dim: "#9D7A32", line: "rgba(227,189,110,0.22)", lineHard: "rgba(227,189,110,0.4)" },
+  value: { points: "#8CC8F2", bid: "#FFA886", coins: "#E8C36A" },
+  felt: { base: "#0F4A3C", lit: "#1A7458", deep: "#062019", rim: "#2E1C11", rimWidth: 4, rimStyle: "solid", bands: [] },
+  cardBack: { kind: "weave", base: "#0F4A3C", motif: "#1A7458", line: "#E3BD6E" },
+  type: { display: "Cormorant Garamond", titleCase: "none", tracking: 0, numerals: "Cormorant Garamond" },
+  shape: { radius: 14, chip: 999, felt: 18, button: 999, sheet: 20 },
+  surface: { kind: "glass", bg: "rgba(255,255,255,0.055)", border: "rgba(227,189,110,0.22)", borderWidth: 1 },
+  button: { kind: "gradient", fill: ["#F4D9A4", "#C79F56"], ink: "#16181D", caps: false },
+  vignette: ["#0F3A2E", "#070F0D"],
+  ornament: "vignette",
+  tab: { bg: "rgba(7,15,13,0.96)", border: "rgba(227,189,110,0.22)", borderWidth: 1 },
+  sheet: { bg: "#0F1C18", border: "rgba(227,189,110,0.4)" },
+  motion: "lush",
+  haptic: { play: "gentle", win: "crisp" },
 };
+
+const darbar: ThemeSpec = {
+  id: "gold", label: { en: "Darbar", ur: "دربار", hi: "दरबार", ne: "दरबार", bn: "দরবার" },
+  story: {
+    en: "A royal court on a wedding night: madder velvet, brass.",
+    ur: "شادی کی رات کا شاہی دربار: گہرا سرخ مخمل اور پیتل۔",
+    hi: "शादी की रात का शाही दरबार: गहरा लाल मख़मल और पीतल।",
+    ne: "बिहेको रातको शाही दरबार: गाढा रातो मखमल र पित्तल।",
+    bn: "বিয়ের রাতের রাজদরবার: গাঢ় লাল মখমল আর পিতল।",
+  },
+  c: {
+    bg: "#140806", surface: "#1F0F0B", surfaceRaised: "#2B1510",
+    text: "#F7EBD3", textSecondary: "#D9BFA0", textMuted: "#B0957A",
+    primary: "#F0C45A", onPrimary: "#1A0E04",
+    success: "#7FD6A2", warning: "#F5B35C", error: "#FF9A8C", info: "#8CC8F2",
+    borderControl: "#8A6A4E", borderSubtle: "#3A2118",
+    tableFelt: "#4A1712",
+  },
+  accent: { color: "#F0C45A", on: "#1A0E04", dim: "#B8923E", line: "rgba(240,196,90,0.28)", lineHard: "rgba(240,196,90,0.5)" },
+  value: { points: "#8CC8F2", bid: "#FFA886", coins: "#F0C45A" },
+  felt: { base: "#4A1712", lit: "#7A2A20", deep: "#240A07", rim: "#B8923E", rimWidth: 5, rimStyle: "double", bands: [] },
+  cardBack: { kind: "ajrak", base: "#1B2A55", motif: "#7A2A20", line: "#FBF8F1" },
+  type: { display: "Bodoni Moda", titleCase: "uppercase", tracking: 2.4, numerals: "Bodoni Moda" },
+  shape: { radius: 4, chip: 3, felt: 6, button: 4, sheet: 6 },
+  surface: { kind: "framed", bg: "#231209", border: "#8A6A4E", borderWidth: 1, shadow: "rgba(240,196,90,0.18)" },
+  button: { kind: "embossed", fill: ["#F7D98A", "#B8842A"], ink: "#1A0E04", press: "#6E4A14", caps: true },
+  vignette: ["#3A140E", "#140806"],
+  ornament: "rule",
+  tab: { bg: "#1F0F0B", border: "#8A6A4E", borderWidth: 2 },
+  sheet: { bg: "#1F0F0B", border: "#8A6A4E" },
+  motion: "standard",
+  haptic: { play: "crisp", win: "firm" },
+};
+
+const arcade: ThemeSpec = {
+  id: "arcade", label: { en: "Arcade", ur: "آرکیڈ", hi: "आर्केड", ne: "आर्केड", bn: "আর্কেড" },
+  story: {
+    en: "A modern deck-builder: ink navy, deep blue felt, chunky slabs.",
+    ur: "جدید گیم کا انداز: سیاہی مائل نیلا، گہرا نیلا کپڑا، موٹے بٹن۔",
+    hi: "आधुनिक गेम का अंदाज़: स्याही-सा नीला, गहरा नीला कपड़ा, मोटे बटन।",
+    ne: "आधुनिक गेमको शैली: मसीजस्तो नीलो, गाढा नीलो कपडा, मोटा बटन।",
+    bn: "আধুনিক গেমের ধাঁচ: কালির মতো নীল, গাঢ় নীল কাপড়, মোটা বোতাম।",
+  },
+  c: {
+    bg: "#0B1220", surface: "#131C2E", surfaceRaised: "#1B2640",
+    text: "#F5F1E8", textSecondary: "#B8C2D6", textMuted: "#8D98AE",
+    primary: "#FFC940", onPrimary: "#120A06",
+    success: "#3DDC84", warning: "#FFB072", error: "#FF8A7E", info: "#35A7FF",
+    borderControl: "#5E6B85", borderSubtle: "#26314A",
+    tableFelt: "#10233F",
+  },
+  accent: { color: "#FFC940", on: "#120A06", dim: "#B58A1E", line: "#05080F", lineHard: "#05080F" },
+  value: { points: "#35A7FF", bid: "#FF5E4D", coins: "#FFC940" },
+  felt: { base: "#10233F", lit: "#1A3D6B", deep: "#08142A", rim: "#05080F", rimWidth: 3, rimStyle: "solid", bands: ["rgba(53,167,255,0.16)", "rgba(255,94,77,0.14)"] },
+  cardBack: { kind: "stripe", base: "#C8372A", motif: "#FF5E4D", line: "#FBF8F1" },
+  type: { display: "Jost-Bold", titleCase: "uppercase", tracking: 0.5, numerals: "Jost-Bold" },
+  shape: { radius: 10, chip: 8, felt: 14, button: 10, sheet: 14 },
+  surface: { kind: "slab", bg: "#1B2640", border: "#05080F", borderWidth: 2, shadow: "#05080F" },
+  button: { kind: "slab", fill: ["#C8372A", "#C8372A"], ink: "#FFFFFF", edge: "#FF5E4D", press: "#7A1E14", caps: true },
+  vignette: ["#12284A", "#0B1220"],
+  ornament: "bands",
+  tab: { bg: "#131C2E", border: "#05080F", borderWidth: 2, pill: "rgba(255,201,64,0.16)" },
+  sheet: { bg: "#131C2E", border: "#05080F" },
+  motion: "juicy",
+  haptic: { play: "crisp", win: "firm" },
+};
+
+const chandRaat: ThemeSpec = {
+  id: "eid", label: { en: "Chand Raat", ur: "چاند رات", hi: "चाँद रात", ne: "चाँद रात", bn: "চাঁদ রাত" },
+  story: {
+    en: "Eid eve: a new moon, silver light and family at the table.",
+    ur: "عید کی رات: نیا چاند، چاندنی اور گھر والے ایک میز پر۔",
+    hi: "ईद की रात: नया चाँद, चाँदनी और परिवार एक टेबल पर।",
+    ne: "ईदको रात: नयाँ चन्द्रमा, चाँदनी र परिवार एउटै टेबलमा।",
+    bn: "ঈদের আগের রাত: নতুন চাঁদ, রুপালি আলো, টেবিলে পরিবার।",
+  },
+  c: {
+    bg: "#07131C", surface: "#0D1E29", surfaceRaised: "#132836",
+    text: "#EFF1EC", textSecondary: "#A8BFCB", textMuted: "#8EA6B3",
+    primary: "#E8D9A8", onPrimary: "#12161A",
+    success: "#7FE0B0", warning: "#F0B45A", error: "#F58A80", info: "#8CC8F2",
+    borderControl: "#5F7383", borderSubtle: "#22323F",
+    tableFelt: "#0C3A44",
+  },
+  accent: { color: "#E8D9A8", on: "#12161A", dim: "#A89A6E", line: "rgba(232,217,168,0.25)", lineHard: "rgba(232,217,168,0.45)" },
+  value: { points: "#8CC8F2", bid: "#FFA886", coins: "#E8D9A8" },
+  felt: { base: "#0C3A44", lit: "#15606E", deep: "#05191E", rim: "#9FB3BF", rimWidth: 3, rimStyle: "solid", bands: [] },
+  cardBack: { kind: "crescent", base: "#0C2A3A", motif: "#E8D9A8", line: "#FBF8F1" },
+  type: { display: "Cormorant Garamond", titleCase: "none", tracking: 0.5, numerals: "Cormorant Garamond" },
+  shape: { radius: 16, chip: 999, felt: 20, button: 999, sheet: 22 },
+  surface: { kind: "glass", bg: "rgba(232,217,168,0.06)", border: "rgba(232,217,168,0.25)", borderWidth: 1 },
+  button: { kind: "gradient", fill: ["#EEF2F4", "#C9B27A"], ink: "#111A22", caps: false },
+  vignette: ["#10304A", "#07131C"],
+  ornament: "vignette",
+  tab: { bg: "rgba(7,19,28,0.96)", border: "rgba(232,217,168,0.25)", borderWidth: 1 },
+  sheet: { bg: "#0E1F2B", border: "rgba(232,217,168,0.4)" },
+  motion: "lush",
+  haptic: { play: "gentle", win: "crisp" },
+};
+
+const deepavali: ThemeSpec = {
+  id: "diwali", label: { en: "Diwali", ur: "دیوالی", hi: "दिवाली", ne: "तिहार", bn: "দীপাবলি" },
+  story: {
+    en: "Festival of lights: marigolds, diyas and a warm table.",
+    ur: "روشنیوں کا تہوار: گیندے کے پھول، دیے اور گرم جوش محفل۔",
+    hi: "रोशनी का त्योहार: गेंदे के फूल, दीये और गरमाहट भरी टेबल।",
+    ne: "बत्तीको पर्व: सयपत्री, दियो र न्यानो टेबल।",
+    bn: "আলোর উৎসব: গাঁদা ফুল, প্রদীপ আর উষ্ণ টেবিল।",
+  },
+  c: {
+    bg: "#140A05", surface: "#21110A", surfaceRaised: "#2D180D",
+    text: "#FBEEDB", textSecondary: "#E6C9A2", textMuted: "#C29E77",
+    primary: "#FFB547", onPrimary: "#1A0D02",
+    success: "#7FD6A2", warning: "#FFC56B", error: "#FF9A8C", info: "#8CC8F2",
+    borderControl: "#8E6B48", borderSubtle: "#3D2415",
+    tableFelt: "#3A1B08",
+  },
+  accent: { color: "#FFB547", on: "#1A0D02", dim: "#B87A24", line: "rgba(255,181,71,0.28)", lineHard: "rgba(255,181,71,0.5)" },
+  value: { points: "#8CC8F2", bid: "#FFA886", coins: "#FFB547" },
+  felt: { base: "#3A1B08", lit: "#6B3512", deep: "#1C0B03", rim: "#D8962E", rimWidth: 4, rimStyle: "solid", bands: [] },
+  cardBack: { kind: "diya", base: "#5A1E0C", motif: "#FFB547", line: "#FBF8F1" },
+  type: { display: "Cormorant Garamond", titleCase: "uppercase", tracking: 1.8, numerals: "Cormorant Garamond" },
+  shape: { radius: 8, chip: 999, felt: 12, button: 8, sheet: 12 },
+  surface: { kind: "framed", bg: "#24130A", border: "#8E6B48", borderWidth: 1, shadow: "rgba(255,181,71,0.25)" },
+  button: { kind: "embossed", fill: ["#FFD98A", "#E0901F"], ink: "#1A0D02", press: "#7A430B", caps: true },
+  vignette: ["#4A200A", "#140A05"],
+  ornament: "rule",
+  tab: { bg: "#21110A", border: "#8E6B48", borderWidth: 2 },
+  sheet: { bg: "#21110A", border: "#8E6B48" },
+  motion: "standard",
+  haptic: { play: "crisp", win: "firm" },
+};
+
+export const themes: Record<ThemeId, ThemeSpec> = { emerald: mehfil, gold: darbar, arcade, eid: chandRaat, diwali: deepavali };
+
+const FESTIVAL_DAYS: Record<FestivalId, readonly (readonly [string, number, number])[]> = {
+  eid: [
+    ["2026-03-20", 3, 7], ["2026-05-27", 3, 7], ["2027-03-10", 3, 7], ["2027-05-17", 3, 7], ["2028-02-26", 3, 7], ["2028-05-05", 3, 7],
+    ["2029-02-15", 3, 7], ["2029-04-24", 3, 7], ["2030-02-05", 3, 7], ["2030-04-14", 3, 7],
+  ],
+  diwali: [["2026-11-08", 5, 7], ["2027-10-29", 5, 7], ["2028-10-17", 5, 7], ["2029-11-05", 5, 7], ["2030-10-26", 5, 7]],
+};
+
+const DAY = 86_400_000;
+const utcDay = (iso: string) => Date.parse(`${iso}T00:00:00Z`);
+const today = (now: Date) => Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+
+export function festivalWindow(id: FestivalId, now: Date = new Date()): { start: Date; end: Date } | null {
+  const d = today(now);
+  for (const [iso, before, after] of FESTIVAL_DAYS[id]) {
+    const start = utcDay(iso) - before * DAY;
+    const end = utcDay(iso) + after * DAY;
+    if (d >= start && d <= end) return { start: new Date(start), end: new Date(end) };
+  }
+  return null;
+}
+
+export const lastFestivalYear = (): number => Math.max(...Object.values(FESTIVAL_DAYS).flat().map(([iso]) => Number(iso.slice(0, 4))));
+
+export const openFestivals = (now: Date = new Date()): FestivalId[] => FESTIVAL_IDS.filter((id) => festivalWindow(id, now));
+export const isFestival = (id: ThemeId): id is FestivalId => (FESTIVAL_IDS as readonly string[]).includes(id);
+
+export function roomFor(id: ThemeId, now: Date = new Date()): ThemeSpec {
+  if (isFestival(id) && !festivalWindow(id, now)) return mehfil;
+  return themes[id] ?? mehfil;
+}
+
+export function toThemeId(v: unknown): ThemeId {
+  return typeof v === "string" && (ALL_THEME_IDS as readonly string[]).includes(v) ? (v as ThemeId) : "emerald";
+}
 
 /** Anything drawn on the felt; ≥ 4.5:1 on both felts. */
 export const onTable = {
@@ -55,21 +268,11 @@ export const cards = {
 
 /** Decorative material from the mehfil mockup (gradients, rims, leaf). Not for text or state. */
 export const material = {
-  feltLit: "#1a7458", felt: "#0f4a3c", feltDeep: "#062019", feltRim: "#03110d",
-  walnut: "#2e1c11", walnutLit: "#6a4626",
-  goldLeaf: "#e3bd6e", goldLeafHot: "#f6e0b0", goldLeafDim: "#9d7a32",
-  paper1: "#fffdf6", paper2: "#eee6d5",
-  obsidian: "#070f0d",
-  /** red suit on dark surfaces (mockup --rouge-lit) */
-  rougeLit: "#ff6b5b",
-  /** hairlines and glass panels drawn over dark surfaces (mockup --line, --line-hard, --glass) */
-  line: "rgba(227,189,110,0.22)", lineHard: "rgba(227,189,110,0.4)", glass: "rgba(255,255,255,0.055)",
-  /** gold button gradient (mockup --btn-1, --btn-2, --btn-ink) */
-  btn1: "#f4d9a4", btn2: "#c79f56", btnInk: "#16181d",
+  feltRim: "#03110d", walnutLit: "#6a4626", rougeLit: "#ff6b5b",
 } as const;
 
 export const fonts = {
-  ui: { family: "Jost", fallback: ["system-ui", "sans-serif"], weights: [400, 500, 600, 700] },
+  ui: { family: "Jost", medium: "Jost-Medium", semibold: "Jost-SemiBold", bold: "Jost-Bold", fallback: ["system-ui", "sans-serif"], weights: [400, 500, 600, 700] },
   display: { family: "Cormorant Garamond", fallback: ["Georgia", "serif"], weights: [500, 600, 700] },
   cardIndex: { family: "Bodoni Moda", fallback: ["Didot", "Georgia", "serif"], weights: [600, 700] },
   nastaliq: { family: "Noto Nastaliq Urdu", fallback: ["serif"], weights: [400, 700] },
@@ -82,30 +285,8 @@ export function scaleFor(role: keyof typeof typeScale, script: "latin" | "devana
   return { fontSize: size, lineHeight: Math.round(size * (script === "nastaliq" ? 1.8 : 1.35)) };
 }
 
-export const space = [4, 8, 12, 16, 24, 32, 48] as const;
 export const radius = { control: 12, sheet: 20, chip: 999, card: 8 } as const;
 export const minTouchTarget = 44;
-
-/** 2.5D elevation (§13.3): each level adds shadow depth and slight scale. */
-export const elevation = [
-  { level: 0, name: "felt", shadowRadius: 0, shadowOpacity: 0, offsetY: 0, scale: 1 },
-  { level: 1, name: "table-card", shadowRadius: 2, shadowOpacity: 0.25, offsetY: 1, scale: 1 },
-  { level: 2, name: "own-hand", shadowRadius: 6, shadowOpacity: 0.3, offsetY: 3, scale: 1.02 },
-  { level: 3, name: "lifted", shadowRadius: 12, shadowOpacity: 0.35, offsetY: 8, scale: 1.06 },
-  { level: 4, name: "hud-sheet", shadowRadius: 18, shadowOpacity: 0.35, offsetY: 10, scale: 1 },
-  { level: 5, name: "modal", shadowRadius: 28, shadowOpacity: 0.45, offsetY: 16, scale: 1 },
-] as const;
-
-/** Motion (§13.5), ms. Reduced motion: deals/plays 120 ms fades, no shakes, flips cross-fade. */
-export const motion = {
-  dealPerCard: 90, dealStagger: 40, play: 220, trickHold: 600, trickSlide: 350, interrupt: 450,
-  capture: 300, reveal: 300, score: 400, turn: 200, toast: 180, sheet: 240, reducedFade: 120,
-  /** if more than this many batches are queued, animations jump to their end state */
-  compressAfterBatches: 2,
-} as const;
-
-/** Responsive breakpoints (§15), dp of the shorter side unless noted. */
-export const breakpoints = { compactPhone: 360, phone: 400, largePhone: 480, tablet: 600, largeTablet: 840 } as const;
 
 /* ── WCAG 2.1 contrast ── */
 function channel(c: number): number { const s = c / 255; return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4; }

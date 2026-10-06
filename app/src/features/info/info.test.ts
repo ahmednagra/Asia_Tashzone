@@ -1,7 +1,8 @@
-import { describe, expect, it } from "vitest";
-import { GAMES } from "../../constants/games";
+import { afterEach, describe, expect, it } from "vitest";
+import { LANG_CODES, setLang } from "../../i18n";
+import { ERROR_MESSAGES, GAMES, GENERIC_ERROR, SETUP } from "../../constants/games";
 import { RULES, TEASERS, playableIds, rulesFor } from "../../constants/rules";
-import { HOWTO_SECTIONS } from "../../constants/howto";
+import { HOWTO } from "../../constants/howto";
 import { ATLAS, ATLAS_GROUPS, atlasFor } from "../../constants/atlas";
 
 /** Route files under src/app, as paths like "game/[id]/setup" ((group) folders and "index" dropped). */
@@ -46,7 +47,7 @@ describe("rules content", () => {
 
 describe("how to play content", () => {
   it("has titled, non-empty sections with valid cards", () => {
-    for (const s of HOWTO_SECTIONS) {
+    for (const s of HOWTO.sections) {
       expect(s.title).not.toBe("");
       expect(s.body.length).toBeGreaterThan(0);
       for (const ex of s.examples ?? []) {
@@ -68,5 +69,71 @@ describe("atlas content", () => {
   });
   it("every href opens an existing route", () => {
     for (const a of ATLAS) if (a.href) expect(routeExists(a.href), a.href).toBe(true);
+  });
+});
+
+describe("every language", () => {
+  afterEach(() => setLang("en"));
+  const en = { rules: playableIds().map((id) => rulesFor(id)!), teasers: GAMES.filter((g) => g.status !== "play").map((g) => TEASERS[g.id]!) };
+
+  for (const lang of LANG_CODES) {
+    it(`every playable game has full rules in ${lang}`, () => {
+      setLang(lang);
+      for (const [i, id] of playableIds().entries()) {
+        const r = rulesFor(id);
+        expect(r, `${lang}/${id}`).toBeDefined();
+        const base = en.rules[i]!;
+        expect(r!.sections.map((x) => x.id)).toEqual(base.sections.map((x) => x.id));
+        for (const [j, sec] of r!.sections.entries()) {
+          expect(sec.title.trim(), `${lang}/${id}/${sec.id}`).not.toBe("");
+          expect(sec.body.length, `${lang}/${id}/${sec.id}`).toBe(base.sections[j]!.body.length);
+          for (const line of sec.body) expect(line.trim(), `${lang}/${id}/${sec.id}`).not.toBe("");
+        }
+        expect(r!.terms.length).toBe(base.terms.length);
+        for (const t of r!.terms) { expect(t.term.trim()).not.toBe(""); expect(t.meaning.trim()).not.toBe(""); }
+        expect(r!.varies.length).toBe(base.varies.length);
+        if (lang !== "en") expect(r!.goal, `${lang}/${id} goal`).not.toBe(base.goal);
+      }
+      for (const [i, t] of en.teasers.entries()) {
+        const x = TEASERS[t.gameId]!;
+        expect(x.goal.trim()).not.toBe("");
+        expect(x.terms.length).toBe(en.teasers[i]!.terms.length);
+        expect(x.deal === undefined).toBe(t.deal === undefined);
+      }
+    });
+
+    it(`catalogue, setup, how-to and atlas follow the language (${lang})`, () => {
+      setLang(lang);
+      const other = lang !== "en";
+      const cb = GAMES.find((g) => g.id === "callbreak")!;
+      expect(cb.name).toBe("Callbreak");
+      expect(cb.description!.trim()).not.toBe("");
+      expect(cb.region.trim()).not.toBe("");
+      expect(cb.rules!.length).toBe(4);
+      for (const info of Object.values(SETUP)) {
+        expect(info.lengthLabel.trim()).not.toBe("");
+        for (const p of info.presets) { expect(p.label.trim()).not.toBe(""); expect(p.hint.trim()).not.toBe(""); }
+        for (const l of info.lengths) expect(l.label.trim()).not.toBe("");
+        for (const h of info.handicaps ?? []) expect(h.label.trim()).not.toBe("");
+      }
+      expect(HOWTO.sections.length).toBe(5);
+      for (const sec of HOWTO.sections) for (const ex of sec.examples ?? []) expect(ex.caption.trim()).not.toBe("");
+      expect(new Set(ATLAS.map((a) => a.label)).size).toBe(ATLAS.length);
+      expect(ERROR_MESSAGES.MUST_FOLLOW_SUIT!.trim()).not.toBe("");
+      expect(GENERIC_ERROR.trim()).not.toBe("");
+      if (other) {
+        setLang("en");
+        const enText = [cb.description, SETUP["bhabhi.tz@1"]!.presets[0]!.hint, HOWTO.intro, ERROR_MESSAGES.MUST_FOLLOW_SUIT, GENERIC_ERROR];
+        setLang(lang);
+        expect([cb.description, SETUP["bhabhi.tz@1"]!.presets[0]!.hint, HOWTO.intro, ERROR_MESSAGES.MUST_FOLLOW_SUIT, GENERIC_ERROR].filter((x, i) => x === enText[i])).toEqual([]);
+      }
+    });
+  }
+
+  it("difficulty and ids stay stable across languages", () => {
+    const before = GAMES.map((g) => [g.id, g.profile, g.difficulty, g.status]);
+    setLang("ur");
+    expect(GAMES.map((g) => [g.id, g.profile, g.difficulty, g.status])).toEqual(before);
+    expect(SETUP["callbreak.np@1"]!.presets.map((p) => p.id)).toEqual(["classic", "easy-follow", "call-bridge-classic", "standard", "lakdi-india"]);
   });
 });

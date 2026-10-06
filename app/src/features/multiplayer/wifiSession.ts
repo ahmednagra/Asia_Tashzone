@@ -19,6 +19,7 @@ import type { WifiState } from "./types";
 export const HOST_GONE_MS = 45_000;
 /** A join that has not produced a table this long after the first attempt gives up. */
 export const JOIN_TIMEOUT_MS = 12_000;
+const GUEST_MAX_RETRIES = 60;
 
 const randomHex = (bytes: number): string => Array.from(getRandomBytes(bytes), (b) => b.toString(16).padStart(2, "0")).join("");
 
@@ -34,18 +35,18 @@ export interface HostOptions {
   protectedMode: boolean;
 }
 
-interface Hosted { table: HostTable | null; server: HostServer | null; stopAdvert: (() => void) | null; unsubscribe: (() => void) | null }
+interface Hosted { table: HostTable | null; server: HostServer | null; stopAdvert: (() => void) | null; unsubscribe: (() => void) | null; rotatePin: (() => void) | null }
 let hosted: Hosted | null = null;
 
 const hostWifi = (patch: Partial<WifiState>): WifiState => ({ ...(getSession().wifi ?? { role: "host", pin: null, qr: null, address: null, roster: [], locked: false }), ...patch });
 
 /** Opens a table: rules, PIN, TCP server, mDNS advert and this phone's own seat. Resolves true when the lobby is up. */
 export async function hostTable(o: HostOptions): Promise<boolean> {
-  const res: Hosted = { table: null, server: null, stopAdvert: null, unsubscribe: null };
+  const res: Hosted = { table: null, server: null, stopAdvert: null, unsubscribe: null, rotatePin: null };
   hosted = res;
   const cleanup = () => {
     const { table, server, stopAdvert, unsubscribe } = res;
-    res.table = null; res.server = null; res.stopAdvert = null; res.unsubscribe = null;
+    res.table = null; res.server = null; res.stopAdvert = null; res.unsubscribe = null; res.rotatePin = null;
     if (hosted === res) hosted = null;
     unsubscribe?.();
     stopAdvert?.();
@@ -63,9 +64,10 @@ export async function hostTable(o: HostOptions): Promise<boolean> {
     if (!ip || !isPrivateLanIpv4(ip)) return fail("NO_WIFI");
 
     const compat = lanCompat(VERSION_CODE);
-    const pin = makePin(getRandomBytes);
+    let pin = makePin(getRandomBytes);
     const table = new HostTable({
-      rules: compiled.rules, effectiveProfileHash: compiled.effective_profile_hash, ...compat, pin, randomHex,
+      rules: compiled.rules, effectiveProfileHash: compiled.effective_profile_hash, ...compat, randomHex,
+      get pin() { return pin; },
       hostName: lanName(o.name) || "Host",
       onSeatsChanged: () => refreshHost(res, current),
     });
@@ -82,6 +84,12 @@ export async function hostTable(o: HostOptions): Promise<boolean> {
 
     let qr: string;
     try { qr = table.qrPayload(ip, server.port); } catch { return fail("SERVER_FAILED"); }
+    const port = server.port;
+    res.rotatePin = () => {
+      if (!current()) return;
+      pin = makePin(getRandomBytes);
+      patchSession({ wifi: hostWifi({ pin, qr: table.qrPayload(ip, port) }) });
+    };
 
     patchSession({
       phase: "lobby", profileId: o.profileId, roomCode: table.code, seat: 0, isHost: true, seatCount: table.seats,
@@ -129,7 +137,12 @@ function refreshHost(res: Hosted, current: () => boolean): void {
 }
 
 /** Host only, lobby: frees an away or unwanted guest's seat (a bot takes it). */
-export function kickSeat(seat: number): void { hosted?.table?.kick(seat); }
+export function kickSeat(seat: number): void {
+  const res = hosted;
+  if (!res?.table) return;
+  res.table.kick(seat);
+  res.rotatePin?.();
+}
 
 /* ───────────── guest ───────────── */
 
@@ -160,8 +173,9 @@ export function joinTable(o: { name: string; host: string; port: number; pin: st
     const guest = lanGuest(bufferedLink(() => connectToHost(o.host, o.port), CLOSE_GRACE_MS), { pin: o.pin, name: o.name });
     joinTimer = setTimeout(() => { if (!joined) fail("UNREACHABLE"); }, JOIN_TIMEOUT_MS);
 
-    startClient(current, { ...guest, ...lanCompat(VERSION_CODE) }, {
+    startClient(current, { ...guest, ...lanCompat(VERSION_CODE), maxRetries: GUEST_MAX_RETRIES }, {
       onState: (st) => {
+        if (st.status === "offline") { fail(joined ? "HOST_GONE" : "UNREACHABLE"); return; }
         if (st.status !== "reconnecting") return;
         // before the first snapshot a dropped connection means nobody is listening there; afterwards keep trying for a while
         if (!joined) { fail("UNREACHABLE"); return; }
@@ -176,7 +190,7 @@ export function joinTable(o: { name: string; host: string; port: number; pin: st
           settle({ ok: true });
         } else if (m.type === "Error" && GUEST_FATAL.has(m.code)) {
           const code = joinFailureCode(m.code);
-          fail(joined && code === "WRONG_PIN" ? "HOST_GONE" : code);
+          fail(joined && code === "WRONG_PIN" ? "KICKED" : code);
         }
       },
     });

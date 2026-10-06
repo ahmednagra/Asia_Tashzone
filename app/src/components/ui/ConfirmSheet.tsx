@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { fonts, material } from "../../theme/tokens";
+import { fonts } from "../../theme/tokens";
 import { useTheme } from "../../context/ThemeContext";
 import { GoldButton } from "./GoldButton";
 import { Sheet } from "./Sheet";
@@ -17,7 +17,7 @@ export function ConfirmSheet({ visible, title, standing, facts, confirmLabel, ca
   visible: boolean; title: string; standing?: readonly string[]; facts: readonly ConfirmFact[];
   confirmLabel: string; cancelLabel: string; onConfirm: () => void; onCancel: () => void;
 }) {
-  const { c } = useTheme();
+  const { c, t } = useTheme();
   return (
     <Sheet visible={visible} title={title} onClose={onCancel}
       actions={<><GoldButton label={cancelLabel} onPress={onCancel} /><GoldButton label={confirmLabel} kind="glass" onPress={onConfirm} /></>}>
@@ -25,7 +25,7 @@ export function ConfirmSheet({ visible, title, standing, facts, confirmLabel, ca
       <View style={s.facts}>
         {facts.map((f) => (
           <View key={f.title} style={s.fact} accessible accessibilityLabel={`${f.title}. ${f.body}`}>
-            <View style={[s.mark, { borderColor: material.goldLeafDim }]}><Text style={[s.markText, { color: material.goldLeaf }]}>{f.mark}</Text></View>
+            <View style={[s.mark, { borderColor: t.accent.dim }]}><Text style={[s.markText, { color: t.accent.color }]}>{f.mark}</Text></View>
             <View style={s.factText}>
               <Text style={[s.factTitle, { color: c.text }]}>{f.title}</Text>
               <Text style={[s.factBody, { color: c.textSecondary }]}>{f.body}</Text>
@@ -41,8 +41,8 @@ const s = StyleSheet.create({
   facts: { gap: 10, paddingBottom: 4 },
   fact: { flexDirection: "row", gap: 10, alignItems: "flex-start" },
   mark: { width: 22, height: 22, borderRadius: 11, borderWidth: 1, alignItems: "center", justifyContent: "center", marginTop: 1 },
-  markText: { fontFamily: fonts.ui.family, fontSize: 12, fontWeight: "700" },
+  markText: { fontFamily: fonts.ui.bold, fontSize: 12 },
   factText: { flex: 1, gap: 1 },
-  factTitle: { fontFamily: fonts.ui.family, fontSize: 15, fontWeight: "600" },
+  factTitle: { fontFamily: fonts.ui.semibold, fontSize: 15 },
   factBody: { fontFamily: fonts.ui.family, fontSize: 13, lineHeight: 18 },
 });

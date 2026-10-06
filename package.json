@@ -10,23 +10,39 @@
     "build": "turbo run build",
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
-    "lint": "eslint -c shared/config/eslint.config.js shared backend/match-server --max-warnings=0",
+    "lint": "eslint -c shared/config/eslint.config.js shared backend/match-server --max-warnings=0 && pnpm --filter @tashzone/app lint",
     "check": "pnpm lint && pnpm typecheck && pnpm test",
     "bundle:engine": "pnpm --filter @tashzone/engine bundle",
     "bundle:profiles": "pnpm --filter @tashzone/engine bundle:profiles",
     "digest": "pnpm --filter @tashzone/engine digest",
     "e2e": "node .github/scripts/e2e-fullstack.mjs",
-    "test:api": "cd backend/api && uv run pytest -q"
+    "test:api": "cd backend/api && uv run pytest -q",
+    "postinstall": "node app/scripts/fix-native-modules.mjs"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
+    "@types/node": "26.6.2",
     "eslint": "10.11.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
     "turbo": "2.11.3",
     "typescript": "6.0.3",
     "typescript-eslint": "8.70.1",
     "vite": "8.3.0",
     "vitest": "5.0.1",
-    "@types/node": "26.6.2",
     "ws": "8.21.3"
+  },
+  "pnpm": {
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "react-dom"
+      ],
+      "allowedVersions": {
+        "react-native-reanimated>react-native-worklets": "0.10"
+      }
+    },
+    "allowedDeprecatedVersions": {
+      "text-encoding": "0.7.0",
+      "uuid": "7.0.3"
+    }
   }
 }

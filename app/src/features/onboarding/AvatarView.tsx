@@ -1,5 +1,6 @@
 import React from "react";
 import Svg, { Circle, Ellipse, Path } from "react-native-svg";
+import { T } from "./copy";
 
 type Shape = { t: "p"; d: string } | { t: "c"; cx: number; cy: number; r: number } | { t: "e"; cx: number; cy: number; rx: number; ry: number };
 const p = (d: string): Shape => ({ t: "p", d });
@@ -18,7 +19,7 @@ export const AVATARS: { name: string; stroke: string; bg: string; shapes: Shape[
   { name: "Teapot", stroke: "#8fd0c0", bg: "#12403a", shapes: [p("M7 14h14v5a7 7 0 0 1-14 0z"), p("M21 16h3a3 3 0 0 1 0 6h-1"), p("M4 16l3-1"), p("M14 14v-3M12 11h4")] },
 ];
 
-export const avatarName = (i: number) => AVATARS[Math.abs(i) % AVATARS.length]!.name;
+export const avatarName = (i: number) => T.avatars[Math.abs(i) % AVATARS.length] ?? AVATARS[Math.abs(i) % AVATARS.length]!.name;
 export const avatarBg = (i: number) => AVATARS[Math.abs(i) % AVATARS.length]!.bg;
 
 /** Line-drawn avatar glyph (transparent background; put it on `avatarBg(index)` for the badge look). */

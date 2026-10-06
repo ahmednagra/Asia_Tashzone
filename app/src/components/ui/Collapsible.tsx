@@ -21,6 +21,6 @@ export function Collapsible({ title, children, defaultOpen = false }: { title: s
 const s = StyleSheet.create({
   card: { padding: 0 },
   head: { minHeight: minTouchTarget + 4, flexDirection: "row", alignItems: "center", gap: 8, paddingHorizontal: 14 },
-  title: { flex: 1, fontFamily: fonts.ui.family, fontSize: 16, fontWeight: "600" },
+  title: { flex: 1, fontFamily: fonts.ui.semibold, fontSize: 16 },
   body: { paddingHorizontal: 14, paddingBottom: 14, gap: 8 },
 });

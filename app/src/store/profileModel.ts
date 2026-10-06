@@ -1,13 +1,15 @@
 /** Pure profile model (no React Native imports) so it can be unit-tested. The provider lives in profile.tsx. */
 
-export type Lang = "en" | "ur" | "hi" | "ne" | "bn";
-const LANGS: readonly Lang[] = ["en", "ur", "hi", "ne", "bn"];
+import { LANG_CODES as LANGS, type Lang } from "../i18n";
+
+export type { Lang };
 
 /** Wrong-PIN tracking, persisted so restarting the app does not reset the lock-out. */
-export interface PinLock { fails: number; until: number }
+export interface PinLock { fails: number; level: number; left: number; mark?: number }
 
 export interface Profile {
   onboarded: boolean;
+  tutorialDone: boolean;
   lang: Lang;
   /** birth year from the age screen; undefined when skipped */
   born?: number;
@@ -28,7 +30,7 @@ export interface Profile {
 }
 
 export const DEFAULT_PROFILE: Profile = {
-  onboarded: false, lang: "en", protectedMode: true, name: "", avatar: 0, easy: false, hints: false, timer: true,
+  onboarded: false, tutorialDone: false, lang: "en", protectedMode: true, name: "", avatar: 0, easy: false, hints: false, timer: true,
   sound: { master: true, effects: true, haptics: true },
   parent: { text: false, online: true, wifi: true },
   stats: { matches: 0, wins: 0, streak: 0, bhabhi: 0 },
@@ -44,9 +46,10 @@ export function mergeProfile(raw: unknown): Profile {
   const r = obj(raw);
   const d = DEFAULT_PROFILE;
   const sound = obj(r.sound), parent = obj(r.parent), stats = obj(r.stats), lock = obj(parent.lock);
-  const hasLock = typeof lock.fails === "number" && typeof lock.until === "number";
+  const hasLock = typeof lock.fails === "number";
   return {
     onboarded: bool(r.onboarded, d.onboarded),
+    tutorialDone: bool(r.tutorialDone, r.onboarded === true),
     lang: LANGS.includes(r.lang as Lang) ? (r.lang as Lang) : d.lang,
     born: typeof r.born === "number" && Number.isFinite(r.born) ? r.born : undefined,
     protectedMode: bool(r.protectedMode, d.protectedMode),
@@ -59,7 +62,7 @@ export function mergeProfile(raw: unknown): Profile {
     parent: {
       pinHash: typeof parent.pinHash === "string" && typeof parent.salt === "string" ? parent.pinHash : undefined,
       salt: typeof parent.pinHash === "string" && typeof parent.salt === "string" ? parent.salt : undefined,
-      lock: hasLock ? { fails: count(lock.fails, 0), until: count(lock.until, 0) } : undefined,
+      lock: hasLock ? { fails: count(lock.fails, 0), level: count(lock.level, 0), left: count(lock.left, 0) } : undefined,
       text: bool(parent.text, d.parent.text), online: bool(parent.online, d.parent.online), wifi: bool(parent.wifi, d.parent.wifi),
     },
     stats: { matches: count(stats.matches, 0), wins: count(stats.wins, 0), streak: count(stats.streak, 0), bhabhi: count(stats.bhabhi, 0) },

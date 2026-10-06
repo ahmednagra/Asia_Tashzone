@@ -29,26 +29,29 @@ interface Played { readonly seat: number; readonly card: CardId }
 
 /**
  * The engine clears a trick the moment it is complete; a table needs a beat to show it (§13.5 trick hold).
- * Returns the trick to draw and, while held, who took it. A new lead cancels the hold at once.
+ * Returns the trick to draw and, while held, who took it. A new lead cancels the hold at once, except after a
+ * Bhabhi thulla (pickup): that one is held for `thullaMs` whatever happens next, so everyone sees the cards.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function useTrickHold(view: any, names: readonly string[], holdMs: number): { trick: readonly Played[]; taken: string | null } {
+export function useTrickHold(view: any, names: readonly string[], holdMs: number, thullaMs = holdMs): { trick: readonly Played[]; taken: string | null; thulla: boolean } {
   const current: readonly Played[] = view.hand?.trick ?? [];
   const last = lastTrick(view, names);
   const key = last ? last.plays.map((p) => `${p.seat}${p.card}`).join(",") : "";
   const seen = useRef(key);
-  const [held, setHeld] = useState<{ plays: readonly Played[]; text: string } | null>(null);
+  const [held, setHeld] = useState<{ plays: readonly Played[]; text: string; thulla: boolean } | null>(null);
   useEffect(() => {
     if (key === seen.current) return;
     seen.current = key;
-    if (!last || current.length > 0 || holdMs <= 0) { setHeld(null); return; }
-    setHeld({ plays: last.plays, text: last.text });
-    const t = setTimeout(() => setHeld(null), holdMs);
+    const thulla = view.game === "bhabhi" && view.hand?.last_trick?.outcome === "pickedUp";
+    const ms = thulla ? thullaMs : holdMs;
+    if (!last || (current.length > 0 && !thulla) || ms <= 0) { setHeld(null); return; }
+    setHeld({ plays: last.plays, text: last.text, thulla });
+    const t = setTimeout(() => setHeld(null), ms);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
-  if (current.length > 0) return { trick: current, taken: null };
-  return held ? { trick: held.plays, taken: held.text } : { trick: [], taken: null };
+  if (held?.thulla) return { trick: held.plays, taken: held.text, thulla: true };
+  if (current.length > 0) return { trick: current, taken: null, thulla: false };
+  return held ? { trick: held.plays, taken: held.text, thulla: false } : { trick: [], taken: null, thulla: false };
 }
 
 /** Time left until a server deadline (epoch ms), refreshed while `active`; null when there is none. */

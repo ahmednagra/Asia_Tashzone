@@ -48,3 +48,7 @@ def limit(request: Request, key: str, per_minute: int | None = None, *, per_hour
 def reset_limits() -> None:
     with _lock:
         _windows.clear()
+
+
+def limit_key(key: str, allowed: int, window_seconds: int) -> None:
+    _hit(f"{key}:{window_seconds}", allowed, window_seconds)

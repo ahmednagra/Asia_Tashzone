@@ -116,7 +116,7 @@ Log out and in, then `docker run --rm hello-world`. Reboot if the login message 
 ### B5. Code and secrets
 PC:
 ```powershell
-cd "D:\Office Works\Card Game"
+cd D:\CardGame
 tar --exclude=node_modules --exclude=.expo --exclude=.venv --exclude=dist --exclude=.turbo -czf tashzone.tgz tashzone
 scp -i "C:\Users\Muhammad Ahmed\.ssh\tashzone.key" tashzone.tgz ubuntu@141.148.193.78:~
 ```
@@ -209,7 +209,7 @@ chmod +x /srv/tashzone/repo/backend/deploy/backup.sh && (crontab -l 2>/dev/null;
 ```
 Copy to the PC:
 ```powershell
-scp -i "C:\Users\Muhammad Ahmed\.ssh\tashzone.key" "ubuntu@141.148.193.78:/srv/tashzone/backups/*.dump" "D:\Office Works\Card Game\backups\"
+scp -i "C:\Users\Muhammad Ahmed\.ssh\tashzone.key" "ubuntu@141.148.193.78:/srv/tashzone/backups/*.dump" "D:\CardGame\backups\"
 ```
 A local dump survives a bad migration only — not a lost instance. D3 is required before the first public release.
 
@@ -279,14 +279,14 @@ The API address is compiled in from `EXPO_PUBLIC_API_URL` (public, `https://` on
 | Build | Command (PC, in `tashzone/app`) |
 |---|---|
 | EAS test APK | `npx eas-cli login` then `npx eas-cli build --profile preview --platform android` |
-| Local release APK | `"D:\Office Works\tashzone\app\scripts\build-apk.bat"` (add `install` to push to a phone) — builds `assembleRelease`, raises `versionCode`, sets and prints `EXPO_PUBLIC_API_URL` |
+| Local release APK | `powershell -ExecutionPolicy Bypass -File D:\CardGame\app\scripts\build-apk.ps1` (add `-Install` to push to a connected phone). Raises `versionCode` in `app/app.json`, builds `assembleRelease` signed from `app\credentials`; APK and log in `build\`. The path must have no spaces |
 | Play build and upload | `npx eas-cli build --profile production --platform android` then `npx eas-cli submit --profile production --platform android` (Internal testing; first upload by hand) |
 
 **Two-phone test:** Phone 1 → online room → Create → Share code; Phone 2 → Join → code or `tashzone://room/CODE`; Phone 1 → Start; play to the end; `tz logs --tail=50 match-server` shows the room and result with no errors.
 
 **Update channel.** APKs live in `/srv/tashzone/releases`, served read-only at `https://<API_DOMAIN>/download/<file>`; `/api/v1/app-config` reads `APP_LATEST_VERSION`, `APP_LATEST_VERSION_CODE`, `APP_DOWNLOAD_URL`, `APP_DOWNLOAD_SHA256`, `APP_DOWNLOAD_SIZE_BYTES` from `.env` (api restarted after changes). The banner appears only for a higher `version_code` over `https`.
 ```bash
-app\scripts\build-apk.bat
+powershell -ExecutionPolicy Bypass -File app\scripts\build-apk.ps1
 bash backend/deploy/deploy.sh --publish-apk
 ```
 `--publish-apk` uploads, verifies the checksum, updates the five variables, restarts `api`, keeps the two newest APKs and checks the endpoint and download. The first publish needs a normal deploy first (Caddy route and mount). Check: `curl https://api.141-148-193-78.sslip.io/api/v1/app-config` (`{}` = nothing offered).
@@ -410,7 +410,7 @@ API first when both change (it accepts the previous protocol version); a breakin
 | `backend/deploy/deploy.sh` | PC (Git Bash) | local gates → reachability → refuse if `.env` lacks `LIVEKIT_API_KEY` → refuse on live tables unless `--force` → upload → **backup before migrations** → swap (`repo.previous`) → migrate → schema version before/after → external checks. Flags `--skip-tests`, `--force`, `--publish-apk` |
 | `backend/deploy/rollback.sh` | PC | restores code from `repo.previous`; does not restore the database (choose a dump, D2) |
 | `backend/deploy/backup.sh` | server | D1 |
-| `app/scripts/build-apk.bat` | PC | local release APK (Part F) |
+| `app/scripts/build-apk.ps1` | PC | local release APK (Part F): raises `versionCode` in `app/app.json`, builds and signs |
 
 **Keystore.** `app/credentials/tashzone-release.keystore` and `keystore.properties` (RSA 4096, PKCS12, alias `tashzone`, 30 years), gitignored and outside the generated `android/` directory; wired by `app/plugins/with-release-signing.js` so `expo prebuild --clean` cannot drop it. **Losing it ends the app:** installs become un-updatable and every player would lose phone-only progress. Back up both files in a password manager or two encrypted copies (one offline), never in git, chat or `.env`; verify a copy is readable before any build leaves your phone. Enrol in **Play App Signing** at the first Play upload (this key becomes the upload key). Check a build: `"%JAVA_HOME%\bin\keytool" -printcert -jarfile app-release.apk` must show `CN=TashZone`, never `CN=Android Debug`.
 

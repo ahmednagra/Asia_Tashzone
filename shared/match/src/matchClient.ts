@@ -25,10 +25,12 @@ export interface MatchClientOptions {
   readonly onState?: (s: ClientState) => void;
   readonly onMessage?: (m: any) => void;
   readonly backoffMs?: (attempt: number) => number;
+  readonly maxRetries?: number;
+  readonly random?: () => number;
 }
 
 export interface ClientState {
-  status: "connecting" | "open" | "reconnecting" | "closed" | "update_required";
+  status: "connecting" | "open" | "reconnecting" | "closed" | "update_required" | "offline";
   viewSeq: number;
   view: any;
   deadline: number | null;
@@ -36,10 +38,30 @@ export interface ClientState {
 }
 
 const FATAL = new Set(["UPDATE_REQUIRED", "UNAUTHORIZED", "KICKED", "OWNERSHIP_LOST", "MATCH_INTERRUPTED"]);
+export const MAX_RECONNECTS = 10;
+
+export function jitteredBackoff(attempt: number, random: () => number = Math.random): number {
+  const cap = Math.min(8000, 250 * 2 ** attempt);
+  return Math.round(cap / 2 + (cap / 2) * random());
+}
+
+export function parseServerFrame(data: unknown): { type: string; [k: string]: any } | null {
+  let m: unknown;
+  try { m = JSON.parse(String(data)); } catch { return null; }
+  if (!m || typeof m !== "object" || Array.isArray(m) || typeof (m as { type?: unknown }).type !== "string") return null;
+  const f = m as { type: string; [k: string]: any };
+  switch (f.type) {
+    case "TableSnapshot": return Number.isInteger(f.view_seq) && f.seat_view && typeof f.seat_view === "object" ? f : null;
+    case "ViewEvents": return Number.isInteger(f.from_seq) && Number.isInteger(f.to_seq) && f.seat_view && typeof f.seat_view === "object" ? f : null;
+    case "Error": return typeof f.code === "string" ? f : null;
+    default: return f;
+  }
+}
 
 export class MatchClient {
   readonly state: ClientState = { status: "connecting", viewSeq: 0, view: null, deadline: null, paused: false };
   private sock: SocketLike | null = null;
+  private timer: ReturnType<typeof setTimeout> | null = null;
   private attempt = 0;
   private stopped = false;
   private n = 0;
@@ -48,10 +70,20 @@ export class MatchClient {
   constructor(private readonly o: MatchClientOptions) {}
 
   connect(): void {
+    if (this.state.status === "update_required") return;
+    this.attempt = 0;
+    if (this.state.status === "offline" || this.state.status === "closed") this.set({ status: this.state.viewSeq > 0 ? "reconnecting" : "connecting" });
+    this.open();
+  }
+
+  private open(): void {
+    this.clearTimer();
+    this.detach();
     this.stopped = false;
     const s = this.o.socket(this.o.url);
     this.sock = s;
     s.onopen = () => {
+      if (this.sock !== s) return;
       this.attempt = 0;
       const hello: Record<string, unknown> = {
         type: "Hello", protocol_min: 2, protocol_max: 2, version_code: this.o.versionCode,
@@ -62,14 +94,31 @@ export class MatchClient {
       s.send(JSON.stringify(hello));
       this.set({ status: "open" });
     };
-    s.onmessage = (ev) => this.onFrame(JSON.parse(String(ev.data)));
+    s.onmessage = (ev) => {
+      if (this.sock !== s) return;
+      const m = parseServerFrame(ev.data);
+      if (m) this.onFrame(m);
+    };
     s.onclose = () => {
+      if (this.sock !== s) return;
+      this.sock = null;
       if (this.stopped || this.state.status === "update_required" || this.state.status === "closed") return;
+      if (this.attempt >= (this.o.maxRetries ?? MAX_RECONNECTS)) { this.set({ status: "offline" }); return; }
       this.set({ status: "reconnecting" });
-      const wait = (this.o.backoffMs ?? ((a) => Math.min(8000, 250 * 2 ** a)))(this.attempt++);
-      setTimeout(() => { if (!this.stopped) this.connect(); }, wait);
+      const wait = (this.o.backoffMs ?? ((a: number) => jitteredBackoff(a, this.o.random)))(this.attempt++);
+      this.timer = setTimeout(() => { this.timer = null; if (!this.stopped) this.open(); }, wait);
     };
   }
+
+  private detach(): void {
+    const old = this.sock;
+    this.sock = null;
+    if (!old) return;
+    old.onopen = null; old.onmessage = null; old.onclose = null;
+    try { old.close(); } catch { return; }
+  }
+
+  private clearTimer(): void { if (this.timer) clearTimeout(this.timer); this.timer = null; }
 
   private onFrame(m: any): void {
     switch (m.type) {
@@ -87,16 +136,17 @@ export class MatchClient {
       case "TablePaused": this.set({ paused: true }); break;
       case "TableResumed": this.set({ paused: false, deadline: m.deadline }); break;
       case "Error":
-        if (m.code === "UPDATE_REQUIRED") { this.stopped = true; this.set({ status: "update_required" }); this.sock?.close(); }
-        else if (FATAL.has(m.code)) { this.stopped = true; this.set({ status: "closed" }); }
+        if (m.code === "UPDATE_REQUIRED") { this.stopped = true; this.clearTimer(); this.set({ status: "update_required" }); this.sock?.close(); }
+        else if (FATAL.has(m.code)) { this.stopped = true; this.clearTimer(); this.set({ status: "closed" }); }
         break;
-      case "MatchEnded": this.stopped = true; break;
+      case "MatchEnded": this.stopped = true; this.clearTimer(); break;
     }
     this.o.onMessage?.(m);
   }
 
   /** Send a move for the current view; retried with the same intent id after a reconnect. */
   intent(action: SeatMove): string {
+    if (!this.state.view?.hand) return "";
     const intent_id = `i${++this.n}-${Date.now().toString(36)}`;
     const frame = { type: "Intent", intent_id, hand_id: this.state.view.hand.hand_id, expected_view_seq: this.state.viewSeq, action };
     this.pending.set(intent_id, frame);
@@ -112,7 +162,7 @@ export class MatchClient {
   send(m: unknown): void { try { this.sock?.send(JSON.stringify(m)); } catch { /* reconnect will resend */ } }
   start(): void { this.send({ type: "Start" }); }
   resumeControl(): void { this.send({ type: "ResumeControl" }); }
-  leave(): void { this.stopped = true; this.send({ type: "Leave" }); this.sock?.close(); this.set({ status: "closed" }); }
+  leave(): void { this.stopped = true; this.clearTimer(); this.send({ type: "Leave" }); this.detach(); this.set({ status: "closed" }); }
   /** tests: drop the transport without leaving */
   dropTransport(): void { this.sock?.close(); }
 

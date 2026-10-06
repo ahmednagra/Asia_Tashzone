@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Redirect, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { Screen } from "../../components/ui/Screen";
 import { Header } from "../../components/ui/Header";
 import { ChipGroup } from "../../components/ui/ChipGroup";
 import { GoldButton } from "../../components/ui/GoldButton";
 import { SETUP } from "../../constants/games";
+import { GameNotFound } from "./NotFound";
 import { type BotSetup, T, defaultSetup, findGame, playParams, playable } from "./copy";
 
 /** Bot table setup (mockup "setup"): preset, length, players, bot level, handicap. Start opens /play/[game] with string params. */
@@ -13,8 +14,9 @@ export function SetupScreen({ id }: { id: string }) {
   const g = findGame(id);
   const info = g?.profile ? SETUP[g.profile] : undefined;
   const [c, setC] = useState<BotSetup | undefined>(() => (g ? defaultSetup(g) : undefined));
-  if (!g || !info || !c || !playable(g)) return <Redirect href="/games" />;
-  const set = (patch: Partial<BotSetup>) => setC({ ...c, ...patch });
+  if (!g) return <GameNotFound body={T.setup.notFound} />;
+  if (!info || !c || !playable(g)) return <GameNotFound title={g.name} body={T.setup.notPlayable} />;
+  const set = (patch: Partial<BotSetup>) => setC((prev) => (prev ? { ...prev, ...patch } : prev));
   const preset = info.presets.find((p) => p.id === c.preset);
   const level = T.setup.levels.find((l) => l.id === c.level);
   return (

@@ -17,7 +17,7 @@ Wi-Fi guest: `/wifi/join` (nearby tables, scan QR) or `/wifi/pin` (PIN keypad, p
 Leaving a lobby frees the seat; leaving a live table hands the seat to a bot; the host leaving a Wi-Fi table ends it for everyone.
 
 ## Same-Wi-Fi: what is real
-- Real (in code, unit-tested in `shared/match` and `lanLogic.test.ts`): host table with bots filling empty seats, host plays too, PIN gate with lockout, QR and manual address, mDNS advert and scan, reconnect by resume token, host-gone and unreachable states, wrong PIN / locked / full / update-required messages, Parent Settings lock (`parent.wifi`), quick-chat only, protected mode advertises no nickname.
+- Real (in code, unit-tested in `shared/match` and `lanLogic.test.ts`): host table with bots filling empty seats, host plays too, PIN gate with lockout, QR and manual address, mDNS advert and scan, reconnect by resume token, host-gone and unreachable states, wrong PIN / locked / full / update-required messages, Parent controls lock (`parent.wifi`), quick-chat only, protected mode advertises no nickname.
 - Not verified on hardware: everything that touches `react-native-tcp-socket`, `react-native-zeroconf`, `expo-network` and the camera. Needs a dev/release build; Expo Go does not include the native modules.
 - Compatibility check: guests send an app-wide engine hash (VERSION_CODE) and a hash of all profile definitions, not the server's simulated digest. Bump `VERSION_CODE` on every release.
 

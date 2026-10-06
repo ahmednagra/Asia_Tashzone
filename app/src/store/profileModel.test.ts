@@ -27,9 +27,30 @@ describe("mergeProfile", () => {
 
   it("keeps a PIN hash only together with its salt, and a well-formed lock", () => {
     expect(mergeProfile({ parent: { pinHash: "h" } }).parent.pinHash).toBeUndefined();
-    const p = mergeProfile({ parent: { pinHash: "h", salt: "s", lock: { fails: 3, until: 99 } } });
-    expect(p.parent).toMatchObject({ pinHash: "h", salt: "s", lock: { fails: 3, until: 99 } });
+    const p = mergeProfile({ parent: { pinHash: "h", salt: "s", lock: { fails: 3, level: 2, left: 99, mark: 5 } } });
+    expect(p.parent).toMatchObject({ pinHash: "h", salt: "s" });
+    expect(p.parent.lock).toEqual({ fails: 3, level: 2, left: 99 });
+    expect(mergeProfile({ parent: { lock: { fails: 1, until: 99 } } }).parent.lock).toEqual({ fails: 1, level: 0, left: 0 });
     expect(mergeProfile({ parent: { lock: { fails: "x" } } }).parent.lock).toBeUndefined();
+  });
+});
+
+describe("tutorialDone", () => {
+  it("is false for a new player", () => {
+    expect(DEFAULT_PROFILE.tutorialDone).toBe(false);
+    expect(mergeProfile({}).tutorialDone).toBe(false);
+    expect(mergeProfile({ onboarded: false }).tutorialDone).toBe(false);
+  });
+
+  it("is true for a returning player saved before the flag existed", () => {
+    expect(mergeProfile({ onboarded: true, name: "Sana" }).tutorialDone).toBe(true);
+  });
+
+  it("keeps a saved value and ignores wrong types", () => {
+    expect(mergeProfile({ onboarded: true, tutorialDone: false }).tutorialDone).toBe(false);
+    expect(mergeProfile({ onboarded: false, tutorialDone: true }).tutorialDone).toBe(true);
+    expect(mergeProfile({ onboarded: true, tutorialDone: "no" }).tutorialDone).toBe(true);
+    expect(mergeProfile({ onboarded: "yes", tutorialDone: 1 }).tutorialDone).toBe(false);
   });
 });
 

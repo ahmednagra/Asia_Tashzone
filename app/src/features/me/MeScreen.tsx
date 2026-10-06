@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { AvatarBadge } from "../../components/ui/AvatarPicker";
 import { Caption } from "../../components/ui/Caption";
@@ -8,38 +8,64 @@ import { GoldButton } from "../../components/ui/GoldButton";
 import { NavRow } from "../../components/ui/NavRow";
 import { SectionLabel } from "../../components/ui/SectionLabel";
 import { SettingsScreen } from "../../components/ui/Settings";
-import { StatBox } from "../../components/ui/StatBox";
+import { TagPill } from "../../components/ui/TagPill";
 import { useTheme } from "../../context/ThemeContext";
+import { displayFace } from "../../i18n";
 import { GAMES } from "../../constants/games";
 import { useGameNav } from "../../hooks/useGameNav";
 import { useProfile } from "../../store/profile";
 import { winRate } from "../../store/profileModel";
 import { fonts } from "../../theme/tokens";
+import type { GameEntry } from "../../types/game";
 import { avatarName } from "../onboarding/AvatarView";
+import { playable } from "../games/copy";
 import { AvatarSheet } from "./AvatarSheet";
 import { T } from "./copy";
 
 const GLYPH = { S: "♠", H: "♥", D: "♦", C: "♣" } as const;
+const RECENT_SHOWN = 3;
 
-/** You tab (mockup `me`): identity, real stats from the saved profile, recent games, avatar sheet. */
 export function MeScreen() {
-  const { c } = useTheme();
+  const { c, t, lang } = useTheme();
+  const latin = lang === "en";
   const { profile: p } = useProfile();
   const nav = useGameNav();
   const [sheet, setSheet] = useState(false);
   const played = p.stats.matches > 0;
-  const recent = p.recent.map((id) => GAMES.find((g) => g.id === id)).filter((g): g is (typeof GAMES)[number] => !!g);
-  const dealTarget = recent.find((g) => g.status === "play") ?? GAMES.find((g) => g.status === "play");
+  const recent = useMemo(() => p.recent.map((id) => GAMES.find((g) => g.id === id)).filter((g): g is GameEntry => !!g), [p.recent]);
+  const dealTarget = recent.find(playable) ?? GAMES.find(playable);
+  const rankTitle = T.ranks[T.rankFor(p.stats.wins)];
+  const caps = t.type.titleCase === "uppercase";
+  const stats = [
+    { value: p.stats.matches, label: T.matches }, { value: p.stats.wins, label: T.wins },
+    { value: p.stats.streak, label: T.streak }, { value: p.stats.bhabhi, label: T.bhabhi },
+  ];
 
   return (
     <SettingsScreen title={T.title} back={false} right={<Chip label={T.table} onPress={() => nav.router.push("/themes")} />}>
-      <GlassCard style={s.who}>
-        <AvatarBadge index={p.avatar} size={56} selected onPress={() => setSheet(true)} label={T.changeAvatar} />
-        <View style={s.grow}>
-          <Text numberOfLines={1} style={[s.name, { color: c.text }]}>{p.name || T.defaultName}</Text>
-          <Caption tone="muted">{played ? T.summary(p.stats.matches, avatarName(p.avatar)) : `${T.noHands} · ${avatarName(p.avatar)}`}</Caption>
+      <GlassCard style={s.passport}>
+        <View style={s.between}>
+          <Text style={[s.passportLabel, { color: t.accent.color }, !latin && s.plain]}>{latin ? T.passport.toUpperCase() : T.passport}</Text>
+          <TagPill gold text={T.onDevice} />
         </View>
-        <Chip label={T.edit} onPress={() => setSheet(true)} />
+
+        <View style={s.who}>
+          <AvatarBadge index={p.avatar} size={60} selected onPress={() => setSheet(true)} label={T.changeAvatar} />
+          <View style={s.grow}>
+            <Text numberOfLines={1} style={[{ color: c.text, letterSpacing: t.type.tracking, textTransform: t.type.titleCase }, displayFace(t.type.display, caps ? 18 : 22, lang)]}>
+              {p.name || T.defaultName}
+            </Text>
+            <Text style={[s.rank, { color: t.value.coins }]}>{rankTitle}</Text>
+            <Caption tone="muted">{played ? T.summary(p.stats.matches, avatarName(p.avatar)) : `${T.noHands} · ${avatarName(p.avatar)}`}</Caption>
+          </View>
+          <Chip label={T.edit} onPress={() => setSheet(true)} />
+        </View>
+
+        {p.stats.streak > 1 ? (
+          <View style={[s.streak, { borderColor: c.warning, borderRadius: t.shape.chip === 999 ? 12 : t.shape.chip }]}>
+            <Text style={[s.streakText, { color: c.warning }]}>{T.streakLine(p.stats.streak)}</Text>
+          </View>
+        ) : null}
       </GlassCard>
 
       {played ? (
@@ -48,12 +74,19 @@ export function MeScreen() {
             <SectionLabel>{T.allTime}</SectionLabel>
             <Caption tone="muted">{T.won(winRate(p.stats))}</Caption>
           </View>
-          <StatBox items={[{ value: p.stats.matches, label: T.matches }, { value: p.stats.wins, label: T.wins }, { value: p.stats.streak, label: T.streak }, { value: p.stats.bhabhi, label: T.bhabhi }]} />
+          <GlassCard style={s.stats}>
+            {stats.map((it) => (
+              <View key={it.label} style={s.cell} accessible accessibilityLabel={`${it.label}: ${it.value}`}>
+                <Text style={[s.value, { color: c.text, fontFamily: t.type.numerals }]}>{it.value}</Text>
+                <Text style={[s.label, { color: c.textMuted }]}>{it.label}</Text>
+              </View>
+            ))}
+          </GlassCard>
         </>
       ) : (
         <GlassCard style={s.empty}>
-          <Text style={[s.star, { color: c.primary }]}>✦</Text>
-          <Text style={[s.emptyTitle, { color: c.text }]}>{T.emptyTitle}</Text>
+          <Text style={[s.star, { color: t.accent.color }]}>✦</Text>
+          <Text style={[s.emptyTitle, { color: c.text, letterSpacing: t.type.tracking, textTransform: t.type.titleCase }, displayFace(t.type.display, 18, lang)]}>{T.emptyTitle}</Text>
           <Caption center>{T.emptyBody}</Caption>
           {dealTarget ? <GoldButton label={T.deal} onPress={() => nav.deal(dealTarget)} style={s.full} /> : null}
           <GoldButton kind="glass" label={T.browse} onPress={() => nav.router.push("/games")} style={s.full} />
@@ -63,23 +96,32 @@ export function MeScreen() {
       {recent.length > 0 ? (
         <>
           <SectionLabel>{T.recent}</SectionLabel>
-          {recent.map((g) => <NavRow key={g.id} icon={GLYPH[g.suit ?? "S"]} title={g.name} caption={g.region} onPress={() => nav.open(g)} />)}
+          {recent.slice(0, RECENT_SHOWN).map((g) => <NavRow key={g.id} icon={GLYPH[g.suit ?? "S"]} title={g.name} caption={g.region} onPress={() => nav.open(g)} />)}
         </>
       ) : null}
 
-      <Caption center size={12} tone="muted">{T.localOnly}</Caption>
+      <Caption center size={13} tone="muted">{T.localOnly}</Caption>
       <AvatarSheet visible={sheet} onClose={() => setSheet(false)} />
     </SettingsScreen>
   );
 }
 
 const s = StyleSheet.create({
-  who: { flexDirection: "row", alignItems: "center", gap: 12 },
-  grow: { flex: 1, minWidth: 0 },
-  name: { fontFamily: fonts.display.family, fontSize: 20, fontWeight: "700" },
+  passport: { gap: 10 },
   between: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-  empty: { alignItems: "center", gap: 8, padding: 18 },
-  star: { fontSize: 26 },
-  emptyTitle: { fontFamily: fonts.display.family, fontSize: 18, fontWeight: "700" },
+  passportLabel: { fontFamily: fonts.ui.bold, fontSize: 13, letterSpacing: 1.4 },
+  plain: { letterSpacing: 0 },
+  who: { flexDirection: "row", alignItems: "center", gap: 12 },
+  grow: { flex: 1, minWidth: 0, gap: 2 },
+  rank: { fontFamily: fonts.ui.semibold, fontSize: 13 },
+  streak: { borderWidth: 1, paddingVertical: 4, paddingHorizontal: 10, alignItems: "center" },
+  streakText: { fontFamily: fonts.ui.bold, fontSize: 13 },
+  stats: { flexDirection: "row", paddingVertical: 10 },
+  cell: { flex: 1, alignItems: "center", gap: 2 },
+  value: { fontSize: 26 },
+  label: { fontFamily: fonts.ui.family, fontSize: 13 },
+  empty: { alignItems: "center", gap: 8, paddingVertical: 20 },
+  star: { fontSize: 24 },
+  emptyTitle: { textAlign: "center" },
   full: { alignSelf: "stretch" },
 });

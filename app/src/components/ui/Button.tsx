@@ -25,5 +25,5 @@ export function Button({ label, onPress, kind = "primary", disabled }: { label: 
 
 const s = StyleSheet.create({
   btn: { minHeight: minTouchTarget, paddingHorizontal: 20, borderRadius: radius.control, borderWidth: 1.5, alignItems: "center", justifyContent: "center" },
-  btnText: { fontFamily: fonts.ui.family, fontSize: 17, fontWeight: "600" },
+  btnText: { fontFamily: fonts.ui.semibold, fontSize: 17 },
 });

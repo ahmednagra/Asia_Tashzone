@@ -24,7 +24,7 @@ Twelve documents, read in order. Decisions are recorded only in the product brie
 | `03-screen-spec.md` | v1.0 screens, contents, flows, states, localization glossary, React Native notes |
 | `04-technical-plan.md` | Engine research (A), app foundation research (B), directory structure and flow diagrams (C) |
 | `05-skills-playbook.md` | Which skills to use at each stage, plus the full skill inventory |
-| **`06-deployment.md`** | **Deployment runbook:** live server facts, server setup from zero, releases and daily commands, backups and point-in-time recovery, app builds and Play Store, troubleshooting, voice chat, and what Oracle Cloud specifically requires (Part I) |
+| **`05_DEPLOYMENT_RUNBOOK.md`** | **Deployment runbook:** live server facts, server setup from zero, releases and daily commands, backups and point-in-time recovery, app builds and Play Store, troubleshooting, voice chat, and what Oracle Cloud specifically requires (Part I) |
 | `07-improvement-plan.md` | Phase-by-phase implementation plan and remaining risks |
 | **`08-store-compliance.md`** | **Store compliance pack:** Play Console declarations, Data safety answers grounded in the code, the moderation policy, a privacy policy draft, the pre-submission checklist, and what still needs the owner or a lawyer |
 | **`09-app-review-plan.md`** | **Review procedure:** step-by-step audit of the built app against the product brief (L1–L40) and the Bhabhi/Thulla market research — decision conformance, rules correctness, fairness, three-mode parity, duplication, pain-point coverage, compliance, device tests |
@@ -42,8 +42,8 @@ Reference images are in `../Research`.
 ## Status (18 Sep 2026)
 - **Phase:** build. Steps 1–7 built. Gates green: `build`, `test` (24/24 suites, **411 TypeScript tests** — engine 105, match 64, match-server 48, protocol 26, app 168), `typecheck`, `lint` (5 packages). Backend live on Oracle Cloud Always Free (Docker Compose + Caddy, HTTPS verified). Next: Android build against the live API and a two-phone online match.
 - **Open before release:** the spectator client, the reconnect catch-up, and the real-device passes. Full list: `10-research-implementation-audit.md` §9.
-- **Deployment (18 Sep 2026):** LiveKit keys, host firewall and Oracle security-list rules are all in place, and a deploy is under way from `backend/deploy/deploy.sh` (`06-deployment.md` Part J1). Until it completes the server still runs code from 17 Sep 08:00 UTC on the initial database migration with four pending, and `room-maintenance` and `livekit` have never started there — so room expiry has never run in production. **Voice remains unproven either way:** the path is configured end to end, but nobody has heard a call. That needs two phones, one on mobile data.
-- **Signing:** release builds are signed from `app/credentials/` (gitignored, generated 18 Sep 2026). That keystore is irreplaceable — `06-deployment.md` Part K explains why and how to back it up.
+- **Deployment (18 Sep 2026):** LiveKit keys, host firewall and Oracle security-list rules are all in place, and a deploy is under way from `backend/deploy/deploy.sh` (`05_DEPLOYMENT_RUNBOOK.md` Part C1). Until it completes the server still runs code from 17 Sep 08:00 UTC on the initial database migration with four pending, and `room-maintenance` and `livekit` have never started there — so room expiry has never run in production. **Voice remains unproven either way:** the path is configured end to end, but nobody has heard a call. That needs two phones, one on mobile data.
+- **Signing:** release builds are signed from `app/credentials/` (gitignored, generated 18 Sep 2026). That keystore is irreplaceable — `05_DEPLOYMENT_RUNBOOK.md` Part J explains why and how to back it up.
 - **Backend (L23):** FastAPI core backend from day one; live matches in a TypeScript match server that shares the app's engine.
 - **Android package name:** `com.tashzone.app` (provisional; permanent after the first Play upload).
 

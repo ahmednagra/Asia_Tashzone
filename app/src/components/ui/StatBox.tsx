@@ -21,6 +21,6 @@ export function StatBox({ items }: { items: { value: number | string; label: str
 const s = StyleSheet.create({
   panel: { flexDirection: "row", paddingVertical: 10 },
   cell: { flex: 1, alignItems: "center", gap: 2 },
-  value: { fontFamily: fonts.display.family, fontSize: 26, fontWeight: "600" },
+  value: { fontFamily: fonts.display.family, fontSize: 26 },
   label: { fontFamily: fonts.ui.family, fontSize: 12 },
 });

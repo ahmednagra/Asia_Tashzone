@@ -1,12 +1,12 @@
 /** Table setup choices (pure, tested in Node): defaults, deep-link parameters, engine settings and a readable summary. */
 import type { BotLevel } from "@tashzone/engine";
 import type { SetupInfo } from "../../types/game";
+import { PLAY } from "./copy";
 
 export interface Choice { preset: string; length: number; players: number; level: BotLevel; handicap: number }
 
-export const BOT_LEVELS: readonly { value: BotLevel; label: string }[] = [
-  { value: "easy", label: "Easy" }, { value: "medium", label: "Medium" }, { value: "hard", label: "Hard" },
-];
+const level = (value: "easy" | "medium" | "hard") => ({ value, get label() { return PLAY.levels[value]; } });
+export const BOT_LEVELS: readonly { readonly value: BotLevel; readonly label: string }[] = [level("easy"), level("medium"), level("hard")];
 
 export function defaultChoice(info: SetupInfo): Choice {
   return { preset: info.presets[0]!.id, length: info.defaultLength, players: 4, level: "medium", handicap: 0 };
@@ -57,11 +57,11 @@ export function settingsFor(info: SetupInfo, c: Choice): Record<string, unknown>
 /** [label, value] rows for the table-info sheet. */
 export function describeChoice(info: SetupInfo, c: Choice): [string, string][] {
   const rows: [string, string][] = [
-    ["Rules", info.presets.find((x) => x.id === c.preset)?.label ?? c.preset],
+    [PLAY.rules, info.presets.find((x) => x.id === c.preset)?.label ?? c.preset],
     [info.lengthLabel, info.lengths[c.length]?.label ?? String(c.length)],
   ];
-  if (info.players) rows.push(["Players", String(c.players)]);
-  rows.push(["Bots", BOT_LEVELS.find((l) => l.value === c.level)?.label ?? c.level]);
-  if (info.handicaps) rows.push(["Deal", info.handicaps.find((h) => h.value === c.handicap)?.label ?? String(c.handicap)]);
+  if (info.players) rows.push([PLAY.players, String(c.players)]);
+  rows.push([PLAY.bots, BOT_LEVELS.find((l) => l.value === c.level)?.label ?? c.level]);
+  if (info.handicaps) rows.push([PLAY.dealRow, info.handicaps.find((h) => h.value === c.handicap)?.label ?? String(c.handicap)]);
   return rows;
 }

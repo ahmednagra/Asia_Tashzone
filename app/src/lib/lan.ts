@@ -1,8 +1,9 @@
 import type { Link, LinkHandlers } from '@tashzone/match';
 import { FrameDecoder, encodeFrame } from '@tashzone/match';
 import * as Network from 'expo-network';
-import TcpSocket from 'react-native-tcp-socket';
-import Zeroconf, { type ZeroconfService } from 'react-native-zeroconf';
+import type TcpSocketType from 'react-native-tcp-socket';
+import type ZeroconfType from 'react-native-zeroconf';
+import type { ZeroconfService } from 'react-native-zeroconf';
 import { buildTxt, parseService, type NearbyTable, type TableInfo } from './lanFormat';
 
 /**
@@ -24,7 +25,17 @@ const MAX_CONNECTIONS = 8;
 const MAX_PENDING_TEXTS = 64;
 const MAX_TABLES = 50;
 
-type Socket = ReturnType<typeof TcpSocket.createConnection>;
+type Socket = ReturnType<typeof TcpSocketType.createConnection>;
+
+/** These native modules are missing in Expo Go, so load them on first use: the rest of the app still runs there. */
+let tcpModule: typeof TcpSocketType | null = null;
+function tcp(): typeof TcpSocketType {
+  try {
+    return (tcpModule ??= require('react-native-tcp-socket').default);
+  } catch {
+    throw new Error('Same Wi-Fi play needs a development build (not available in Expo Go).');
+  }
+}
 
 /** A link whose handlers are attached by the owner once it has them (texts received meanwhile are queued). */
 export interface WiredLink {
@@ -97,7 +108,7 @@ export function startHostServer(accept: (link: Link) => LinkHandlers): Promise<H
   return new Promise((resolve, reject) => {
     const sockets = new Set<Socket>();
     let listening = false;
-    const server = TcpSocket.createServer((raw) => {
+    const server = tcp().createServer((raw) => {
       const socket = raw as Socket;
       if (sockets.size >= MAX_CONNECTIONS) {
         socket.destroy();
@@ -131,7 +142,7 @@ export function startHostServer(accept: (link: Link) => LinkHandlers): Promise<H
 export function connectToHost(host: string, port: number): Promise<WiredLink> {
   return new Promise((resolve, reject) => {
     let settled = false;
-    const socket = TcpSocket.createConnection({ host, port }, () => {
+    const socket = tcp().createConnection({ host, port }, () => {
       if (settled) return;
       settled = true;
       clearTimeout(timer);
@@ -163,8 +174,16 @@ export async function localIpAddress(): Promise<string | null> {
   }
 }
 
-let zeroconf: Zeroconf | null = null;
-const getZeroconf = () => (zeroconf ??= new Zeroconf());
+let zeroconf: ZeroconfType | null = null;
+const getZeroconf = (): ZeroconfType => {
+  if (zeroconf) return zeroconf;
+  try {
+    const Zeroconf = require('react-native-zeroconf').default;
+    return (zeroconf = new Zeroconf());
+  } catch {
+    throw new Error('Same Wi-Fi play needs a development build (not available in Expo Go).');
+  }
+};
 
 /**
  * Every call below deliberately omits the `implType` argument, so Android uses NsdManager, the system's own mDNS.

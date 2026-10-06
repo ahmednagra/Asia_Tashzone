@@ -98,6 +98,27 @@ class Settings(BaseSettings):
     oidc_max_token_chars: int = Field(default=8192, ge=512)
     oidc_clock_skew_seconds: int = Field(default=60, ge=0, le=300)
 
+    # email accounts
+    mail_backend: str = "disabled"
+    smtp_host: str = ""
+    smtp_port: int = Field(default=587, ge=1, le=65535)
+    smtp_username: str = ""
+    smtp_password: str = ""
+    smtp_use_ssl: bool = False
+    smtp_timeout_seconds: float = Field(default=10.0, gt=0, le=60)
+    mail_from: str = ""
+    auth_code_ttl_minutes: int = Field(default=10, ge=2, le=60)
+    auth_code_max_attempts: int = Field(default=5, ge=1, le=10)
+    auth_code_resend_seconds: int = Field(default=60, ge=10, le=600)
+    auth_code_retention_hours: int = Field(default=24, ge=1)
+    auth_codes_per_email_per_hour: int = Field(default=5, ge=1)
+    auth_codes_per_ip_per_hour: int = Field(default=20, ge=1)
+    logins_per_email_per_15_minutes: int = Field(default=8, ge=1)
+    logins_per_ip_per_hour: int = Field(default=60, ge=1)
+
+    # startup
+    db_auto_create: bool = True
+
     # rate limits
     account_links_per_hour: int = Field(default=10, ge=1)
     restores_per_ip_per_hour: int = Field(default=20, ge=1)
@@ -134,6 +155,12 @@ class Settings(BaseSettings):
         return bool(self.play_games_client_id and self.play_games_client_secret)
 
     @property
+    def email_accounts_configured(self) -> bool:
+        if self.mail_backend == "console":
+            return True
+        return self.mail_backend == "smtp" and bool(self.smtp_host and self.mail_from)
+
+    @property
     def disabled_profile_set(self) -> frozenset[str]:
         return frozenset(self._list(self.disabled_profiles))
 
@@ -150,6 +177,10 @@ class Settings(BaseSettings):
             raise ValueError("secrets must be at least 32 characters")
         if len(set(secrets.values())) != len(secrets):
             raise ValueError("secrets must be distinct")
+        if self.mail_backend not in ("disabled", "console", "smtp"):
+            raise ValueError("MAIL_BACKEND must be disabled, console or smtp")
+        if self.is_production and self.mail_backend == "console":
+            raise ValueError("MAIL_BACKEND=console prints sign-in codes to the log and is not allowed in production")
         if self.is_production:
             bad = [n for n, v in secrets.items() if any(m in v.lower() for m in _PLACEHOLDER_MARKERS)]
             if bad:

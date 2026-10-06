@@ -8,8 +8,8 @@ from sqlalchemy.orm import Session
 from app.Core.enforcement import aware, banned_error, is_banned
 from app.Core.errors import conflict, not_found
 from app.Models import Player, PlayerIdentity, now
+from app.Services import SessionService
 from app.Services.IdentityVerifier import get_verifier
-from app.Services.PlayerService import token_for
 from config.settings import Settings
 
 logger = logging.getLogger("tashzone")
@@ -59,4 +59,4 @@ def restore(db: Session, settings: Settings, provider: str, id_token: str, nonce
     p.last_seen_at = now()
     db.commit()
     logger.info("player_restored", extra={"player_id": p.id, "provider": v.provider})
-    return p, token_for(settings, p)
+    return p, SessionService.issue(db, settings, p)

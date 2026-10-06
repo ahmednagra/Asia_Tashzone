@@ -4,7 +4,7 @@
     "slug": "tashzone",
     "version": "0.1.0",
     "orientation": "default",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "dark",
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.tashzone.app",
@@ -17,6 +17,7 @@
     },
     "android": {
       "package": "com.tashzone.app",
+      "versionCode": 13,
       "permissions": [
         "android.permission.INTERNET",
         "android.permission.ACCESS_NETWORK_STATE",
@@ -25,11 +26,7 @@
       ],
       "blockedPermissions": [
         "android.permission.READ_EXTERNAL_STORAGE",
-        "android.permission.WRITE_EXTERNAL_STORAGE",
-        "android.permission.ACCESS_FINE_LOCATION",
-        "android.permission.ACCESS_COARSE_LOCATION",
-        "android.permission.READ_CONTACTS",
-        "android.permission.SYSTEM_ALERT_WINDOW"
+        "android.permission.WRITE_EXTERNAL_STORAGE"
       ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -45,6 +42,8 @@
     "owner": "muhammad_ahmed",
     "plugins": [
       "./plugins/with-release-signing",
+      "./plugins/with-build-hygiene",
+      "./plugins/with-play-games",
       "expo-router",
       [
         "expo-camera",
@@ -60,14 +59,33 @@
           "image": "./assets/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#0046b8"
+          "backgroundColor": "#070F0D"
         }
-      ]
+      ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": false,
+          "recordAudioAndroid": false,
+          "enableBackgroundPlayback": false,
+          "enableBackgroundRecording": false
+        }
+      ],
+      "expo-secure-store"
     ],
     "scheme": "tashzone",
     "experiments": {
       "typedRoutes": true
     },
-    "icon": "./assets/icon.png"
+    "icon": "./assets/icon.png",
+    "backgroundColor": "#070F0D",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/5ca7b4b8-fb4c-458e-95f5-e5d4c27f5360",
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0
+    }
   }
 }

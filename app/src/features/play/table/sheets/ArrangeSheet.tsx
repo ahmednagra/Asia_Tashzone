@@ -2,7 +2,9 @@ import React from "react";
 import { GoldButton } from "../../../../components/ui/GoldButton";
 import { ChipGroup } from "../../../../components/ui/ChipGroup";
 import { Sheet } from "../../../../components/ui/Sheet";
+import { useTheme } from "../../../../context/ThemeContext";
 import type { HandSort } from "../insights";
+import { T } from "../copy";
 
 export type HandLayout = "fan" | "spread";
 
@@ -10,12 +12,14 @@ export type HandLayout = "fan" | "spread";
 export function ArrangeSheet({ visible, onClose, layout, onLayout, sort, onSort }: {
   visible: boolean; onClose: () => void; layout: HandLayout; onLayout: (v: HandLayout) => void; sort: HandSort; onSort: (v: HandSort) => void;
 }) {
+  useTheme();
+  const S = T.sheets;
   return (
-    <Sheet visible={visible} title="Arrange my cards" onClose={onClose} actions={<GoldButton label="Done" onPress={onClose} />}>
-      <ChipGroup label="Layout" value={layout} onChange={onLayout} options={[{ value: "fan", label: "Fan" }, { value: "spread", label: "Spread" }]}
-        hint={layout === "spread" ? "Every card is shown whole, tiled in rows." : "The classic overlap; the playable cards lift."} />
-      <ChipGroup label="Order" value={sort} onChange={onSort} options={[{ value: "suit", label: "By suit" }, { value: "rank", label: "By rank" }]}
-        hint={sort === "rank" ? "Highest first, regardless of suit." : "Grouped by suit, colours alternating."} />
+    <Sheet visible={visible} title={S.arrange} onClose={onClose} actions={<GoldButton label={S.done} onPress={onClose} />}>
+      <ChipGroup label={S.layout} value={layout} onChange={onLayout} options={[{ value: "fan", label: S.fan }, { value: "spread", label: S.spread }]}
+        hint={layout === "spread" ? S.spreadHint : S.fanHint} />
+      <ChipGroup label={S.order} value={sort} onChange={onSort} options={[{ value: "suit", label: S.bySuit }, { value: "rank", label: S.byRank }]}
+        hint={sort === "rank" ? S.rankHint : S.suitHint} />
     </Sheet>
   );
 }

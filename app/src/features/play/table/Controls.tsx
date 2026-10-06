@@ -1,75 +1,143 @@
 import React from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { GoldButton } from "../../../components/ui/GoldButton";
 import { ActionPill } from "./chrome";
-import { cards, fonts, material, minTouchTarget, onTable, radius } from "../../../theme/tokens";
+import { cards, fonts, minTouchTarget, onTable, radius } from "../../../theme/tokens";
+import { useTheme } from "../../../context/ThemeContext";
+import { displayFace } from "../../../i18n";
+import { suitName } from "./logic";
+import { T } from "./copy";
 
+function useTray() {
+  const { t, lang } = useTheme();
+  return {
+    t,
+    tray: { backgroundColor: t.sheet.bg, borderColor: t.accent.color, borderRadius: Math.max(radius.card, t.shape.sheet - 6), borderWidth: t.surface.kind === "slab" ? 2 : 1.5 },
+    title: [{ color: t.accent.color, letterSpacing: t.type.tracking, textTransform: t.type.titleCase }, displayFace(t.type.display, 17, lang)],
+    tag: { borderColor: t.accent.color, backgroundColor: t.accent.line },
+  };
+}
 
-/** Call picker sheet (Callbreak 1–13 / Call Bridge 2–12). */
 export function CallPicker({ min, max, suggestion, onCall }: { min: number; max: number; suggestion?: number; onCall: (n: number) => void }) {
+  const { t, tray, title, tag } = useTray();
   const nums: number[] = [];
   for (let n = min; n <= max; n++) nums.push(n);
   return (
-    <View style={s.sheet} accessibilityLabel="Choose your call">
-      <Text style={s.sheetTitle}>Your call</Text>
-      <ScrollView horizontal contentContainerStyle={s.row} showsHorizontalScrollIndicator={false}>
-        {nums.map((n) => (
-          <Pressable key={n} onPress={() => onCall(n)} accessibilityRole="button" accessibilityLabel={`Call ${n}${n === suggestion ? ", suggested" : ""}`}
-            style={[s.num, n === suggestion && s.suggested]}>
-            <Text style={s.numText}>{n}</Text>
-          </Pressable>
-        ))}
-      </ScrollView>
-    </View>
-  );
-}
-
-/** W-CB-1 strip: identical for everybody; only eligible seats see the request button. */
-export function RedealStrip({ canRequest, requested, onRequest }: { canRequest: boolean; requested: boolean; onRequest: () => void }) {
-  return (
-    <View style={s.strip} accessibilityLiveRegion="polite">
-      <Text style={s.stripText}>{requested ? "Redeal requested. Waiting for the window to close…" : "Redeal window open"}</Text>
-      {canRequest && <Pressable onPress={onRequest} style={s.stripBtn} accessibilityRole="button"><Text style={s.stripBtnText}>Request redeal</Text></Pressable>}
-    </View>
-  );
-}
-
-/** Court Piece: the caller sees 5 cards and names trump. */
-const SUITS = [{ id: "S", glyph: "♠", name: "Spades", red: false }, { id: "H", glyph: "♥", name: "Hearts", red: true }, { id: "D", glyph: "♦", name: "Diamonds", red: true }, { id: "C", glyph: "♣", name: "Clubs", red: false }] as const;
-export function TrumpPicker({ suggestion, onChoose }: { suggestion?: string; onChoose: (suit: "S" | "H" | "D" | "C") => void }) {
-  return (
-    <View style={s.sheet} accessibilityLabel="Choose trump">
-      <Text style={s.sheetTitle}>Choose trump</Text>
-      <View style={s.row}>
-        {SUITS.map((x) => (
-          <Pressable key={x.id} onPress={() => onChoose(x.id)} accessibilityRole="button" accessibilityLabel={`${x.name}${x.id === suggestion ? ", suggested" : ""}`}
-            style={[s.suit, x.id === suggestion && s.suggested]}>
-            <Text style={[s.suitText, x.red && s.red]}>{x.glyph}</Text>
-          </Pressable>
-        ))}
+    <View style={[s.floatingTray, tray]} accessibilityLabel={T.controls.chooseCall}>
+      <View style={s.trayHeader}>
+        <Text style={[s.trayTitle, title]}>{T.controls.makeCall}</Text>
+        {suggestion !== undefined && (
+          <View style={[s.suggestedTag, tag]}>
+            <Text style={[s.suggestedTagText, { color: t.accent.color }]}>{T.controls.suggested(String(suggestion))}</Text>
+          </View>
+        )}
+      </View>
+      <View style={s.numGrid}>
+        {nums.map((n) => {
+          const on = n === suggestion;
+          return (
+            <Pressable
+              key={n}
+              onPress={() => onCall(n)}
+              accessibilityRole="button"
+              accessibilityLabel={T.controls.callN(n, on)}
+              style={({ pressed }) => [s.numBtn, { borderColor: on ? t.accent.color : t.c.borderControl, backgroundColor: on ? t.accent.color : t.surface.bg, borderRadius: t.shape.button === 999 ? minTouchTarget / 2 : t.shape.button }, pressed && { opacity: 0.8 }]}
+            >
+              <Text style={[s.numText, { color: on ? t.accent.on : t.value.bid }]}>{n}</Text>
+            </Pressable>
+          );
+        })}
       </View>
     </View>
   );
 }
 
-/** Bhabhi house rule L33: before a trick, take the next player's cards (they get away). */
-export function TakeButton({ onTake }: { onTake: () => void }) {
+export function RedealStrip({ canRequest, requested, onRequest }: { canRequest: boolean; requested: boolean; onRequest: () => void }) {
+  const { t } = useTheme();
   return (
-    <View style={s.strip}>
-      <Text style={s.stripText}>You may take the next player's cards. They get away.</Text>
-      <Pressable onPress={onTake} style={s.stripBtn} accessibilityRole="button" accessibilityLabel="Take the next player's cards">
-        <Text style={s.stripBtnText}>Take cards</Text>
+    <View style={[s.strip, { backgroundColor: t.sheet.bg, borderColor: t.accent.line }]} accessibilityLiveRegion="polite">
+      <Text style={s.stripText}>{requested ? T.controls.redealRequested : T.controls.redealOpen}</Text>
+      {canRequest && (
+        <Pressable onPress={onRequest} style={[s.stripBtn, { borderColor: t.accent.color }]} accessibilityRole="button">
+          <Text style={[s.stripBtnText, { color: t.accent.color }]}>{T.controls.requestRedeal}</Text>
+        </Pressable>
+      )}
+    </View>
+  );
+}
+
+const SUITS = [
+  { id: "S", glyph: "♠" },
+  { id: "H", glyph: "♥" },
+  { id: "D", glyph: "♦" },
+  { id: "C", glyph: "♣" },
+] as const;
+
+export function TrumpPicker({ suggestion, onChoose }: { suggestion?: string; onChoose: (suit: "S" | "H" | "D" | "C") => void }) {
+  const { t, tray, title, tag } = useTray();
+  const { fourColor } = useTheme();
+  const ink = fourColor ? cards.fourColor : cards.twoColor;
+  return (
+    <View style={[s.floatingTray, tray]} accessibilityLabel={T.controls.chooseTrump}>
+      <View style={s.trayHeader}>
+        <Text style={[s.trayTitle, title]}>{T.controls.chooseTrump}</Text>
+        {suggestion && (
+          <View style={[s.suggestedTag, tag]}>
+            <Text style={[s.suggestedTagText, { color: t.accent.color }]}>{T.controls.suggested(suitName(suggestion))}</Text>
+          </View>
+        )}
+      </View>
+      <View style={s.suitRow}>
+        {SUITS.map((x) => {
+          const on = x.id === suggestion;
+          return (
+            <Pressable
+              key={x.id}
+              onPress={() => onChoose(x.id)}
+              accessibilityRole="button"
+              accessibilityLabel={T.controls.suitSuggested(`${x.glyph} ${suitName(x.id)}`, on)}
+              style={({ pressed }) => [s.suitBtn, { borderColor: on ? t.accent.color : t.c.borderControl, backgroundColor: t.surface.bg, borderWidth: on ? 2 : 1.5 }, pressed && { opacity: 0.8 }]}
+            >
+              <View style={s.suitChip}>
+                <Text style={[s.suitText, { color: ink[x.id] }]}>{x.glyph}</Text>
+              </View>
+              <Text style={[s.suitName, { color: on ? t.accent.color : onTable.secondary }]} numberOfLines={1} adjustsFontSizeToFit>{suitName(x.id)}</Text>
+            </Pressable>
+          );
+        })}
+      </View>
+    </View>
+  );
+}
+
+export function TakeButton({ onTake }: { onTake: () => void }) {
+  const { t } = useTheme();
+  return (
+    <View style={[s.strip, { backgroundColor: t.sheet.bg, borderColor: t.accent.line }]}>
+      <Text style={s.stripText}>{T.controls.takeLine}</Text>
+      <Pressable onPress={onTake} style={[s.stripBtn, { borderColor: t.accent.color }]} accessibilityRole="button" accessibilityLabel={T.controls.takeSpoken}>
+        <Text style={[s.stripBtnText, { color: t.accent.color }]}>{T.controls.takeCards}</Text>
       </Pressable>
     </View>
   );
 }
 
-/** Between hands (the table holds the next deal): what just ended and the ways on. Offline only. */
-export function HandOverStrip({ title, primaryLabel, onPrimary, secondaryLabel, onSecondary }: {
-  title: string; primaryLabel: string; onPrimary: () => void; secondaryLabel: string; onSecondary: () => void;
+export function HandOverStrip({
+  title,
+  primaryLabel,
+  onPrimary,
+  secondaryLabel,
+  onSecondary,
+}: {
+  title: string;
+  primaryLabel: string;
+  onPrimary: () => void;
+  secondaryLabel: string;
+  onSecondary: () => void;
 }) {
+  const { t } = useTheme();
   return (
-    <View style={s.strip} accessibilityLiveRegion="polite">
+    <View style={[s.strip, { backgroundColor: t.sheet.bg, borderColor: t.accent.line }]} accessibilityLiveRegion="polite">
       <Text style={s.stripText}>{title}</Text>
       <View style={s.stripBtns}>
         <ActionPill label={secondaryLabel} onPress={onSecondary} />
@@ -80,18 +148,117 @@ export function HandOverStrip({ title, primaryLabel, onPrimary, secondaryLabel, 
 }
 
 const s = StyleSheet.create({
-  stripBtns: { flexDirection: "row", gap: 8, alignItems: "center", flexWrap: "wrap", justifyContent: "flex-end" },
-  suit: { width: 64, height: 64, borderRadius: radius.control, borderWidth: 1.5, borderColor: onTable.gold, alignItems: "center", justifyContent: "center", backgroundColor: cards.face },
-  suitText: { fontSize: 34, color: cards.black },
-  red: { color: cards.red },
-  sheet: { backgroundColor: material.feltDeep, borderWidth: 1, borderColor: material.line, borderTopLeftRadius: radius.sheet, borderTopRightRadius: radius.sheet, padding: 16, gap: 10 },
-  sheetTitle: { color: onTable.text, fontFamily: fonts.display.family, fontSize: 20, fontWeight: "600" },
-  row: { flexDirection: "row", flexWrap: "wrap", gap: 8, paddingVertical: 4 },
-  num: { width: 48, height: 48, borderRadius: radius.control, borderWidth: 1.5, borderColor: onTable.gold, alignItems: "center", justifyContent: "center" },
-  suggested: { backgroundColor: material.glass, borderWidth: 3 },
-  numText: { color: onTable.text, fontSize: 20, fontVariant: ["tabular-nums"], fontWeight: "600" },
-  strip: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 12, padding: 12, borderRadius: radius.control, backgroundColor: material.feltRim, borderWidth: 1, borderColor: material.line },
-  stripText: { color: onTable.secondary, fontSize: 15, flexShrink: 1 },
-  stripBtn: { minHeight: minTouchTarget, justifyContent: "center", paddingHorizontal: 14, borderRadius: radius.control, borderWidth: 1.5, borderColor: onTable.gold },
-  stripBtnText: { color: onTable.gold, fontWeight: "600" },
+  floatingTray: {
+    padding: 10,
+    gap: 8,
+    shadowColor: "#000",
+    shadowOpacity: 0.6,
+    shadowRadius: 14,
+    elevation: 10,
+  },
+  trayHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    flexWrap: "wrap",
+    gap: 6,
+    paddingHorizontal: 4,
+  },
+  trayTitle: {
+    fontSize: 17,
+    flexShrink: 1,
+  },
+  suggestedTag: {
+    borderWidth: 1,
+    borderRadius: 999,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+  },
+  suggestedTagText: {
+    fontFamily: fonts.ui.semibold,
+    fontSize: 13,
+  },
+  numGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: 6,
+    paddingVertical: 2,
+  },
+  numBtn: {
+    width: minTouchTarget,
+    height: minTouchTarget,
+    borderWidth: 1.5,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  numText: {
+    fontFamily: fonts.ui.bold,
+    fontSize: 17,
+    fontVariant: ["tabular-nums"],
+  },
+  suitRow: {
+    flexDirection: "row",
+    gap: 8,
+    justifyContent: "space-around",
+    paddingVertical: 2,
+  },
+  suitBtn: {
+    flex: 1,
+    minHeight: 64,
+    borderRadius: radius.control,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 6,
+    gap: 3,
+  },
+  suitChip: {
+    width: 36,
+    height: 36,
+    borderRadius: radius.card,
+    backgroundColor: cards.face,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  suitText: {
+    fontSize: 24,
+    lineHeight: 30,
+  },
+  suitName: {
+    fontFamily: fonts.ui.semibold,
+    fontSize: 13,
+  },
+  strip: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    flexWrap: "wrap",
+    gap: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: radius.control,
+    borderWidth: 1,
+  },
+  stripText: {
+    color: onTable.secondary,
+    fontFamily: fonts.ui.family,
+    fontSize: 13,
+    flexShrink: 1,
+  },
+  stripBtn: {
+    minHeight: minTouchTarget,
+    justifyContent: "center",
+    paddingHorizontal: 14,
+    borderRadius: radius.control,
+    borderWidth: 1.5,
+  },
+  stripBtnText: {
+    fontFamily: fonts.ui.semibold,
+    fontSize: 14,
+  },
+  stripBtns: {
+    flexDirection: "row",
+    gap: 8,
+    alignItems: "center",
+  },
 });

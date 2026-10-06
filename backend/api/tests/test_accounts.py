@@ -1,0 +1,282 @@
+import pytest
+from conftest import register
+
+SENT: list[dict] = []
+
+
+@pytest.fixture()
+def mail(env, monkeypatch):
+    from app.Services import Mailer
+
+    SENT.clear()
+    env(MAIL_BACKEND="console")
+    monkeypatch.setattr(Mailer, "send_code", lambda settings, to, purpose, code, lang: SENT.append({"to": to, "purpose": purpose, "code": code, "lang": lang}))
+    return SENT
+
+
+def ask(client, email, purpose, lang="en"):
+    r = client.post("/api/v1/auth/email/code", json={"email": email, "purpose": purpose, "lang": lang})
+    assert r.status_code == 202 and r.json() == {"sent": True}
+
+
+def signed_up(client, mail, email="asha@example.com", password="cards2026"):
+    pid, h = register(client, "Asha")
+    ask(client, email, "signup")
+    r = client.post("/api/v1/auth/signup", json={"email": email, "code": mail[-1]["code"], "password": password}, headers=h)
+    assert r.status_code == 201, r.text
+    return pid, {"Authorization": f"Bearer {r.json()['token']}"}
+
+
+def test_signup_attaches_email_to_the_guest_and_password_login_returns_the_same_player(client, mail):
+    pid, h = signed_up(client, mail, "Asha@Example.com")
+    assert mail[-1]["purpose"] == "signup" and mail[-1]["to"] == "asha@example.com"
+    assert client.get("/api/v1/players/me", headers=h).json()["email"] == "asha@example.com"
+    r = client.post("/api/v1/auth/login", json={"email": "ASHA@example.com", "password": "cards2026"}).json()
+    assert r["player_id"] == pid
+    assert client.get("/api/v1/players/me", headers={"Authorization": f"Bearer {r['token']}"}).status_code == 200
+
+
+def test_wrong_password_and_unknown_email_look_the_same(client, mail):
+    signed_up(client, mail)
+    wrong = client.post("/api/v1/auth/login", json={"email": "asha@example.com", "password": "nope12345"})
+    unknown = client.post("/api/v1/auth/login", json={"email": "nobody@example.com", "password": "nope12345"})
+    assert wrong.status_code == unknown.status_code == 401
+    assert wrong.json()["error"]["code"] == unknown.json()["error"]["code"] == "INVALID_CREDENTIALS"
+
+
+def test_code_requests_never_reveal_whether_an_account_exists(client, mail):
+    ask(client, "ghost@example.com", "login")
+    ask(client, "ghost@example.com", "reset")
+    assert mail == []
+    signed_up(client, mail)
+    count = len(mail)
+    ask(client, "asha@example.com", "signup")
+    assert len(mail) == count + 1 and mail[-1]["purpose"] == "login"
+
+
+def test_code_login_resend_cooldown_and_attempt_cap(client, mail, env):
+    pid, _ = signed_up(client, mail)
+    env(MAIL_BACKEND="console", AUTH_CODE_RESEND_SECONDS="10")
+    ask(client, "asha@example.com", "login")
+    before = len(mail)
+    ask(client, "asha@example.com", "login")
+    assert len(mail) == before
+    code = mail[-1]["code"]
+    wrong = "000000" if code != "000000" else "111111"
+    for _ in range(5):
+        assert client.post("/api/v1/auth/login/code", json={"email": "asha@example.com", "code": wrong}).json()["error"]["code"] == "INVALID_CODE"
+    assert client.post("/api/v1/auth/login/code", json={"email": "asha@example.com", "code": code}).json()["error"]["code"] == "INVALID_CODE"
+
+
+def test_code_login_works_once(client, mail):
+    pid, _ = signed_up(client, mail)
+    ask(client, "asha@example.com", "login")
+    code = mail[-1]["code"]
+    assert client.post("/api/v1/auth/login/code", json={"email": "asha@example.com", "code": code}).json()["player_id"] == pid
+    assert client.post("/api/v1/auth/login/code", json={"email": "asha@example.com", "code": code}).status_code == 400
+
+
+def test_signup_codes_do_not_work_for_login(client, mail):
+    _, h = register(client, "Bilal")
+    ask(client, "bilal@example.com", "signup")
+    code = mail[-1]["code"]
+    assert client.post("/api/v1/auth/login/code", json={"email": "bilal@example.com", "code": code}).status_code == 400
+
+
+def test_password_reset_revokes_old_sessions(client, mail):
+    _, old = signed_up(client, mail)
+    ask(client, "asha@example.com", "reset")
+    r = client.post("/api/v1/auth/password/reset", json={"email": "asha@example.com", "code": mail[-1]["code"], "new_password": "fresh2027"})
+    assert r.status_code == 200
+    assert client.get("/api/v1/players/me", headers=old).status_code == 401
+    assert client.get("/api/v1/players/me", headers={"Authorization": f"Bearer {r.json()['token']}"}).status_code == 200
+    assert client.post("/api/v1/auth/login", json={"email": "asha@example.com", "password": "fresh2027"}).status_code == 200
+    assert client.post("/api/v1/auth/login", json={"email": "asha@example.com", "password": "cards2026"}).status_code == 401
+
+
+def test_change_password_needs_the_current_one(client, mail):
+    _, h = signed_up(client, mail)
+    bad = client.put("/api/v1/auth/password", json={"current_password": "wrong999", "new_password": "fresh2027"}, headers=h)
+    assert bad.status_code == 401
+    ok = client.put("/api/v1/auth/password", json={"current_password": "cards2026", "new_password": "fresh2027"}, headers=h)
+    assert ok.status_code == 200
+    assert client.get("/api/v1/players/me", headers=h).status_code == 401
+
+
+def test_weak_passwords_are_refused(client, mail):
+    _, h = register(client)
+    ask(client, "weak@example.com", "signup")
+    r = client.post("/api/v1/auth/signup", json={"email": "weak@example.com", "code": mail[-1]["code"], "password": "abcdefgh"}, headers=h)
+    assert r.json()["error"]["code"] == "WEAK_PASSWORD"
+
+
+def test_protected_profiles_cannot_attach_an_email(client, mail):
+    _, h = register(client, "Kid", adult=False)
+    ask(client, "kid@example.com", "signup")
+    r = client.post("/api/v1/auth/signup", json={"email": "kid@example.com", "code": mail[-1]["code"], "password": "cards2026"}, headers=h)
+    assert r.status_code == 403 and r.json()["error"]["code"] == "PROTECTED_NO_EMAIL"
+
+
+def test_one_account_per_profile_and_per_email(client, mail):
+    _, h = signed_up(client, mail)
+    ask(client, "other@example.com", "signup")
+    r = client.post("/api/v1/auth/signup", json={"email": "other@example.com", "code": mail[-1]["code"], "password": "cards2026"}, headers=h)
+    assert r.json()["error"]["code"] == "ACCOUNT_EXISTS"
+
+
+def test_sign_out_everywhere_revokes_every_token(client, mail):
+    _, h = signed_up(client, mail)
+    fresh = client.post("/api/v1/auth/sign-out-everywhere", headers=h).json()["token"]
+    assert client.get("/api/v1/players/me", headers=h).status_code == 401
+    assert client.get("/api/v1/players/me", headers={"Authorization": f"Bearer {fresh}"}).status_code == 200
+
+
+def test_deleting_the_profile_frees_the_email(client, mail):
+    _, h = signed_up(client, mail)
+    assert client.delete("/api/v1/players/me", headers=h).status_code == 204
+    assert client.post("/api/v1/auth/login", json={"email": "asha@example.com", "password": "cards2026"}).status_code == 401
+    signed_up(client, mail)
+
+
+def test_email_sign_in_is_off_until_mail_is_configured(client, env):
+    env(MAIL_BACKEND="disabled")
+    r = client.post("/api/v1/auth/email/code", json={"email": "a@example.com", "purpose": "signup"})
+    assert r.status_code == 503 and r.json()["error"]["code"] == "EMAIL_NOT_CONFIGURED"
+    assert client.get("/api/v1/app-config").json()["email_accounts"] is False
+
+
+def test_console_mail_is_refused_in_production(monkeypatch):
+    from config.settings import Settings
+
+    s = Settings(environment="production", mail_backend="console", player_token_secret="a" * 40, join_token_secret="b" * 40,
+                 internal_api_token="c" * 40)
+    with pytest.raises(ValueError):
+        s.check()
+
+
+def test_passwords_are_salted_scrypt_hashes():
+    from app.Services.AccountService import hash_password, verify_password
+
+    a, b = hash_password("cards2026"), hash_password("cards2026")
+    assert a != b and a.startswith("scrypt$") and "cards2026" not in a
+    assert verify_password("cards2026", a) and not verify_password("cards2027", a) and not verify_password("x", None)
+
+
+def test_startup_creates_missing_tables_only(client):
+    from sqlalchemy import inspect, text
+
+    from app.Core.bootstrap import create_missing_tables
+    from config.database import engine
+
+    assert create_missing_tables() == []
+    with engine().begin() as conn:
+        conn.execute(text("DROP TABLE auth_codes"))
+    assert create_missing_tables() == ["auth_codes"]
+    assert "auth_codes" in inspect(engine()).get_table_names()
+
+
+def bearer(token):
+    return {"Authorization": f"Bearer {token}"}
+
+
+def test_logout_ends_only_this_phones_session(client, mail):
+    _, phone_a = signed_up(client, mail)
+    phone_b = bearer(client.post("/api/v1/auth/login", json={"email": "asha@example.com", "password": "cards2026"}).json()["token"])
+    assert client.post("/api/v1/auth/logout", headers=phone_a).status_code == 204
+    assert client.get("/api/v1/players/me", headers=phone_a).json()["error"]["code"] == "UNAUTHORIZED"
+    assert client.get("/api/v1/players/me", headers=phone_b).status_code == 200
+
+
+def test_guest_tokens_are_sessions_too(client):
+    from test_players import claims
+
+    _, h = register(client)
+    assert "sid" in claims(h["Authorization"][7:])
+    assert client.post("/api/v1/auth/logout", headers=h).status_code == 204
+    assert client.get("/api/v1/players/me", headers=h).status_code == 401
+
+
+def test_sign_out_everywhere_keeps_this_phone_and_ends_old_style_tokens(client, mail):
+    from app.Core.security import sign_player_token
+
+    pid, phone_a = signed_up(client, mail)
+    phone_b = bearer(client.post("/api/v1/auth/login", json={"email": "asha@example.com", "password": "cards2026"}).json()["token"])
+    legacy = bearer(sign_player_token("p" * 40, pid, 1, 30))
+    assert client.get("/api/v1/players/me", headers=legacy).status_code == 200
+    fresh = bearer(client.post("/api/v1/auth/sign-out-everywhere", headers=phone_a).json()["token"])
+    for h in (phone_a, phone_b, legacy):
+        assert client.get("/api/v1/players/me", headers=h).status_code == 401
+    assert client.get("/api/v1/players/me", headers=fresh).status_code == 200
+
+
+def test_a_session_cannot_be_used_for_another_player(client):
+    from test_players import claims
+
+    from app.Core.security import sign_player_token
+
+    _, ha = register(client, "A")
+    pid_b, _ = register(client, "B")
+    sid_a = claims(ha["Authorization"][7:])["sid"]
+    forged = bearer(sign_player_token("p" * 40, pid_b, 1, 30, sid_a))
+    assert client.get("/api/v1/players/me", headers=forged).status_code == 401
+
+
+def test_old_and_revoked_sessions_are_purged(client):
+    from datetime import timedelta
+
+    from app.Models import PlayerSession, now
+    from app.Services import SessionService
+    from config.database import get_db
+    from config.settings import get_settings
+
+    register(client)
+    _, h = register(client, "B")
+    client.post("/api/v1/auth/logout", headers=h)
+    db = next(get_db())
+    for s in db.query(PlayerSession).all():
+        if s.revoked_at is not None:
+            s.revoked_at = now() - timedelta(days=31)
+    db.commit()
+    assert SessionService.purge(db, get_settings()) == 1
+    assert db.query(PlayerSession).count() == 1
+    db.close()
+
+
+def test_your_devices_lists_named_sessions_and_signs_one_out(client, mail):
+    _, guest = register(client, "Asha")
+    ask(client, "asha@example.com", "signup")
+    signup = client.post("/api/v1/auth/signup", json={"email": "asha@example.com", "code": mail[-1]["code"], "password": "cards2026"}, headers=guest)
+    phone_a = bearer(signup.json()["token"])
+    assert client.get("/api/v1/players/me", headers=guest).status_code == 401
+    b = client.post("/api/v1/auth/login", json={"email": "asha@example.com", "password": "cards2026"},
+                    headers={"X-Device-Name": "Samsung\x00 SM-A546E   "}).json()["token"]
+    phone_b = bearer(b)
+    listed = client.get("/api/v1/auth/sessions", headers=phone_a).json()["sessions"]
+    assert len(listed) == 2
+    mine = [s for s in listed if s["current"]]
+    other = [s for s in listed if not s["current"]]
+    assert len(mine) == 1 and other[0]["device_name"] == "Samsung SM-A546E"
+    assert client.delete(f"/api/v1/auth/sessions/{other[0]['id']}", headers=phone_a).status_code == 204
+    assert client.get("/api/v1/players/me", headers=phone_b).status_code == 401
+    assert client.get("/api/v1/players/me", headers=phone_a).status_code == 200
+    assert [s["current"] for s in client.get("/api/v1/auth/sessions", headers=phone_a).json()["sessions"]] == [True]
+
+
+def test_you_cannot_sign_out_someone_elses_device(client):
+    from test_players import claims
+
+    _, ha = register(client, "A")
+    _, hb = register(client, "B")
+    sid_b = claims(hb["Authorization"][7:])["sid"]
+    r = client.delete(f"/api/v1/auth/sessions/{sid_b}", headers=ha)
+    assert r.status_code == 404 and r.json()["error"]["code"] == "SESSION_NOT_FOUND"
+    assert client.get("/api/v1/players/me", headers=hb).status_code == 200
+
+
+def test_device_names_are_cleaned_and_capped():
+    from app.Core.device import clean_device_name
+
+    assert clean_device_name("  Pixel\n 8\tPro ") == "Pixel 8 Pro"
+    assert clean_device_name("x" * 200) == "x" * 60
+    assert clean_device_name("\x00\x01") is None and clean_device_name(None) is None
+    assert clean_device_name("Pixel\x008") == "Pixel 8"

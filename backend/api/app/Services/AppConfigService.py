@@ -57,4 +57,5 @@ def app_config(settings: Settings) -> dict:
         "features": {**{f: feature_enabled(settings, f) for f in FEATURES}, "voice": feature_enabled(settings, "voice") and settings.voice_configured,
                      "verify_hand": False, "tournaments": False},
         "sign_in_providers": list(configured_providers()),
+        "email_accounts": feature_enabled(settings, "account_linking") and settings.email_accounts_configured,
     }

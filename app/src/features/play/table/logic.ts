@@ -1,5 +1,7 @@
 /** Pure presentation helpers (tested in Node). Seat mapping keeps the human at the bottom; the table never mirrors in RTL. */
+import type { Lang } from "../../../i18n";
 import type { CardId } from "@tashzone/engine";
+import { CARD, T } from "./copy";
 
 export type Position = "bottom" | "right" | "top" | "left";
 /** Seats are clockwise; with the human at the bottom, the next clockwise seat sits on the left. */
@@ -7,15 +9,18 @@ export function positionOf(seat: number, human: number): Position {
   return (["bottom", "left", "top", "right"] as const)[(seat - human + 4) % 4]!;
 }
 
-const RANK_NAMES: Record<string, string> = { A: "Ace", K: "King", Q: "Queen", J: "Jack", T: "10" };
-const SUIT_NAMES: Record<string, string> = { S: "Spades", H: "Hearts", D: "Diamonds", C: "Clubs" };
 export const SUIT_GLYPH: Record<string, string> = { S: "♠", H: "♥", D: "♦", C: "♣" };
+
+export function suitName(suit: string): string {
+  return (CARD.suits as Record<string, string>)[suit] ?? suit;
+}
+export const seatName = (names: readonly string[] | undefined, seat: number): string => names?.[seat] ?? T.seat(seat + 1);
 
 /** Screen-reader name (§14): "Queen of Hearts, playable". */
 export function cardLabel(card: CardId, playable?: boolean): string {
-  const r = RANK_NAMES[card[0]!] ?? card[0]!;
-  const base = `${r} of ${SUIT_NAMES[card[1]!]}`;
-  return playable === undefined ? base : `${base}, ${playable ? "playable" : "not playable"}`;
+  const r = (CARD.ranks as Record<string, string>)[card[0]!] ?? card[0]!;
+  const base = CARD.card(r, suitName(card[1]!), card[0] === "Q");
+  return playable === undefined ? base : CARD.playable(base, playable);
 }
 export function rankLabel(card: CardId): string { return card[0] === "T" ? "10" : card[0]!; }
 
@@ -47,6 +52,37 @@ export function fanLayout(count: number, width: number, cardWidth: number, textS
   const one = calc(1);
   if (count > 7 && (textScale >= 1.5 || one.step < MIN_STRIP)) return calc(2);
   return one;
+}
+
+export interface HandSpot { x: number; y: number; drop: number; rot: number; z: number; slopRight: number }
+
+export function handGeometry(count: number, maxWidth: number, cardWidth: number, layout: "fan" | "spread" = "fan", textScale = 1): { cardW: number; height: number; rows: number; spots: HandSpot[] } {
+  if (count <= 0) return { cardW: cardWidth, height: 0, rows: 0, spots: [] };
+  const spread = layout === "spread";
+  const want = count > 6 ? Math.ceil(count / 2) : count;
+  const w = spread
+    ? Math.max(40, Math.min(cardWidth, Math.floor((maxWidth - (want - 1) * 4) / want)))
+    : Math.min(cardWidth, Math.max(46, Math.floor(maxWidth / (count > 8 ? 6.5 : 5.2))));
+  const h = Math.round(w * 1.4);
+  const l = fanLayout(count, maxWidth, w, textScale, layout);
+  const pitch = spread ? h + 6 : Math.round(h * 0.52);
+  const spots: HandSpot[] = [];
+  for (let i = 0; i < count; i++) {
+    const row = Math.floor(i / l.perRow);
+    const col = i % l.perRow;
+    const inRow = Math.min(l.perRow, count - row * l.perRow);
+    const span = w + (inRow - 1) * l.step;
+    const u = col - (inRow - 1) / 2;
+    spots.push({
+      x: Math.max(0, (maxWidth - span) / 2) + col * l.step,
+      y: 14 + row * pitch,
+      drop: spread ? 0 : Math.min(12, u * u * (inRow > 7 ? 0.38 : 0.55)),
+      rot: spread ? 0 : u * Math.min(2.8, 30 / inRow),
+      z: row * 100 + col + 1,
+      slopRight: col < inRow - 1 ? Math.max(0, l.step - w + 6) : 10,
+    });
+  }
+  return { cardW: w, height: h + (l.rows - 1) * pitch + 26, rows: l.rows, spots };
 }
 
 export function formatScore(tenths: number): string {
@@ -87,21 +123,19 @@ export interface TableModel {
   readonly game: string;
   readonly seats: readonly SeatInfo[];
   readonly trick: readonly { seat: number; card: CardId }[];
-  readonly hud: readonly string[];
+  readonly hud: readonly { readonly text: string; readonly points?: boolean }[];
   readonly notice: string | null;
   readonly results: readonly { seat: number; place: number | null; score: string }[] | null;
 }
 
-const ORD = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"];
-
 /** Presentation model from a SeatView of any game (the view is the only input: nothing hidden can appear). */
- 
-export function tableModel(view: any, human: number, names?: readonly string[]): TableModel {
+export function tableModel(view: any, human: number, names?: readonly string[], _lang?: Lang): TableModel {
   const h = view.hand;
   const game: string = view.game ?? "callbreak";
   const n: number = game === "bhabhi" ? view.rules.players : 4;
   const areas = ringAreas(n, human);
-  const suit = (x: string | null) => (x ? `${SUIT_GLYPH[x]} ${SUIT_NAMES[x]}` : "not chosen yet");
+  const M = T.model;
+  const suit = (x: string | null) => (x ? `${SUIT_GLYPH[x]} ${suitName(x)}` : M.notChosen);
   const seats: SeatInfo[] = areas.map((area, seat) => {
     let badge = "–";
     let spoken = "";
@@ -109,33 +143,45 @@ export function tableModel(view: any, human: number, names?: readonly string[]):
     if (game === "callbreak" && h) {
       const call = h.calls[seat];
       badge = call === null ? "–" : `${h.tricks[seat]}/${call}`;
-      spoken = call === null ? "" : `called ${call}, won ${h.tricks[seat]}`;
+      spoken = call === null ? "" : M.spokenCall(call, h.tricks[seat]);
     } else if (game === "courtpiece" && h) {
       const team = seat % 2;
-      badge = `Team ${team === 0 ? "A" : "B"} · ${h.team_tricks[team]}`;
-      spoken = `team ${team === 0 ? "A" : "B"}, ${h.team_tricks[team]} tricks`;
+      const letter = team === 0 ? "A" : "B";
+      badge = M.teamBadge(letter, h.team_tricks[team]);
+      spoken = M.teamSpoken(letter, h.team_tricks[team]);
     } else if (game === "bhabhi" && h) {
       out = h.out[seat];
       const place = h.finish_order.indexOf(seat);
-      badge = out ? `Away ${ORD[place] ?? ""}` : `${h.counts[seat]} cards`;
-      spoken = out ? `got away ${ORD[place] ?? ""}` : `${h.counts[seat]} cards`;
+      const ord = place >= 0 ? CARD.ord(place + 1) : "";
+      badge = out ? M.awayBadge(ord) : T.cards(h.counts[seat]);
+      spoken = out ? M.awaySpoken(ord) : T.cards(h.counts[seat]);
     }
     return { seat, area, badge, spoken, isTurn: h?.turn === seat, dealer: h?.dealer === seat, out };
   });
-  const hud: string[] = [];
-  let notice: string | null = h?.annulled ? `Hand annulled (${String(h.annulled).replace(/_/g, " ")}). Same dealer deals again.` : null;
+  const hud: { text: string; points?: boolean }[] = [];
+  const reason = (r: unknown) => (M.reasons as Record<string, string>)[String(r)] ?? String(r).replace(/_/g, " ");
+  let notice: string | null = h?.annulled ? M.annulled(reason(h.annulled)) : null;
   if (game === "callbreak") {
-    hud.push(h ? `Hand ${view.match.hands_played + (h.phase === "DONE" ? 0 : 1)} of ${view.rules.rounds}` : "Shuffling", `${SUIT_NAMES[view.rules.trump]} are trump ${SUIT_GLYPH[view.rules.trump]}`);
+    hud.push(
+      { text: h ? M.handOf(view.match.hands_played + (h.phase === "DONE" ? 0 : 1), view.rules.rounds) : M.shuffling },
+      { text: M.trumpAlways(suitName(view.rules.trump), SUIT_GLYPH[view.rules.trump]!) },
+    );
   } else if (game === "courtpiece") {
-    hud.push(`${view.rules.variant === "double" ? "Double" : "Single"} Sir · to ${view.rules.target_points}`, `Points A ${view.match.points[0]} · B ${view.match.points[1]}`);
-    if (h) hud.push(`Trump: ${suit(h.trump)}`);
-    if (h && h.pile > 0) hud.push(`Pile ${h.pile}`);
-    if (h?.phase === "TRUMP" && h.turn !== human) notice = notice ?? "Waiting for trump to be chosen";
+    hud.push(
+      { text: M.sir(view.rules.variant === "double", view.rules.target_points) },
+      { text: M.pointsAB(view.match.points[0], view.match.points[1]), points: true },
+    );
+    if (h) hud.push({ text: M.trumpIs(suit(h.trump)) });
+    if (h && h.pile > 0) hud.push({ text: M.pile(h.pile) });
+    if (h?.phase === "TRUMP" && h.turn !== human) notice = notice ?? M.waitingTrump;
   } else if (game === "bhabhi") {
-    hud.push(`Hand ${view.match.hands_played + (h && h.phase !== "DONE" ? 1 : 0)} of ${view.rules.rounds}`, h ? `Pile ${h.waste_count}` : "Shuffling");
+    hud.push(
+      { text: M.handOf(view.match.hands_played + (h && h.phase !== "DONE" ? 1 : 0), view.rules.rounds) },
+      { text: h ? M.pile(h.waste_count) : M.shuffling },
+    );
     if (h?.last_trick) {
       const who = h.last_trick.seat;
-      notice = notice ?? (h.last_trick.outcome === "pickedUp" ? `${names?.[who] ?? `Seat ${who + 1}`} picked up the trick` : "Trick put aside");
+      notice = notice ?? (h.last_trick.outcome === "pickedUp" ? M.pickedUpTrick(seatName(names, who)) : M.trickAside);
     }
   }
   let results: TableModel["results"] = null;
@@ -143,7 +189,7 @@ export function tableModel(view: any, human: number, names?: readonly string[]):
     const placements: readonly number[] | null = view.match.placements ?? (game === "courtpiece" && view.match.winner !== null ? [0, 1, 2, 3].map((x) => (x % 2 === view.match.winner ? 1 : 2)) : null);
     results = Array.from({ length: n }, (_, seat) => ({
       seat, place: placements?.[seat] ?? null,
-      score: game === "callbreak" ? formatScore(view.match.totals[seat]) : game === "courtpiece" ? `${view.match.points[seat % 2]} pts` : `${view.match.bhabhi_counts[seat]}× Bhabhi`,
+      score: game === "callbreak" ? formatScore(view.match.totals[seat]) : game === "courtpiece" ? M.pts(view.match.points[seat % 2]) : M.timesBhabhi(view.match.bhabhi_counts[seat]),
     })).sort((a, b) => (a.place ?? 99) - (b.place ?? 99) || a.seat - b.seat);
   }
   return { game, seats, trick: h?.trick ?? [], hud, notice, results };
