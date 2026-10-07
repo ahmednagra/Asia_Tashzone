@@ -24,12 +24,14 @@ interface Ctx {
   ready: boolean;
   storageError: boolean;
   update: (patch: Partial<Profile>) => void;
+  /** like `update`, but computed from the latest saved profile (safe for counters bumped from timers or effects) */
+  updateWith: (fn: (p: Profile) => Partial<Profile>) => void;
   /** records a finished match: bumps matches, wins and streak, `bhabhi` when the player lost Bhabhi, and the recent list */
   recordResult: (gameId: string, won: boolean, lostBhabhi?: boolean) => void;
   reset: () => void;
 }
 
-const ProfileCtx = createContext<Ctx>({ profile: DEFAULT_PROFILE, ready: false, storageError: false, update: () => {}, recordResult: () => {}, reset: () => {} });
+const ProfileCtx = createContext<Ctx>({ profile: DEFAULT_PROFILE, ready: false, storageError: false, update: () => {}, updateWith: () => {}, recordResult: () => {}, reset: () => {} });
 
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -112,6 +114,7 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
   }, [flush]);
 
   const update = useCallback((patch: Partial<Profile>) => commit({ ...latest.current, ...patch }, "parent" in patch || "onboarded" in patch || "tutorialDone" in patch), [commit]);
+  const updateWith = useCallback((fn: (p: Profile) => Partial<Profile>) => commit({ ...latest.current, ...fn(latest.current) }), [commit]);
   const recordResult = useCallback((gameId: string, won: boolean, lostBhabhi = false) => {
     const p = latest.current;
     commit({
@@ -145,7 +148,7 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
     return () => { sub.remove(); flush(); };
   }, [flush]);
 
-  const value = useMemo(() => ({ profile, ready, storageError, update, recordResult, reset }), [profile, ready, storageError, update, recordResult, reset]);
+  const value = useMemo(() => ({ profile, ready, storageError, update, updateWith, recordResult, reset }), [profile, ready, storageError, update, updateWith, recordResult, reset]);
   return <ProfileCtx.Provider value={value}>{children}</ProfileCtx.Provider>;
 }
 

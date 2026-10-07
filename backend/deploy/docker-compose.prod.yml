@@ -72,6 +72,15 @@ services:
       MAINTENANCE_MESSAGE_EN: ${MAINTENANCE_MESSAGE_EN:-}
       MAINTENANCE_MESSAGE_UR: ${MAINTENANCE_MESSAGE_UR:-}
       MIN_VERSION_CODE: ${MIN_VERSION_CODE:-1}
+      # Online tables need a signed-in player (false lets guests in again). Prompt tuning: SIGNUP_* in config/settings.py.
+      ONLINE_REQUIRES_ACCOUNT: ${ONLINE_REQUIRES_ACCOUNT:-true}
+      SIGNUP_PROMPTS_ENABLED: ${SIGNUP_PROMPTS_ENABLED:-true}
+      SIGNUP_FIRST_AFTER_GAMES: ${SIGNUP_FIRST_AFTER_GAMES:-3}
+      SIGNUP_PLAY_MINUTES: ${SIGNUP_PLAY_MINUTES:-10}
+      SIGNUP_MAX_SHEETS: ${SIGNUP_MAX_SHEETS:-3}
+      SIGNUP_COOLDOWN_GAMES: ${SIGNUP_COOLDOWN_GAMES:-3,10}
+      SIGNUP_COOLDOWN_DAYS: ${SIGNUP_COOLDOWN_DAYS:-0,7}
+      SIGNUP_CARD_MAX_VIEWS: ${SIGNUP_CARD_MAX_VIEWS:-10}
       # The release the app offers as an update, written by `deploy.sh --publish-apk`. Interpolated (not env_file)
       # so a changed .env changes the service definition and `up -d api` really recreates the container.
       APP_MINIMUM_VERSION: ${APP_MINIMUM_VERSION:-}

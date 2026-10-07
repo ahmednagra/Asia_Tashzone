@@ -5,6 +5,8 @@ import pytest
 os.environ.setdefault("PLAYER_TOKEN_SECRET", "p" * 40)
 os.environ.setdefault("JOIN_TOKEN_SECRET", "j" * 40)
 os.environ.setdefault("INTERNAL_API_TOKEN", "i" * 40)
+# Most suites exercise rooms with plain guests; test_online_account.py turns the account requirement back on.
+os.environ.setdefault("ONLINE_REQUIRES_ACCOUNT", "false")
 
 
 @pytest.fixture()

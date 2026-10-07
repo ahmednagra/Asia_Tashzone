@@ -41,6 +41,17 @@ class Settings(BaseSettings):
     app_release_notes_en: str = ""
     app_release_notes_ur: str = ""
 
+    # ── accounts: online play needs a signed-in player; offline and Wi-Fi play never do ──
+    online_requires_account: bool = True  # false: guests may create, join and queue for online tables again
+    # Sign-up prompts the app shows on result screens (read through app-config, so they tune without a release).
+    signup_prompts_enabled: bool = True
+    signup_first_after_games: int = Field(default=3, ge=1, le=50)  # first sheet after this many finished games
+    signup_play_minutes: int = Field(default=10, ge=0, le=600)  # or after this much active play (0 = off)
+    signup_max_sheets: int = Field(default=3, ge=0, le=10)
+    signup_cooldown_games: str = "3,10"  # games to wait after the 1st, 2nd, ... "Not now" (last value repeats)
+    signup_cooldown_days: str = "0,7"  # and days to wait (both must pass)
+    signup_card_max_views: int = Field(default=10, ge=0, le=100)  # inline card retires after this many untapped views
+
     # rooms and retention
     room_ttl_minutes: int = 60
     room_playing_max_minutes: int = Field(default=180, ge=30)
@@ -167,6 +178,25 @@ class Settings(BaseSettings):
     @property
     def disabled_feature_set(self) -> frozenset[str]:
         return frozenset(self._list(self.disabled_features))
+
+    @staticmethod
+    def _ints(value: str, low: int, high: int) -> tuple[int, ...]:
+        """A comma list of whole numbers clamped to [low, high]; anything unreadable is dropped, never fatal."""
+        out = []
+        for part in value.split(","):
+            try:
+                out.append(min(high, max(low, int(part.strip()))))
+            except ValueError:
+                continue
+        return tuple(out)
+
+    @property
+    def signup_cooldown_game_list(self) -> tuple[int, ...]:
+        return self._ints(self.signup_cooldown_games, 0, 100) or (3,)
+
+    @property
+    def signup_cooldown_day_list(self) -> tuple[int, ...]:
+        return self._ints(self.signup_cooldown_days, 0, 90) or (0,)
 
     def check(self) -> None:
         secrets = {"PLAYER_TOKEN_SECRET": self.player_token_secret, "JOIN_TOKEN_SECRET": self.join_token_secret,

@@ -127,7 +127,7 @@ def test_kill_switch_and_disabled_profiles(client, env):
     r = client.post("/api/v1/rooms", json={"profile_id": "callbreak.np@1"}, headers=h)
     assert r.status_code == 503 and r.json()["error"] == {"code": "ONLINE_DISABLED", "message": "Back at 6 pm"}
     cfg = client.get("/api/v1/app-config").json()
-    assert cfg["online"] == {"enabled": False, "disabled_profiles": [], "message": {"en": "Back at 6 pm"}}
+    assert cfg["online"] == {"enabled": False, "disabled_profiles": [], "message": {"en": "Back at 6 pm"}, "requires_account": False}
     assert cfg["features"]["quick_match"] is False
     env(ONLINE_ENABLED="true", DISABLED_PROFILES="bhabhi.tz@1")
     assert client.post("/api/v1/rooms", json={"profile_id": "bhabhi.tz@1"}, headers=h).json()["error"]["code"] == "GAME_DISABLED"

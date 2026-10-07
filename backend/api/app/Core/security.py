@@ -8,11 +8,13 @@ import time
 from typing import Annotated
 
 from fastapi import Depends, Header, Request
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.Core.enforcement import aware, banned_error, is_banned
 from app.Core.errors import ApiError, forbidden
-from app.Models import Moderator, Player, PlayerSession, now
+from app.Models import Moderator, Player, PlayerAccount, PlayerIdentity, PlayerSession, now
+from app.Services.AppConfigService import online_requires_account
 from config.database import get_db
 from config.settings import Settings, get_settings
 
@@ -92,6 +94,23 @@ def current_player(player: Player = Depends(authenticated_player), db: Session =
     return player
 
 
+def is_registered(db: Session, player_id: str) -> bool:
+    """A player with an email account or a linked sign-in provider; a bare guest token is neither."""
+    if db.get(PlayerAccount, player_id) is not None:
+        return True
+    return db.scalar(select(PlayerIdentity.subject).where(PlayerIdentity.player_id == player_id).limit(1)) is not None
+
+
+def registered_player(player: Player = Depends(current_player), db: Session = Depends(get_db),
+                      settings: Settings = Depends(get_settings)) -> Player:
+    """Online tables need an identity that outlives the phone: bans, reports and ratings must stick to someone.
+    Guests keep every offline and same-Wi-Fi mode. ONLINE_REQUIRES_ACCOUNT=false turns the requirement off, and it
+    never applies while no sign-in method is configured."""
+    if online_requires_account(settings) and not is_registered(db, player.id):
+        raise forbidden("ACCOUNT_REQUIRED", "Sign in to play online")
+    return player
+
+
 def current_moderator(player: Player = Depends(authenticated_player), db: Session = Depends(get_db)) -> Moderator:
     if is_banned(db, player.id):
         raise banned_error()
@@ -107,6 +126,7 @@ def internal_only(authorization: str | None = Header(default=None), settings: Se
 
 
 CurrentPlayer = Annotated[Player, Depends(current_player)]
+RegisteredPlayer = Annotated[Player, Depends(registered_player)]
 AnyPlayer = Annotated[Player, Depends(authenticated_player)]
 CurrentModerator = Annotated[Moderator, Depends(current_moderator)]
 DB = Annotated[Session, Depends(get_db)]

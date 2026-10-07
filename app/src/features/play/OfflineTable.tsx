@@ -19,6 +19,7 @@ import { gameResult, handResult } from "./result/model";
 import type { SetupInfo } from "../../types/game";
 import { BOT_LEVELS, type Choice, defaultChoice, describeChoice, settingsFor } from "./setup";
 import { TableScreen } from "./table/TableScreen";
+import { usePlayClock } from "../account/SignupScreens";
 
 /** Marks the between-hands wait: the shell asks to schedule the next deal after this many ms; we hold it until the player asks. */
 const HOLD_MS = 2_147_000_000;
@@ -97,6 +98,8 @@ function Table({ gameId, info, rules, choice, onExit, onNew }: { gameId: string;
   const [view, setView] = useState<any>(table.view());
   const viewRef = useRef(view);
   viewRef.current = view;
+  // foreground time at the table, for the "after 10 minutes of play" sign-up prompt; stops when the match ends
+  usePlayClock(!view.match?.over);
   const [toast, setToast] = useState<string | null>(null);
   useEffect(() => { const off = table.subscribe((v) => setView(v)); table.start(); return () => { off(); table.dispose(); }; }, [table]);
   useEffect(() => { if (!toast) return; const t = setTimeout(() => setToast(null), TOAST_MS); return () => clearTimeout(t); }, [toast]);

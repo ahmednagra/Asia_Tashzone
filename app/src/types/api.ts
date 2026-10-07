@@ -8,6 +8,9 @@ export interface AppConfig {
   features?: Partial<Record<string, boolean>>;
   sign_in_providers?: string[];
   email_accounts?: boolean;
+  online?: { enabled?: boolean; requires_account?: boolean };
+  /** sign-up prompt rules; read with promptConfigFrom() */
+  signup_prompt?: unknown;
 }
 export interface JoinResponse { room_code: string; seat: number; match_url: string; join_token: string }
 export interface MeView {

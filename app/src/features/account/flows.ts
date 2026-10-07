@@ -1,10 +1,11 @@
 import { account, adoptToken, ApiFailure, deleteServerProfile, freshGuest, hasAccount, online, signOut } from "../multiplayer/http";
 import { type Provider, type ProviderCredential, deviceProviders, providerCredential } from "../../services/googleAuth";
-import { readToken } from "../../services/session";
+import { readToken, sessionKind, writeToken } from "../../services/session";
 import type { Profile } from "../../store/profileModel";
 import type { SessionView } from "../../types/api";
 import { fromServer, toProgress } from "./progressSync";
 import { normalizeEmail } from "./validate";
+import { DEFAULT_PROMPT_CONFIG, type PromptConfig, promptConfigFrom } from "./signupPrompt";
 
 export interface AccountState {
   email: string | null;
@@ -113,4 +114,50 @@ export async function switchToLinked(taken: Extract<LinkResult, { kind: "taken" 
 
 export function unlinkProvider(provider: Provider, profile: Profile): Promise<void> {
   return account.unlink(nameOf(profile), provider);
+}
+
+/** What the sign-up prompts and the online gate need to know, from one app-config read. */
+export interface SignupContext {
+  guest: boolean;
+  google: boolean;
+  email: boolean;
+  /** online tables need an account (false when the server switched it off, or offers no way to sign up) */
+  onlineNeedsAccount: boolean;
+  prompt: PromptConfig;
+}
+
+const CONTEXT_TTL_MS = 10 * 60_000;
+let context: { value: SignupContext; at: number } | null = null;
+
+/**
+ * Cached for a few minutes: result screens ask after every game. When the server cannot be reached the prompts
+ * stay quiet (`google`/`email` false) rather than offering a sign-up that would fail.
+ */
+export async function signupContext(fresh = false): Promise<SignupContext> {
+  const guest = (await sessionKind()) !== "account";
+  if (!fresh && context && Date.now() - context.at < CONTEXT_TTL_MS) return { ...context.value, guest };
+  const cfg = await online.appConfig().catch(() => null);
+  const linking = cfg?.features?.account_linking !== false;
+  const google = linking && known(cfg?.sign_in_providers).includes("google") && deviceProviders().includes("google");
+  const value: SignupContext = {
+    guest, google, email: linking && !!cfg?.email_accounts,
+    onlineNeedsAccount: cfg ? cfg.online?.requires_account === true : true,
+    prompt: cfg ? promptConfigFrom(cfg.signup_prompt) : DEFAULT_PROMPT_CONFIG,
+  };
+  if (cfg) context = { value, at: Date.now() };
+  return value;
+}
+
+/**
+ * Repairs a phone that holds an account but whose session was saved as "guest" (an install that signed in
+ * before the kind was recorded): asks the server, and if the player has an email or a linked provider, says so.
+ */
+export async function confirmAccount(profile: Profile): Promise<boolean> {
+  if ((await sessionKind()) === "account") return true;
+  const token = await readToken();
+  if (!token) return false;
+  const me = await account.me(nameOf(profile)).catch(() => null);
+  if (!me || (!me.email && known(me.linked_providers).length === 0)) return false;
+  await writeToken(token, "account");
+  return true;
 }
