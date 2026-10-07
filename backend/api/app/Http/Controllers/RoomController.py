@@ -1,7 +1,7 @@
 """RoomController: request orchestration (rate limits, service calls) between routes and Services."""
 from fastapi import Request
 
-from app.Core.security import DB, Config, CurrentPlayer
+from app.Core.security import DB, Config, CurrentPlayer, RegisteredPlayer
 from app.Middleware.rate_limit import limit
 from app.Schemas.rooms import CreateIn
 from app.Services import RoomService, VoiceService
@@ -9,12 +9,12 @@ from app.Services import RoomService, VoiceService
 
 class RoomController:
     @staticmethod
-    def create(body: CreateIn, request: Request, p: CurrentPlayer, db: DB, settings: Config):
+    def create(body: CreateIn, request: Request, p: RegisteredPlayer, db: DB, settings: Config):
         limit(request, f"room-create:{p.id}", per_minute=settings.room_creates_per_minute, per_ip=False)
         return RoomService.create(db, settings, p, body.profile_id, body.preset, body.settings)
 
     @staticmethod
-    def join(code: str, request: Request, p: CurrentPlayer, db: DB, settings: Config):
+    def join(code: str, request: Request, p: RegisteredPlayer, db: DB, settings: Config):
         limit(request, f"room-join:{p.id}", per_minute=settings.room_join_attempts_per_minute, per_ip=False)
         limit(request, "room-join", per_minute=settings.room_join_attempts_per_ip_per_minute)
         return RoomService.join(db, settings, p, code)

@@ -13,7 +13,10 @@ const MANIFEST_PACKAGE = /(<manifest\b[^>]*?)\s+package="([^"]*)"/;
 
 const MANIFEST_FIXES = {
   "expo-file-system": [[/(<provider)\s+tools:replace="android:authorities"(\s+android:name="\.FileSystemFileProvider")/, "$1$2"]],
-  "expo-modules-core": [[/(android:name="com\.facebook\.soloader\.enabled"\s+android:value="true")\s+tools:replace="android:value"/, "$1"]],
+  // Not redundant: com.facebook.soloader:soloader 0.12.1 declares the same meta-data with value="false", and without
+  // tools:replace the manifest merger fails (:app:processReleaseMainManifest). An earlier version of this script
+  // stripped the attribute, so this puts it back where it is missing; files that still have it are left alone.
+  "expo-modules-core": [[/(android:name="com\.facebook\.soloader\.enabled"\s+android:value="true")(\s*\/>)/, '$1\n            tools:replace="android:value"$2']],
 };
 
 const ZEROCONF_ABIS = 'abiFilters(*(findProperty("reactNativeArchitectures") ?: "armeabi-v7a,arm64-v8a,x86,x86_64").toString().split(","))';

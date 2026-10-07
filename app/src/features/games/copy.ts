@@ -264,6 +264,6 @@ export function defaultSetup(g: GameEntry): BotSetup | undefined {
 }
 
 /** Route params for /play/[game]: all strings; `length` is the index into SETUP.lengths. */
-export function playParams(g: GameEntry, c: BotSetup): Record<string, string> {
+export function playParams(g: GameEntry, c: BotSetup): { game: string; preset: string; length: string; players: string; level: string; handicap: string } {
   return { game: g.id, preset: c.preset, length: String(c.length), players: String(c.players), level: c.level, handicap: String(c.handicap) };
 }

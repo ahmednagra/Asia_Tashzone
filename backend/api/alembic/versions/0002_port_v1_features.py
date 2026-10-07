@@ -252,7 +252,14 @@ def upgrade() -> None:
     # owner decision 17 Sep 2026: typed chat and voice default on (Parent Settings can turn them off)
     for col in ('free_text_chat', 'voice', 'online_play'):
         op.alter_column('parental_settings', col, server_default=sa.text('true'))
-    op.execute("GRANT SELECT ON rooms, room_seats TO tz_match")  # read-only; results still go through /internal
+    # read-only; results still go through /internal. Guarded like 0001: the role exists only where initdb created it
+    # (production), so a fresh database without it (CI, a developer's PostgreSQL) still migrates.
+    op.execute("""
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'tz_match') THEN
+    GRANT SELECT ON rooms, room_seats TO tz_match;
+  END IF;
+END $$;""")
 
 
 

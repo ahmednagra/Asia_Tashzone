@@ -7,6 +7,7 @@ import { useTheme } from "../../../context/ThemeContext";
 import { T } from "../table/copy";
 import { ResultLayout, ScoreRows, VictoryPodium } from "./ResultLayout";
 import { R } from "./copy";
+import { ResultSignupPrompt } from "../../account/SignupScreens";
 
 export function HandResultScreen() {
   const router = useRouter();
@@ -90,6 +91,7 @@ export function GameResultScreen() {
     >
       <VictoryPodium rows={data.rows} />
       <ScoreRows title={data.rowsTitle} rows={data.rows} />
+      <ResultSignupPrompt won={data.won} />
     </ResultLayout>
   );
 }

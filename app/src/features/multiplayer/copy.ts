@@ -198,6 +198,7 @@ export const copy = localized("multiplayer", {
       fallbackName: "the next player",
     },
     errors: {
+      ACCOUNT_REQUIRED: "Online play needs an account. Sign in from Settings → Account and data.",
       NETWORK: "Can't reach the server. Check your connection and try again.",
       ROOM_NOT_FOUND: "No open room with that code. Check it and try again.",
       ROOM_FULL: "That room is full.",
@@ -419,6 +420,7 @@ export const copy = localized("multiplayer", {
       fallbackName: "اگلا کھلاڑی",
     },
     errors: {
+      ACCOUNT_REQUIRED: "آن لائن کھیلنے کے لیے اکاؤنٹ ضروری ہے۔ ترتیبات ← اکاؤنٹ اور ڈیٹا سے سائن اِن کریں۔",
       NETWORK: "سرور سے رابطہ نہیں ہو سکا۔ کنکشن دیکھ کر دوبارہ کوشش کریں۔",
       ROOM_NOT_FOUND: "اس کوڈ کا کوئی کھلا روم نہیں۔ کوڈ دیکھ کر دوبارہ کوشش کریں۔",
       ROOM_FULL: "روم بھر گیا ہے۔",
@@ -640,6 +642,7 @@ export const copy = localized("multiplayer", {
       fallbackName: "अगला खिलाड़ी",
     },
     errors: {
+      ACCOUNT_REQUIRED: "ऑनलाइन खेलने के लिए खाता ज़रूरी है। सेटिंग्स → खाता और डेटा से साइन-इन करें।",
       NETWORK: "सर्वर से कनेक्ट नहीं हुआ। कनेक्शन देखकर फिर कोशिश करें।",
       ROOM_NOT_FOUND: "इस कोड का कोई खुला रूम नहीं। कोड देखकर फिर कोशिश करें।",
       ROOM_FULL: "रूम भर गया है।",
@@ -861,6 +864,7 @@ export const copy = localized("multiplayer", {
       fallbackName: "अर्को खेलाडी",
     },
     errors: {
+      ACCOUNT_REQUIRED: "अनलाइन खेल्न खाता चाहिन्छ। सेटिङ → खाता र डेटामा गएर साइन-इन गर्नुहोस्।",
       NETWORK: "सर्भरमा जोडिन सकिएन। जडान जाँचेर फेरि प्रयास गर्नुहोस्।",
       ROOM_NOT_FOUND: "यो कोडको कुनै खुला रुम छैन। कोड जाँचेर फेरि प्रयास गर्नुहोस्।",
       ROOM_FULL: "रुम भरियो।",
@@ -1082,6 +1086,7 @@ export const copy = localized("multiplayer", {
       fallbackName: "পরের খেলোয়াড়",
     },
     errors: {
+      ACCOUNT_REQUIRED: "অনলাইনে খেলতে অ্যাকাউন্ট লাগে। সেটিংস → অ্যাকাউন্ট ও ডেটা থেকে সাইন-ইন করুন।",
       NETWORK: "সার্ভারে যুক্ত হওয়া যায়নি। সংযোগ দেখে আবার চেষ্টা করুন।",
       ROOM_NOT_FOUND: "এই কোডের কোনো খোলা রুম নেই। কোড দেখে আবার চেষ্টা করুন।",
       ROOM_FULL: "রুম ভর্তি।",

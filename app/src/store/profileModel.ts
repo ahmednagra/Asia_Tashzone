@@ -4,6 +4,9 @@ import { LANG_CODES as LANGS, type Lang } from "../i18n";
 
 export type { Lang };
 
+/** Sign-up prompt history: what was asked and when, so a "Not now" is respected across restarts. */
+export interface SignupState { sheets: number; lastSheetMatch: number; lastSheetAt: number; cardOff: boolean; cardViews: number; playMs: number }
+
 /** Wrong-PIN tracking, persisted so restarting the app does not reset the lock-out. */
 export interface PinLock { fails: number; level: number; left: number; mark?: number }
 
@@ -27,6 +30,7 @@ export interface Profile {
   stats: { matches: number; wins: number; streak: number; bhabhi: number };
   /** game ids, most recent first (max 5) */
   recent: string[];
+  signup: SignupState;
 }
 
 export const DEFAULT_PROFILE: Profile = {
@@ -35,6 +39,7 @@ export const DEFAULT_PROFILE: Profile = {
   parent: { text: false, online: true, wifi: true },
   stats: { matches: 0, wins: 0, streak: 0, bhabhi: 0 },
   recent: [],
+  signup: { sheets: 0, lastSheetMatch: 0, lastSheetAt: 0, cardOff: false, cardViews: 0, playMs: 0 },
 };
 
 const bool = (v: unknown, d: boolean) => (typeof v === "boolean" ? v : d);
@@ -45,7 +50,7 @@ const obj = (v: unknown) => (v && typeof v === "object" && !Array.isArray(v) ? (
 export function mergeProfile(raw: unknown): Profile {
   const r = obj(raw);
   const d = DEFAULT_PROFILE;
-  const sound = obj(r.sound), parent = obj(r.parent), stats = obj(r.stats), lock = obj(parent.lock);
+  const sound = obj(r.sound), parent = obj(r.parent), stats = obj(r.stats), lock = obj(parent.lock), signup = obj(r.signup);
   const hasLock = typeof lock.fails === "number";
   return {
     onboarded: bool(r.onboarded, d.onboarded),
@@ -67,6 +72,10 @@ export function mergeProfile(raw: unknown): Profile {
     },
     stats: { matches: count(stats.matches, 0), wins: count(stats.wins, 0), streak: count(stats.streak, 0), bhabhi: count(stats.bhabhi, 0) },
     recent: Array.isArray(r.recent) ? r.recent.filter((g): g is string => typeof g === "string").slice(0, 5) : [],
+    signup: {
+      sheets: count(signup.sheets, 0), lastSheetMatch: count(signup.lastSheetMatch, 0), lastSheetAt: count(signup.lastSheetAt, 0),
+      cardOff: bool(signup.cardOff, false), cardViews: count(signup.cardViews, 0), playMs: count(signup.playMs, 0),
+    },
   };
 }
 
@@ -82,8 +91,9 @@ export function importProfile(text: string, current: Profile): Profile | null {
     const data = obj(JSON.parse(text));
     if (data.app !== "tashzone" || !data.profile) return null;
     const next = mergeProfile(data.profile);
-    // parental controls are never taken from pasted text, or a child could switch them off by importing
-    return { ...next, onboarded: true, protectedMode: current.protectedMode, parent: current.parent };
+    // parental controls are never taken from pasted text, or a child could switch them off by importing;
+    // sign-up prompt history stays this phone's, so pasting a backup cannot replay prompts already declined
+    return { ...next, onboarded: true, protectedMode: current.protectedMode, parent: current.parent, signup: current.signup };
   } catch {
     return null;
   }

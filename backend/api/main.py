@@ -23,7 +23,7 @@ def create_app() -> FastAPI:
     settings = get_settings()  # fail fast on missing or weak secrets (C-17)
     app = FastAPI(
         title="TashZone API",
-        version="0.2.0",
+        version="0.1.0",
         # No public schema or docs in production; scripts.export_openapi builds the schema from create_app().openapi().
         openapi_url=None if settings.is_production else "/openapi.json",
         docs_url=None if settings.is_production else "/docs",

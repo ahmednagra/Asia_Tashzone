@@ -9,7 +9,7 @@ Every option is off until it is configured. With nothing set, the app shows no s
 | Play Games project ID (numeric) | `app/.env` `PLAY_GAMES_APP_ID` | No |
 | SMTP login | server `.env` `SMTP_*`, `MAIL_FROM`, `MAIL_BACKEND=smtp` | **Yes** (password) |
 
-The server `.env` is `/srv/tashzone/.env` in production (`backend/deploy/.env.example`), or `backend/api/.env` locally. Never commit either.
+The server `.env` is `/srv/tashzone/.env` in production (written by `backend/deploy/server-setup.sh`), or `backend/api/.env` locally. Never commit either.
 
 ## 1. Signing key fingerprints
 
@@ -76,7 +76,7 @@ For local development, set `MAIL_BACKEND=console` in `backend/api/.env`. Codes a
 
 ## 5. Put the values in place
 
-**App** (`app/.env`, copied from `app/.env.example`):
+**App** (`app/.env`):
 
 ```
 EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=1234567890-abc.apps.googleusercontent.com

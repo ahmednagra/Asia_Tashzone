@@ -71,8 +71,22 @@ function useSubmit() {
 
 const home = "/settings/account" as const;
 
+/**
+ * Where a finished sign-in goes. Opened from a sign-up prompt or the online gate (`?back=1`), it returns to that
+ * screen so the player carries on; from Settings it lands on the account page as before.
+ */
+function useFinish() {
+  const router = useRouter();
+  const { back } = useLocalSearchParams<{ back?: string }>();
+  const returning = back === "1";
+  const finish = () => (returning && router.canGoBack() ? router.back() : router.dismissTo(home));
+  const params = returning ? { back: "1" } : undefined;
+  return { finish, params };
+}
+
 export function SignInScreen() {
   const router = useRouter();
+  const { finish, params } = useFinish();
   const { lang } = useTheme();
   const { profile, update } = useProfile();
   const [mode, setMode] = useState<"password" | "code">("password");
@@ -83,11 +97,11 @@ export function SignInScreen() {
   const { busy, error, setError, run } = useSubmit();
 
   const checkEmail = () => { if (emailOk(email)) return true; setError(A.errEmail); return false; };
-  const byPassword = () => { if (checkEmail()) run(async () => { update(await signInWithPassword(email, password, profile)); router.dismissTo(home); }); };
+  const byPassword = () => { if (checkEmail()) run(async () => { update(await signInWithPassword(email, password, profile)); finish(); }); };
   const send = () => { if (checkEmail()) run(async () => { await requestCode(email, "login", lang); setSent(true); }); };
   const byCode = () => {
     if (!codeOk(code)) { setError(A.errCode); return; }
-    run(async () => { update(await signInWithCode(email, code, profile)); router.dismissTo(home); });
+    run(async () => { update(await signInWithCode(email, code, profile)); finish(); });
   };
   const switchMode = () => { setMode(mode === "password" ? "code" : "password"); setSent(false); setCode(""); setError(null); };
 
@@ -107,13 +121,14 @@ export function SignInScreen() {
         </View>
       </GlassCard>
       <Caption tone="muted">{A.replaceNote}</Caption>
-      <GoldButton kind="glass" label={A.toCreate} onPress={() => router.replace("/account/create")} disabled={busy} />
+      <GoldButton kind="glass" label={A.toCreate} onPress={() => router.replace({ pathname: "/account/create", params })} disabled={busy} />
     </Frame>
   );
 }
 
 export function CreateAccountScreen() {
   const router = useRouter();
+  const { finish, params } = useFinish();
   const { lang } = useTheme();
   const { profile } = useProfile();
   const [email, setEmail] = useState("");
@@ -129,7 +144,7 @@ export function CreateAccountScreen() {
   const create = () => {
     if (!codeOk(code)) { setError(A.errCode); return; }
     if (!passwordOk(password, email)) { setError(A.errPassword); return; }
-    run(async () => { await createAccount(email, code, password, profile); router.dismissTo(home); });
+    run(async () => { await createAccount(email, code, password, profile); finish(); });
   };
 
   return (
@@ -152,7 +167,7 @@ export function CreateAccountScreen() {
         </View>
       </GlassCard>
       <Caption tone="muted">{A.keepNote}</Caption>
-      <GoldButton kind="glass" label={A.toSignIn} onPress={() => router.replace("/account/sign-in")} disabled={busy} />
+      <GoldButton kind="glass" label={A.toSignIn} onPress={() => router.replace({ pathname: "/account/sign-in", params })} disabled={busy} />
     </Frame>
   );
 }

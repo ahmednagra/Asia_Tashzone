@@ -27,6 +27,15 @@ def require_feature(settings: Settings, feature: str) -> None:
         raise ApiError(503, "FEATURE_DISABLED", "This feature is not available right now")
 
 
+def sign_up_available(settings: Settings) -> bool:
+    return feature_enabled(settings, "account_linking") and (settings.email_accounts_configured or bool(configured_providers()))
+
+
+def online_requires_account(settings: Settings) -> bool:
+    """Only while players can actually sign up: a server with no sign-in method must not lock everyone out."""
+    return settings.online_requires_account and sign_up_available(settings)
+
+
 def _manifest(settings: Settings) -> dict:
     if settings.engine_manifest and Path(settings.engine_manifest).exists():
         return json.loads(Path(settings.engine_manifest).read_text())
@@ -47,7 +56,13 @@ def app_config(settings: Settings) -> dict:
         "min_version_code": settings.min_version_code,
         "minimum_version": settings.app_minimum_version or None,
         "latest": latest,
-        "online": {"enabled": settings.online_enabled, "disabled_profiles": sorted(settings.disabled_profile_set), "message": maintenance or None},
+        "online": {"enabled": settings.online_enabled, "disabled_profiles": sorted(settings.disabled_profile_set), "message": maintenance or None,
+                   "requires_account": online_requires_account(settings)},
+        "signup_prompt": {"enabled": settings.signup_prompts_enabled, "first_after_games": settings.signup_first_after_games,
+                          "play_minutes": settings.signup_play_minutes, "max_sheets": settings.signup_max_sheets,
+                          "cooldown_games": list(settings.signup_cooldown_game_list),
+                          "cooldown_days": list(settings.signup_cooldown_day_list),
+                          "card_max_views": settings.signup_card_max_views},
         "protocol": {"min": 2, "max": 2},
         "engine_build_hash": m.get("engine_build_hash"),
         "behaviour_digests": m.get("behaviour_digests", {}),

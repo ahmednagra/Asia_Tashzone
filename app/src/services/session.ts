@@ -9,6 +9,14 @@ const LEGACY_KEY = "tashzone.online.account.v1";
 const PENDING_LOGOUT_KEY = "tashzone.session.pending-logout.v1";
 
 let cached: { token: string | null; kind: SessionKind } | undefined;
+const kindListeners = new Set<(kind: SessionKind) => void>();
+
+/** Called whenever this phone's session changes between guest and account (sign-in, sign-out, wipe). */
+export function subscribeSessionKind(fn: (kind: SessionKind) => void): () => void {
+  kindListeners.add(fn);
+  return () => { kindListeners.delete(fn); };
+}
+const announce = (kind: SessionKind) => kindListeners.forEach((fn) => fn(kind));
 
 async function load(): Promise<{ token: string | null; kind: SessionKind }> {
   if (cached) return cached;
@@ -37,6 +45,7 @@ export async function writeToken(token: string, kind: SessionKind): Promise<void
   cached = { token, kind };
   await SecureStore.setItemAsync(KEY, token);
   await SecureStore.setItemAsync(KIND_KEY, kind);
+  announce(kind);
 }
 
 export async function rememberPendingLogout(token: string): Promise<void> {
@@ -58,4 +67,5 @@ export async function clearToken(): Promise<void> {
     SecureStore.deleteItemAsync(KIND_KEY).catch(() => {}),
     AsyncStorage.removeItem(LEGACY_KEY).catch(() => {}),
   ]);
+  announce("guest");
 }

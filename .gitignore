@@ -5,7 +5,6 @@ coverage/
 *.tsbuildinfo
 .env
 .env.*
-!.env.example
 __pycache__/
 .venv/
 .pytest_cache/
@@ -15,3 +14,6 @@ app/android/
 app/ios/
 app/.expo/
 /build/
+
+# native module build output
+app/modules/*/android/build/

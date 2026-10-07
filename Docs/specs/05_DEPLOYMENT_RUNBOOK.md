@@ -20,7 +20,7 @@ files live in `backend/deploy/` under the same names as TashZone v1.
 | `backup.sh` | `pg_dump` to `/srv/tashzone/backups`, 14 days |
 | `docker-compose.prod.yml` | postgres 17, api-migrate, api, room-maintenance, match-server, livekit v1.13, caddy 2 |
 | `Caddyfile` | api (internal routes 404, `/download/*` APKs, body limits), match (`/match` only), voice |
-| `livekit.yaml`, `initdb/01-roles.sh`, `.env.example` | voice config; least-privilege `tz_match` role; the `.env` keys |
+| `livekit.yaml`, `initdb/01-roles.sh` | voice config; least-privilege `tz_match` role (the server `.env` keys are written by `server-setup.sh`) |
 
 ```bash
 # 1. PC → server, once

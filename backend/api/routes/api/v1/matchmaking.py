@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request
 
-from app.Core.security import DB, Config, CurrentPlayer
+from app.Core.security import DB, Config, CurrentPlayer, RegisteredPlayer
 from app.Http.Controllers.MatchmakingController import MatchmakingController
 from app.Schemas.matchmaking import QueueIn
 
@@ -8,7 +8,7 @@ router = APIRouter(prefix="/matchmaking", tags=["Matchmaking"])
 
 
 @router.post("/queue")
-def queue(body: QueueIn, request: Request, p: CurrentPlayer, db: DB, settings: Config):
+def queue(body: QueueIn, request: Request, p: RegisteredPlayer, db: DB, settings: Config):
     return MatchmakingController.queue(body, request, p, db, settings)
 
 

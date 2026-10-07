@@ -21,7 +21,7 @@ This tree follows the live repository layout: `app/`, `shared/*`, `backend/api`,
 | `shared/config` | shared ESLint (determinism + boundary rules) and TypeScript base config | — |
 | `backend/api` | FastAPI in the v1 layout: `main.py`, `config/`, `routes/api/v1/`, `app/{Core,Http/Controllers,Middleware,Models,Schemas,Services,Utils,Workers}`, `infrastructure/docker/`, `scripts/`, Alembic | 34 (×2 databases) |
 | `backend/match-server` | WebSocket match server for every game: queue, journal-first, `view_seq`, seeds, hand-over, fencing, drain, PostgreSQL adapters; tests beside the code in `src/` | 20 |
-| `backend/deploy` | `docker-compose.prod.yml`, `Caddyfile`, `livekit.yaml`, `server-setup.sh`, `deploy.sh`, `rollback.sh`, `backup.sh`, `initdb/`, `.env.example` | build steps simulated |
+| `backend/deploy` | `docker-compose.prod.yml`, `Caddyfile`, `livekit.yaml`, `server-setup.sh`, `deploy.sh`, `rollback.sh`, `backup.sh`, `initdb/` | build steps simulated |
 | `app` | Expo app: `src/{design,ui,platform,features/{home,lobby,play,play/table,settings}}` | 14 + typecheck |
 | `Docs/` | specs, status, mehfil design, and the TashZone v1 reference documents | — |
 | `.github/` | `workflows/ci.yml`, `scripts/e2e-fullstack.mjs` | — |
