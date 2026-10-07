@@ -156,7 +156,7 @@ ssh_run true || die "Cannot reach $SSH_USER@$HOST over SSH."
 ssh_run "test -f /srv/tashzone/.env" < /dev/null || die "/srv/tashzone/.env does not exist. Run backend/deploy/server-setup.sh on the server first."
 for key in LIVEKIT_API_KEY TZ_MATCH_PASSWORD SEED_ENCRYPTION_KEY POSTGRES_PASSWORD; do
   ssh_run "grep -q '^$key=' /srv/tashzone/.env" < /dev/null \
-    || die "/srv/tashzone/.env has no $key, and the production Compose file will not start without it (see .env.example)."
+    || die "/srv/tashzone/.env has no $key, and the production Compose file will not start without it (see server-setup.sh)."
 done
 
 # A restart drains live tables for up to DRAIN_DEADLINE_MS. Deploying onto a busy server is allowed; doing it
