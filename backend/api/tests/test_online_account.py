@@ -1,6 +1,6 @@
 """Online tables need a signed-in player; guests keep offline play. Sign-up prompt rules come from app-config."""
 from conftest import register
-from test_accounts import ask, mail  # noqa: F401  (fixture)
+from test_accounts import mail, signed_up  # noqa: F401  (fixture)
 from test_players import FakeVerifier
 
 
@@ -37,10 +37,7 @@ def test_a_guest_who_links_google_plays_online_as_the_same_player(client, env, m
 
 def test_an_email_account_plays_online(client, env, mail):  # noqa: F811
     gate_on(env)
-    _, h = register(client, "Asha")
-    ask(client, "asha@example.com", "signup")
-    r = client.post("/api/v1/auth/signup", json={"email": "asha@example.com", "code": mail[-1]["code"], "password": "cards2026"}, headers=h)
-    signed = {"Authorization": f"Bearer {r.json()['token']}"}
+    _, signed = signed_up(client, mail)
     assert client.post("/api/v1/rooms", json={"profile_id": "callbreak.np@1"}, headers=signed).status_code == 201
 
 
