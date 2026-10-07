@@ -50,7 +50,7 @@ jobs:
       PG_URL: postgresql+psycopg://tashzone:tashzone-ci@localhost:5432/tashzone
     steps:
       - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v10
+      - uses: astral-sh/setup-uv@v10.2.0  # setup-uv publishes exact tags only; a bare v10 does not resolve
         with:
           python-version: "3.12"
           enable-cache: true
